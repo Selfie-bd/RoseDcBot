@@ -5,7 +5,7 @@ from pyrogram import filters
 from pyrogram.errors import ChatAdminRequired, RPCError
 from pyrogram.types import ChatMemberUpdated, InlineKeyboardMarkup, Message
 from rose.database.welcomedb import Greetings
-from rose import app, NOTES_CHANNEL_ID
+from rose import app
 from rose.utils.dbfunctions import is_gbanned_user
 from re import sub
 from rose.core.decorators.permissions import adminsOnly
@@ -253,11 +253,7 @@ async def save_wlcm(_, m: Message):
     if not msgtype:
         await m.reply_text("Please provide some data for this to reply with!")
         return
-# Copying message to a private channel
-    await m.reply_to_message.copy(NOTES_CHANNEL_ID)
-    db.set_welcome_text(text)
-    await m.reply_text("Saved welcome!")
-    return
+
 
 @app.on_message(filters.command("setgoodbye") & ~filters.private)
 @adminsOnly("can_change_info")
