@@ -20,7 +20,6 @@ from rose.adv import ADV_MODULES
 from rose.base import BASE_MODULES
 from rose.fun import FUN_MODULES
 from rose.utils import paginate_modules
-from rose.utils.constants import MARKDOWN
 from rose.utils.dbfunctions import clean_restart_stage
 from rose import LOGGER
 from rose.utils.dbfunctions import  get_served_chats, get_served_users
@@ -40,6 +39,9 @@ from pyrogram.errors import UserAlreadyParticipant
 from rose import ForceSub
 loop = asyncio.get_event_loop()
 
+MARKDOWN = """
+Commands Menu > Basic Menu > Notes
+"""
 HELPABLE = {}
 IMPORTED = {}
 BASICCMDS = {}
