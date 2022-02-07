@@ -34,8 +34,11 @@ You Protect Your Groups & Suit For All Your Needs.
 
 ## Deployment
 Read [Docs](https://szsupunma.gitbook.io/rose-bot/) for Detailed Description and Setup Guide on deloying Bot.
+
+####  Deploy to heroku
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploytemplate=https://github.com/szsupunma/sz-rosebot)
-[![Deploy](https://https://my.telegram.org/button.svg)](https://heroku.com/deploytemplate=https://github.com/szsupunma/sz-rosebot)
+
+### Deploy telgram
 
 ## Contact & Support
 
@@ -71,7 +74,7 @@ Anything missing kindly let us know at  [Telegram Support Group](https://t.me/sl
 
 > This project exists thanks to these awesome developers and their codes and contributions.
 
-![GitHub Contributors Image](https://contrib.rocks/image?repo=szsupunma/sz-rose-bot)   
+![GitHub Contributors Image](https://contrib.rocks/image?repo=szsupunma/sz-rosebot)   
 
 > And credits goes to all who supported, all who helped and API & environmental equirement package devs and all projects helped in making this project.
 > Special thanks to you for using bot
