@@ -68,6 +68,10 @@
         "BASE_DB":{
             "description": "base mongo database (filters/welcome/notes/etc..)",
             "required": true
+        },
+        "FSUB_CHANNEL":{
+            "description": "FSUB_CHANNEL channel id",
+            "required": true
         }
     }
 }
