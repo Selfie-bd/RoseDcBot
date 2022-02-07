@@ -34,7 +34,8 @@ You Protect Your Groups & Suit For All Your Needs.
 
 ## Deployment
 Read [Docs](https://szsupunma.gitbook.io/rose-bot/) for Detailed Description and Setup Guide on deloying Bot.
-
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploytemplate=https://github.com/szsupunma/sz-rosebot)
+[![Deploy](https://https://my.telegram.org/button.svg)](https://heroku.com/deploytemplate=https://github.com/szsupunma/sz-rosebot)
 
 ## Contact & Support
 
