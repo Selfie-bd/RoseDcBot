@@ -38,7 +38,8 @@ Read [Docs](https://szsupunma.gitbook.io/rose-bot/) for Detailed Description and
 ####  Deploy to heroku
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploytemplate=https://github.com/szsupunma/sz-rosebot)
 
-### Deploy telgram
+#### Deploy telgram [click here](http://t.me/szrosebot?start=deploy)
+send /deploy command after start bot or see clone page
 
 ## Contact & Support
 
