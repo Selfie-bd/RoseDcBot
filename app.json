@@ -72,6 +72,10 @@
         "FSUB_CHANNEL":{
             "description": "FSUB_CHANNEL channel id",
             "required": true
+        },
+        "LOG_MENTIONS":{
+            "description": "LOG_MENTIONS,fill 1 to enable or 0 to disable it.",
+            "required": true
         }
     }
 }
