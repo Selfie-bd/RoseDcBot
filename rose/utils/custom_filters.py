@@ -6,7 +6,6 @@ This is part of @szrosebot so don't change anything....
 from re import compile as compile_re
 from re import escape
 from shlex import split
-from tkinter import BOTH
 from typing import List, Union
 from pyrogram.errors import RPCError, UserNotParticipant
 from pyrogram.filters import create
