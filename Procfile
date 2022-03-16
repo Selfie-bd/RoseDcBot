@@ -1,1 +1,1 @@
-worker: make run
+worker: python3 -m Rose

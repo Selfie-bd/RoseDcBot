@@ -1,11 +1,16 @@
-FROM python:3.9.7
+# Copyright (C) 2022 szsupunma
+# Copyright (C) 2021 @szrosebot
 
-WORKDIR /root/rose
+# This file is part of @szrosebot (Telegram Bot)
+
+FROM python:python3.9
+
+WORKDIR /root/Rose
+
+RUN pip3 install -U pip
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -U -r requirements.txt
 
 COPY . .
 
-RUN pip3 install --upgrade pip setuptools
-
-RUN pip install -U -r requirements.txt
-
-CMD ["python3","-m","rose"] 
+CMD ["python3", "-m", "Rose"]

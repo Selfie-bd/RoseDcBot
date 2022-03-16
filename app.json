@@ -1,0 +1,70 @@
+{
+    "name": "Rose Bot ✨",
+    "description": "szrose is an all in one group management bot made for managing your group effectively with some advance security tools & Suit For All Your Needs ❤️",
+    "repository": "https://github.com/sz-rose-bot/sz-rosebot",
+    "logo": "https://telegra.ph//file/fa0373692ebd143eb66ac.jpg",
+    "keywords": [
+    "python3",
+    "telegram",
+    "bot",
+    "mongodb",
+    "telegram-bot",
+    "ARQ",
+    "pyrogram"
+    ],
+    "stack": "container",
+    "env": {
+        "BOT_TOKEN": {
+            "description": "Telegram bot token get it from  @BotFather",
+            "required": true
+        },
+        "API_ID": {
+            "description": "API_ID of your Telegram Account my.telegram.org/apps",
+            "required": true
+        },
+        "API_HASH": {
+            "description": "API_HASH of your Telegram Account my.telegram.org/apps",
+            "required": true
+        },
+        "API_ID1": {
+            "description": "Same as API_ID (multi-client)",
+            "required": true
+        },
+        "API_HASH1": {
+            "description": "Same as API_HASH (multi-client)",
+            "required": true
+        },
+        "LOG_GROUP_ID": {
+            "description": "For logs channel to note down important bot level events, recommend to make this public. ex: '-123456'",
+            "required": true
+        },
+        "MONGO_URL": {
+            "description": "Get From Here.https://www.mongodb.com/",
+            "required": true
+        },
+        "BASE_DB": {
+            "description": "Get From Here.https://www.mongodb.com/ (Same as MONGO_URL but give differant value for this) ",
+            "required": true
+        },
+        "ARQ_API_URL": {
+            "description": "Don't change this value",
+            "value": "https://thearq.tech",
+            "required": true
+        },
+        "ARQ_API_KEY": {
+            "description": "Get this from @ARQRobot.",
+            "required": true
+        }
+    },
+    "buildpacks": [
+        {
+            "url": "heroku/python"
+        }
+    ],
+    "formation": {
+        "worker": {
+            "quantity": 1,
+            "size": "free"
+        }
+    }
+}
