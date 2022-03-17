@@ -3,7 +3,7 @@
 
 # This file is part of @szrosebot (Telegram Bot)
 
-FROM python:python3.9
+FROM python:latest
 
 WORKDIR /root/Rose
 
