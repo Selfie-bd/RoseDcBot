@@ -98,7 +98,7 @@ home_keyboard_pm = InlineKeyboardMarkup(
                 text="👨‍💻 About", callback_data="_about"
             ),
             InlineKeyboardButton(
-                text="🌎 Network", url="https://t.me/TeamSzRoseBot"
+                text="🌎 Network", url="https://t.me/Theszrosebot"
             ),
         ],
         [
