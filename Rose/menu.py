@@ -14,7 +14,7 @@ Rose was created on **August 10, 2021**. We are currently developing and maintai
 • [News Channel](https://t.me/szroseupdates) 
 • [Documentation](https://szsupunma.gitbook.io/rose-bot/)
 • [Logs Channel](https://t.me/szroselog)
-• [Network](https://t.me/TeamSzRoseBot)
+• [Network](https://t.me/Theszrosebot)
 • [Source Code](https://github.com/szsupunma/sz-rosebot)
 
 **Current Version:** `1.0.8` | [Changelogs](https://szsupunma.gitbook.io/rose-bot/changelogs)
