@@ -1,9 +1,5 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
 
-# This file is part of @szrosebot (Telegram Bot)
-
-FROM python:latest
+FROM python:3.9.6
 
 WORKDIR /root/Rose
 
