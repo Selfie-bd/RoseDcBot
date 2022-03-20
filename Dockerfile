@@ -1,5 +1,5 @@
 
-FROM python:3.9.6
+FROM python:3.9.10
 
 WORKDIR /root/Rose
 
