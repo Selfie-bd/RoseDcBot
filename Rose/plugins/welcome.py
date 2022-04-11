@@ -18,8 +18,7 @@ from Rose.mongo.captcha import captchas
 from .captcha import send_captcha     
 from Rose.utils.lang import *
 from Rose.utils.filter_groups import *
-from Rose.mongo.feddb import (get_fed_from_chat,
-                                              get_fed_reason, is_user_fban)
+
 
 gdb = GBan()
 
@@ -166,24 +165,8 @@ async def welcome(_, message: Message):
     group_name = message.chat.title
     db = Greetings(group_id)
     chat_title = html.escape(message.chat.title)
-    fed_id = get_fed_from_chat(group_id)
     for member in message.new_chat_members:   
         user_id = member.id
-        if is_user_fban(fed_id, user_id):
-                fed_reason = get_fed_reason(fed_id, user_id)
-                text = (
-                        "**This user is banned in the current federation:**\n\n"
-                        f"User: {member.mention} (`{member.id}`)\n"
-                        f"Reason: `{fed_reason}`"
-                    )
-
-                if await app.chat.ban_member(chat_id, user_id): 
-                        text += '\nAction: `Banned`'
-                        
-                await message.reply(
-                    text
-                )
-                return 
         if user_id == BOT_ID:
                 await message.reply_text(
                     f"""
