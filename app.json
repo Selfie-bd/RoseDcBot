@@ -48,11 +48,15 @@
         },
         "ARQ_API_URL": {
             "description": "Don't change this value",
-            "value": "https://thearq.tech",
+            "value": "https://arq.hamker.in",
             "required": true
         },
         "ARQ_API_KEY": {
             "description": "Get this from @ARQRobot.",
+            "required": true
+        },
+        "COMMAND_PREFIXES": {
+            "description": "now you can set custom command handler for rose like : / ! ,",
             "required": true
         }
     },

@@ -6,9 +6,11 @@
 [![Size](https://img.shields.io/github/repo-size/szsupunma/sz-rosebot?style=flat-square&color=green)](https://github.com/szsupunma/sz-rosebot/)   
 [![Python](https://img.shields.io/badge/Python-v3.9.9-blue)](https://www.python.org/)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://github.com/szsupunma/sz-rosebot/graphs/commit-activity)
+[![Crowdin](https://badges.crowdin.net/szrosebot/localized.svg)](https://crowdin.com/project/szrosebot)
 <p align='left'>
- <a href="https://www.supun.ml/deploy.html"><img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy on Heroku"></a></br></br>
+ <a href="https://heroku.com/deploy?template=https://github.com/szsupunma/sz-rosebot"><img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy on Heroku"></a></br></br>
 </p>
+
 
 [szrosebot](https://github.com/szsupunma/sz-rosebot) is the most featured group management bot ever made with advance Anti module !
 
@@ -31,8 +33,6 @@ Release notes for Rose Bot releases will describe what’s new in each version, 
  - [Logs Channel ](https://t.me/szroselog)
  - [Network ](https://t.me/TeamSzRoseBot)
  - [Source Code ](https://github.com/szsupunma/sz-rosebot)
-
-
 
 ## 💩 privacy policy
 Our privacy policy may change from time to time [more info](https://szsupunma.gitbook.io/rose-bot/privacy-policy)

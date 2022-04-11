@@ -1,15 +1,9 @@
-FROM python:3.10-slim-buster
+FROM python:3.9.6
 
-WORKDIR /root/Rose
-
-RUN apt-get -y update
-
-RUN apt-get -y install git gcc python3-dev
-
-COPY requirements.txt requirements.txt
-
-RUN pip3 install -r requirements.txt
-
-COPY . .
-
-CMD [ "python3", "-m" , "Rose"]
+WORKDIR /Rose
+COPY . /Rose
+ 
+RUN pip install -r requirements.txt
+ 
+ENTRYPOINT ["python"]
+CMD ["-m", "Rose"]
