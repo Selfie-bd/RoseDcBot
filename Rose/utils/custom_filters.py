@@ -1,9 +1,3 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
-
 from re import compile as compile_re
 from re import escape
 from shlex import split
@@ -20,8 +14,6 @@ OWNER_ID = DEV_USERS
 SUDO_USERS = DEV_USERS
 BOT = "@szrosebot"
 COMMAND = "/"
-
-
 SUDO_LEVEL = set(SUDO_USERS + DEV_USERS + OWNER_ID)
 DEV_LEVEL = set(DEV_USERS + OWNER_ID)
 
@@ -45,15 +37,12 @@ def command(
             return False
 
         if owner_cmd and (m.from_user.id != OWNER_ID):
-            # Only owner allowed to use this...!
             return False
 
         if dev_cmd and (m.from_user.id not in DEV_LEVEL):
-            # Only devs allowed to use this...!
             return False
 
         if sudo_cmd and (m.from_user.id not in SUDO_LEVEL):
-            # Only sudos and above allowed to use it
             return False
 
         text: str = m.text or m.caption
@@ -78,10 +67,8 @@ def command(
                 try:
                     user_status = (await m.chat.get_member(m.from_user.id)).status
                 except UserNotParticipant:
-                    # i.e anon admin
                     user_status = "administrator"
                 except ValueError:
-                    # i.e. PM
                     user_status = "creator"
                 if str(matches.group(1)) in disable_list and user_status not in (
                     "creator",
@@ -122,11 +109,8 @@ async def bot_admin_check_func(_, __, m: Message or CallbackQuery):
 
     if m.chat.type != "supergroup":
         return False
-
-    # Telegram and GroupAnonyamousBot
     if m.sender_chat:
         return True
-
     try:
         admin_group = {i[0] for i in ADMIN_CACHE[m.chat.id]}
     except KeyError:
@@ -134,17 +118,13 @@ async def bot_admin_check_func(_, __, m: Message or CallbackQuery):
             i[0] for i in await admin_cache_reload(m, "custom_filter_update")
         }
     except ValueError as ef:
-        # To make language selection work in private chat of user, i.e. PM
         if ("The chat_id" and "belongs to a user") in ef:
             return True
-
     if BOT_ID in admin_group:
         return True
-
     await m.reply_text(
-        "I am not an admin to recive updates in this group; Mind Promoting?",
+        "I am not an admin to recive updates in this group, Mind Promoting?",
     )
-
     return False
 
 
@@ -152,18 +132,12 @@ async def admin_check_func(_, __, m: Message or CallbackQuery):
     """Check if user is Admin or not."""
     if isinstance(m, CallbackQuery):
         m = m.message
-
     if m.chat.type != "supergroup":
         return False
-
-    # Telegram and GroupAnonyamousBot
     if m.sender_chat:
         return True
-
-    # Bypass the bot devs, sudos and owner
     if m.from_user.id in SUDO_LEVEL:
         return True
-
     try:
         admin_group = {i[0] for i in ADMIN_CACHE[m.chat.id]}
     except KeyError:
@@ -171,32 +145,22 @@ async def admin_check_func(_, __, m: Message or CallbackQuery):
             i[0] for i in await admin_cache_reload(m, "custom_filter_update")
         }
     except ValueError as ef:
-        # To make language selection work in private chat of user, i.e. PM
         if ("The chat_id" and "belongs to a user") in ef:
             return True
-
     if m.from_user.id in admin_group:
         return True
-
     await m.reply_text("Need Admin Power")
-
     return False
 
 
 async def owner_check_func(_, __, m: Message or CallbackQuery):
-    """Check if user is Owner or not."""
     if isinstance(m, CallbackQuery):
         m = m.message
-
     if m.chat.type != "supergroup":
         return False
-
-    # Bypass the bot devs, sudos and owner
     if m.from_user.id in DEV_LEVEL:
         return True
-
     user = await m.chat.get_member(m.from_user.id)
-
     if user.status == "creator":
         status = True
     else:
@@ -209,106 +173,74 @@ async def owner_check_func(_, __, m: Message or CallbackQuery):
 
     return status
 
-
 async def restrict_check_func(_, __, m: Message or CallbackQuery):
-    """Check if user can restrict users or not."""
     if isinstance(m, CallbackQuery):
         m = m.message
-
     if m.chat.type != "supergroup":
         return False
-
-    # Bypass the bot devs, sudos and owner
     if m.from_user.id in DEV_LEVEL:
         return True
-
     user = await m.chat.get_member(m.from_user.id)
-
     if user.can_restrict_members or user.status == "creator":
         status = True
     else:
         status = False
-        await m.reply_text("Need Some admin Powers")
+        await m.reply_text("Need user ban  admin Powers")
 
     return status
 
 
 async def promote_check_func(_, __, m):
-    """Check if user can promote users or not."""
     if isinstance(m, CallbackQuery):
         m = m.message
-
     if m.chat.type != "supergroup":
         return False
-
-    # Bypass the bot devs, sudos and owner
     if m.from_user.id in DEV_LEVEL:
         return True
-
     user = await m.chat.get_member(m.from_user.id)
-
     if user.can_promote_members or user.status == "creator":
         status = True
     else:
         status = False
-        await m.reply_text(m, "admin.promote.no_promote_perm")
-
+        await m.reply_text("Need add new admins, admin Power")
     return status
 
 
 async def changeinfo_check_func(_, __, m):
-    """Check if user can change info or not."""
     if isinstance(m, CallbackQuery):
         m = m.message
-
     if m.chat.type != "supergroup":
         await m.reply_text("This command is made to be used in groups not in pm!")
         return False
-
-    # Telegram and GroupAnonyamousBot
     if m.sender_chat:
         return True
-
-    # Bypass the bot devs, sudos and owner
     if m.from_user.id in SUDO_LEVEL:
         return True
-
     user = await m.chat.get_member(m.from_user.id)
-
     if user.can_change_info or user.status == "creator":
         status = True
     else:
         status = False
         await m.reply_text("You don't have: can_change_info permission!")
-
     return status
 
 
 async def can_pin_message_func(_, __, m):
-    """Check if user can change info or not."""
     if isinstance(m, CallbackQuery):
         m = m.message
-
     if m.chat.type != "supergroup":
         await m.reply_text("This command is made to be used in groups not in pm!")
         return False
-
-    # Telegram and GroupAnonyamousBot
     if m.sender_chat:
         return True
-
-    # Bypass the bot devs, sudos and owner
     if m.from_user.id in SUDO_LEVEL:
         return True
-
     user = await m.chat.get_member(m.from_user.id)
-
     if user.can_pin_messages or user.status == "creator":
         status = True
     else:
         status = False
         await m.reply_text("You don't have: can_pin_messages permission!")
-
     return status
 
 

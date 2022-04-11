@@ -3,8 +3,7 @@
 
 # This file is part of @szrosebot (Telegram Bot)
 
-from Rose import db
-lockurl = db.urllock
+from Rose.mongo import urllockdb as lockurl
 
 
 def add_chat(chat_id):

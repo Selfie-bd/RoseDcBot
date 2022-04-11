@@ -1,8 +1,3 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
 import asyncio
 import importlib
 import re
@@ -13,21 +8,24 @@ from Rose.menu import *
 from Rose import *
 from Rose.plugins import ALL_MODULES
 from Rose.utils import paginate_modules
-from Rose.utils.constants import MARKDOWN
-from Rose.utils.dbfunctions import clean_restart_stage
-from Rose.utils.dbfunctions import *
-from rich.console import Console
+from lang import get_command
+from Rose.utils.lang import *
+from Rose.utils.commands import *
+from Rose.mongo.rulesdb import *
+from Rose.utils.start import *
+from Rose.mongo.usersdb import *
+from Rose.mongo.restart import *
+from Rose.mongo.chatsdb import *
 
 
 loop = asyncio.get_event_loop()
+flood = {}
+START_COMMAND = get_command("START_COMMAND")
+HELP_COMMAND = get_command("HELP_COMMAND")
 HELPABLE = {}
-console = Console()
-
-
 
 async def start_bot():
     global HELPABLE
-
     for module in ALL_MODULES:
         imported_module = importlib.import_module("Rose.plugins." + module)
         if (
@@ -51,30 +49,22 @@ async def start_bot():
         else:
             all_module += "•≫ Successfully imported:{:<15}.py".format(i)
         j += 1           
-    console.print(f"{all_module}")
-    await app.send_message(LOG_GROUP_ID, f"{all_module}")
+    print(f"{all_module}")
     restart_data = await clean_restart_stage()
     print("""
-
  _____________________________________________   
 |                                             |  
-|         > Deployed Successfully <           |  
+|          Deployed Successfully              |  
 |         (C) 2021-2022 by @szteambots        | 
 |          Greetings from supun  :)           |
 |_____________________________________________|  
-                                                                                             
-    
+                                                                                               
     """)
     try:
         if restart_data:
-            await app.edit_message_text(
-                restart_data["chat_id"],
-                restart_data["message_id"],
-                "**Restarted Successfully**",
-            )
-
+            print("Restarting Your bot wait man !")
         else:
-            await app.send_message(LOG_GROUP_ID, "Bot Online !")
+            await app.send_message(LOG_GROUP_ID, "Bot started successfully !")
     except Exception:
         pass
 
@@ -90,86 +80,86 @@ home_keyboard_pm = InlineKeyboardMarkup(
     [
         [
             InlineKeyboardButton(
-                text="❓ Commands Menu", callback_data="bot_commands"
+                text="📚 Commands & help", callback_data="bot_commands"
             ),
         ],
         [
            InlineKeyboardButton(
-                text="👨‍💻 About", callback_data="_about"
+                text="👨‍🦯 About", callback_data="_about"
             ),
             InlineKeyboardButton(
-                text="🌎 Network", url="https://t.me/Theszrosebot"
+                text="🌎 languages ", callback_data="_langs"
             ),
         ],
         [
             InlineKeyboardButton(
-                text="➕ Add Me To Your Group ➕",
+                text="📓 Documentation",
+                url=f"https://szsupunma.gitbook.io/rose-bot/",
+            )
+        ],
+        [
+            InlineKeyboardButton(
+                text=" ➕ Add Me To Your Group ➕ ",
                 url=f"http://t.me/{BOT_USERNAME}?startgroup=new",
             )
         ],
     ]
 )
 
-home_text_pm = f"""
-Hello There ! I'm {BOT_NAME}✨ 
-
-An  advanced telegram Group management Bot For help 
-You Protect Your Groups & Suit For All Your Needs.
-"""
-
-
 keyboard = InlineKeyboardMarkup(
     [
         [
             InlineKeyboardButton(
-                text="Help Commands ❓",
+                text="📚 Commands & help",
                 url=f"t.me/{BOT_USERNAME}?start=help",
             )
         ]
     ]
 )
 
-flood = {}
-
-@app.on_message(filters.command("start"))
-async def start(_, message: Message):
+@app.on_message(filters.command(START_COMMAND))
+@language
+async def start(client, message: Message, _):
     if message.sender_chat:
         return
     else:
         await add_served_user(message.from_user.id)
     if message.chat.type != "private":
         await message.reply(
-            "**PM me if you have any questions how to use me!**", reply_markup=keyboard)
+            _["main2"].format(BOT_NAME), reply_markup=keyboard)
         return await add_served_chat(message.chat.id)
     if len(message.text.split()) > 1:
         name = (message.text.split(None, 1)[1]).lower()
-        if name == "mkdwn_help":
-            await message.reply(
-                MARKDOWN, parse_mode="html", disable_web_page_preview=True
-            )
+        if name.startswith("rules"):
+                await get_private_rules(app, message, name)
+                return     
         elif "_" in name:
             module = name.split("_", 1)[1]
-            text = (
-                f"Here is the help for **{HELPABLE[module].__MODULE__}**:\n"
-                + HELPABLE[module].__HELP__
+            text = (_["main6"].format({HELPABLE[module].__MODULE__}
+                + HELPABLE[module].__HELP__)
             )
             await message.reply(text, disable_web_page_preview=True)
         elif name == "help":
             text, keyb = await help_parser(message.from_user.first_name)
             await message.reply(
-                text,
+                _["main5"],
                 reply_markup=keyb,
+                disable_web_page_preview=True,
             )
+        elif name == "connections":
+            await message.reply("Run /connections to view or disconnect from groups!")
     else:
         await message.reply(
-            home_text_pm,
+            _["main1"].format(BOT_NAME),
             reply_markup=home_keyboard_pm,
+            disable_web_page_preview=True,
         )
         return await add_served_user(message.from_user.id) 
 
 
-@app.on_message(filters.command("help"))
-async def help_command(_, message):
+@app.on_message(filters.command(HELP_COMMAND))
+@language
+async def help_command(client, message: Message, _):
     if message.chat.type != "private":
         if len(message.command) >= 2:
             name = (message.text.split(None, 1)[1]).replace(" ", "_").lower()
@@ -178,35 +168,34 @@ async def help_command(_, message):
                     [
                         [
                             InlineKeyboardButton(
-                                text="Click here",
+                                text=_["main3"],
                                 url=f"t.me/{BOT_USERNAME}?start=help_{name}",
                             )
                         ],
                     ]
                 )
                 await message.reply(
-                    f"Click on the below button to get help about {name}",
+                    _["main4"],
                     reply_markup=key,
                 )
             else:
                 await message.reply(
-                    "**PM me if you have any questions how to use me!**", reply_markup=keyboard
+                    _["main2"], reply_markup=keyboard
                 )
         else:
             await message.reply(
-                "**PM me if you have any questions how to use me!**", reply_markup=keyboard
+                _["main2"], reply_markup=keyboard
             )
     else:
         if len(message.command) >= 2:
             name = (message.text.split(None, 1)[1]).replace(" ", "_").lower()
             if str(name) in HELPABLE:
-                text = (
-                    f"Here is the help for **{HELPABLE[name].__MODULE__}**:\n"
-                    + HELPABLE[name].__HELP__ 
+                text = (_["main6"].format({HELPABLE[name].__MODULE__}
+                + HELPABLE[name].__HELP__)
                 )
                 if hasattr(HELPABLE[name], "__helpbtns__"):
-                       button = (HELPABLE[name].__helpbtns__) + [[InlineKeyboardButton("🔙 Back", callback_data="bot_commands")]]
-                if not hasattr(HELPABLE[name], "__helpbtns__"): button = [[InlineKeyboardButton("🔙 Back", callback_data="bot_commands")]]
+                       button = (HELPABLE[name].__helpbtns__) + [[InlineKeyboardButton("« Back", callback_data="bot_commands")]]
+                if not hasattr(HELPABLE[name], "__helpbtns__"): button = [[InlineKeyboardButton("« Back", callback_data="bot_commands")]]
                 await message.reply(text,
                            reply_markup=InlineKeyboardMarkup(button),
                            disable_web_page_preview=True)
@@ -215,7 +204,7 @@ async def help_command(_, message):
                     message.from_user.first_name
                 )
                 await message.reply(
-                    text,
+                    _["main5"],
                     reply_markup=help_keyboard,
                     disable_web_page_preview=True,
                 )
@@ -229,17 +218,19 @@ async def help_command(_, message):
     return
   
 @app.on_callback_query(filters.regex("startcq"))
-async def startcq(_, query):
-    await query.message.edit(
-            text=home_text_pm,
+@languageCB
+async def startcq(client,CallbackQuery, _):
+    await CallbackQuery.message.edit(
+            text=_["main1"].format(BOT_NAME),
             disable_web_page_preview=True,
             reply_markup=home_keyboard_pm)
+
 
 async def help_parser(name, keyboard=None):
     if not keyboard:
         keyboard = InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help"))
     return (
-        """
+"""
 **Welcome to help menu**
 
 I'm a group management bot with some useful features.
@@ -247,46 +238,34 @@ You can choose an option below, by clicking a button.
 If you have any bugs or questions on how to use me, 
 have a look at my [Docs](https://szsupunma.gitbook.io/rose-bot/), or head to @szteambots.
 
-**All commands can be used with the following: / **
-""".format(
-            first_name=name,
-            bot_name=BOT_NAME,
-        ),
+**All commands can be used with the following: / **""",
         keyboard,
     )
 
 
+
 @app.on_callback_query(filters.regex("bot_commands"))
-async def commands_callbacc(_, CallbackQuery):
-    text, keyboard = await help_parser(CallbackQuery.from_user.mention)
+@languageCB
+async def commands_callbacc(client,CallbackQuery, _):
+    text ,keyboard = await help_parser(CallbackQuery.from_user.mention)
     await app.send_message(
         CallbackQuery.message.chat.id,
-        text=text,
+        text=_["main5"],
         reply_markup=keyboard,
         disable_web_page_preview=True,
     )
-
     await CallbackQuery.message.delete()
 
-
 @app.on_callback_query(filters.regex(r"help_(.*?)"))
-async def help_button(client, query):
+@languageCB
+async def help_button(client, query, _):
     home_match = re.match(r"help_home\((.+?)\)", query.data)
     mod_match = re.match(r"help_module\((.+?)\)", query.data)
     prev_match = re.match(r"help_prev\((.+?)\)", query.data)
     next_match = re.match(r"help_next\((.+?)\)", query.data)
     back_match = re.match(r"help_back", query.data)
     create_match = re.match(r"help_create", query.data)
-    top_text = f"""
-**Welcome to help menu**
-
-I'm a group management bot with some useful features.
-You can choose an option below, by clicking a button.
-If you have any bugs or questions on how to use me, 
-have a look at my [Docs](https://szsupunma.gitbook.io/rose-bot/), or head to @szteambots.
-
-**All commands can be used with the following: / **
- """
+    top_text = _["main5"]
     if mod_match:
         module = (mod_match.group(1)).replace(" ", "_")
         text = (
@@ -296,8 +275,8 @@ have a look at my [Docs](https://szsupunma.gitbook.io/rose-bot/), or head to @sz
             + HELPABLE[module].__HELP__
         )
         if hasattr(HELPABLE[module], "__helpbtns__"):
-                       button = (HELPABLE[module].__helpbtns__) + [[InlineKeyboardButton("🔙 Back", callback_data="bot_commands")]]
-        if not hasattr(HELPABLE[module], "__helpbtns__"): button = [[InlineKeyboardButton("🔙 Back", callback_data="bot_commands")]]
+                       button = (HELPABLE[module].__helpbtns__) + [[InlineKeyboardButton("« Back", callback_data="bot_commands")]]
+        if not hasattr(HELPABLE[module], "__helpbtns__"): button = [[InlineKeyboardButton("« Back", callback_data="bot_commands")]]
         await query.message.edit(
             text=text,
             reply_markup=InlineKeyboardMarkup(button),
@@ -306,7 +285,7 @@ have a look at my [Docs](https://szsupunma.gitbook.io/rose-bot/), or head to @sz
     elif home_match:
         await app.send_message(
             query.from_user.id,
-            text=home_text_pm,
+            text= _["main2"],
             reply_markup=home_keyboard_pm,
         )
         await query.message.delete()

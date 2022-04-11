@@ -1,20 +1,11 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
-
 from threading import RLock
 from time import time
-
 from Rose.mongo import MongoDB
 
 INSERTION_LOCK = RLock()
 
 
 class Rules(MongoDB):
-    """Class for rules for chats in bot."""
-
     db_name = "rules"
 
     def __init__(self, chat_id: int) -> None:

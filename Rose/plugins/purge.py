@@ -1,17 +1,15 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
 from asyncio import sleep
-from pyrogram.errors import MessageDeleteForbidden, RPCError
+from pyrogram.errors import MessageDeleteForbidden
 from pyrogram.types import Message
-from Rose import app as app, SUPPORT_GROUP
+from Rose import app 
 from Rose.utils.custom_filters import admin_filter, command
+from Rose.utils.lang import *
+from Rose.utils.commands import *
 
 
 @app.on_message(command("purge") & admin_filter)
-async def purge(c: app, m: Message):
+@language
+async def purge(client, m: Message, _):
     if m.reply_to_message:
         message_ids = list(range(m.reply_to_message.message_id, m.message_id))
 
@@ -24,27 +22,28 @@ async def purge(c: app, m: Message):
 
         try:
             for plist in m_list:
-                await c.delete_messages(
+                await app.delete_messages(
                     chat_id=m.chat.id,
                     message_ids=plist,
                     revoke=True,
                 )
             await m.delete()
         except MessageDeleteForbidden:
-            await m.reply_text("Old than 2 days")
+            await m.reply_text(_["purge1"])
             return
         count_del_msg = len(message_ids)
 
-        z = await m.reply_text(f"Done{count_del_msg} Message was deleted")
+        z = await m.reply_text(_[f"purge2"])
         await sleep(3)
         await z.delete()
         return
-    await m.reply_text("Reply to a message to start purge !")
+    await m.reply_text(_["purge3"])
     return
 
 
 @app.on_message(command("spurge") & admin_filter)
-async def spurge(c: app, m: Message):
+@language
+async def spurge(client, m: Message, _):
     if m.reply_to_message:
         message_ids = list(range(m.reply_to_message.message_id, m.message_id))
 
@@ -57,16 +56,16 @@ async def spurge(c: app, m: Message):
 
         try:
             for plist in m_list:
-                await c.delete_messages(
+                await app.delete_messages(
                     chat_id=m.chat.id,
                     message_ids=plist,
                     revoke=True,
                 )
             await m.delete()
         except MessageDeleteForbidden:
-            await m.reply_text("Old than 2 days")
+            await m.reply_text(_["purge1"])
             return
-    await m.reply_text("Reply to a message to start spurge !")
+    await m.reply_text(_["purge5"])
     return
 
 
@@ -74,15 +73,15 @@ async def spurge(c: app, m: Message):
     command("del") & admin_filter,
     group=9,
 )
-async def del_msg(c: app, m: Message):
+async def del_msg(client, m: Message, _):
     if m.reply_to_message:
         await m.delete()
-        await c.delete_messages(
+        await app.delete_messages(
             chat_id=m.chat.id,
             message_ids=m.reply_to_message.message_id,
         )
     else:
-        await m.reply_text("🤔")
+        await m.reply_text(_["purge6"])
     return
 
 __MODULE__ = "Purges"

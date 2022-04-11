@@ -1,8 +1,3 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
 from hashlib import md5
 from threading import RLock
 from time import time
@@ -101,7 +96,6 @@ class Notes(MongoDB):
         with INSERTION_LOCK:
             return self.count({"msgtype": ntype})
 
-    # Migrate if chat id changes!
     def migrate_chat(self, old_chat_id: int, new_chat_id: int):
         with INSERTION_LOCK:
             old_chat_db = self.find_one({"_id": old_chat_id})
@@ -136,7 +130,6 @@ class NotesSettings(MongoDB):
     def count_chats(self):
         return len(self.find_all({"privatenotes": True}))
 
-    # Migrate if chat id changes!
     def migrate_chat(self, old_chat_id: int, new_chat_id: int):
         with INSERTION_LOCK:
             old_chat_db = self.find_one({"_id": old_chat_id})

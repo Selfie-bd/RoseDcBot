@@ -1,8 +1,3 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
 from traceback import format_exc
 from typing import Tuple
 from pyrogram.types.messages_and_media.message import Message
@@ -11,7 +6,6 @@ from Rose.mongo.usersdb import Users
 
 
 async def extract_user(c: app, m: Message) -> Tuple[int, str, str]:
-    """Extract the user from the provided message."""
     user_id = None
     user_first_name = None
     user_name = None
@@ -29,7 +23,6 @@ async def extract_user(c: app, m: Message) -> Tuple[int, str, str]:
                 user_first_name = required_entity.user.first_name
                 user_name = required_entity.user.username
             elif required_entity.type in ("mention", "phone_number"):
-                # new long user ids are identified as phone_number
                 user_found = m.text[
                     required_entity.offset : (
                         required_entity.offset + required_entity.length
@@ -48,7 +41,6 @@ async def extract_user(c: app, m: Message) -> Tuple[int, str, str]:
                     user_first_name = user["name"]
                     user_name = user["username"]
                 except KeyError:
-                    # If user not in database
                     try:
                         user = await c.get_users(user_found)
                     except Exception as ef:
@@ -60,8 +52,6 @@ async def extract_user(c: app, m: Message) -> Tuple[int, str, str]:
                     user_id = user_found
                     user_first_name = user_found
                     user_name = ""
-
-
         else:
             try:
                 user_id = int(m.text.split()[1])
@@ -74,8 +64,6 @@ async def extract_user(c: app, m: Message) -> Tuple[int, str, str]:
                     )
                 else:
                     user_id = m.text.split()[1]
-
-
             if user_id is not None:
                 try:
                     user = Users.get_user_info(user_id)
@@ -88,8 +76,6 @@ async def extract_user(c: app, m: Message) -> Tuple[int, str, str]:
                         return await m.reply_text(f"User not found ! Error: {ef}")
                     user_first_name = user.first_name
                     user_name = user.username
-
-
     else:
         user_id = m.from_user.id
         user_first_name = m.from_user.first_name

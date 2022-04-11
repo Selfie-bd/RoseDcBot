@@ -1,21 +1,11 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
 from threading import RLock
 from time import time
-
-
 from Rose.mongo import MongoDB
 
 INSERTION_LOCK = RLock()
 
 
 class Blacklist(MongoDB):
-    """Class to manage database for blacklists for chats."""
-
-    # Database name to connect to to preform operations
     db_name = "blacklists"
 
     def __init__(self, chat_id: int) -> None:
@@ -112,13 +102,12 @@ class Blacklist(MongoDB):
                 "_id": self.chat_id,
                 "triggers": [],
                 "action": "none",
-                "reason": "Automated blacklisted word: {{}}",
+                "reason": "Blacklisted word: {{}}",
             }
             self.insert_one(new_data)
             return new_data
         return chat_data
 
-    # Migrate if chat id changes!
     def migrate_chat(self, new_chat_id: int):
         old_chat_db = self.find_one({"_id": self.chat_id})
         new_data = old_chat_db.update({"_id": new_chat_id})

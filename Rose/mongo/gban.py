@@ -1,8 +1,3 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
 from datetime import datetime
 from threading import RLock
 from Rose.mongo import MongoDB
@@ -12,8 +7,6 @@ ANTISPAM_BANNED = set()
 
 
 class GBan(MongoDB):
-    """Class for managing Gbans in bot."""
-
     db_name = "gbans"
 
     def __init__(self) -> None:
@@ -26,11 +19,10 @@ class GBan(MongoDB):
     def add_gban(self, user_id: int, reason: str, by_user: int):
         global ANTISPAM_BANNED
         with INSERTION_LOCK:
-            # Check if  user is already gbanned or not
+
             if self.find_one({"_id": user_id}):
                 return self.update_gban_reason(user_id, reason)
 
-            # If not already gbanned, then add to gban
             time_rn = datetime.now()
             return self.insert_one(
                 {
@@ -44,7 +36,7 @@ class GBan(MongoDB):
     def remove_gban(self, user_id: int):
         global ANTISPAM_BANNED
         with INSERTION_LOCK:
-            # Check if  user is already gbanned or not
+    
             if self.find_one({"_id": user_id}):
                 return self.delete_one({"_id": user_id})
 

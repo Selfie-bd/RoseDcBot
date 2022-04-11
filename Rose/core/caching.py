@@ -1,9 +1,3 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
-
 from threading import RLock
 from time import perf_counter, time
 from typing import List
@@ -34,7 +28,6 @@ async def admin_cache_reload(m: Message or CallbackQuery, status=None) -> List[i
             if TEMP_ADMIN_CACHE_BLOCK[m.chat.id] in ("autoblock", "manualblock"):
                 return
         except KeyError:
-            # Because it might be first time when admn_list is being reloaded
             pass
 
         admin_list = [

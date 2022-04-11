@@ -1,9 +1,3 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
-
 import asyncio
 from time import time
 from pyrogram import filters
@@ -13,14 +7,19 @@ from Rose.utils.extract_user import extract_user
 from Rose import BOT_ID, SUDOERS, app
 from Rose.utils.functions import (extract_user_and_reason,
                                  time_converter)
-
 from Rose.core.decorators.permissions import adminsOnly
-from pyrogram.types import (
-    CallbackQuery,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    Message,
-)
+from pyrogram.types import Message
+from lang import get_command
+from Rose.utils.commands import *
+from Rose.utils.lang import *
+
+KICK_ME = get_command("KICK_ME")
+SKICK = get_command("SKICK")
+KICK = get_command("KICK")
+BAN = get_command("BAN")
+UNBAN = get_command("UNBAN")
+SBAN = get_command("SBAN")
+
 
 async def member_permissions(chat_id: int, user_id: int):
     perms = []
@@ -57,7 +56,6 @@ async def list_admins(chat_id: int):
         interval = time() - admins_in_chat[chat_id]["last_updated_at"]
         if interval < 3600:
             return admins_in_chat[chat_id]["data"]
-
     admins_in_chat[chat_id] = {
         "last_updated_at": time(),
         "data": [
@@ -94,30 +92,27 @@ async def current_chat_permissions(chat_id):
 
 
 
-# Kick members
-@app.on_message(
-    filters.command("kickme") 
-)
-@adminsOnly("can_restrict_members")
-async def kickFunc(_, message: Message):
+
+@app.on_message(command(KICK_ME) )
+@language
+async def kickFunc(client, message: Message, _):
     reason = None
     if len(message.text.split()) >= 2:
         reason = message.text.split(None, 1)[1]
     try:
         await message.chat.ban_member(message.from_user.id)
-        txt = "Yeah, you're right - get out."
+        txt = "you're right - get out."
         txt += f"\n<b>Reason</b>: {reason}" if reason else ""
         await message.reply_text(txt)
         await message.chat.unban_member(message.from_user.id)
-    except RPCError as ef:
+    except Exception as ef:
         await message.reply_text(f"{ef}")
     return
 
-@app.on_message(
-    filters.command("skick")  
-)
+@app.on_message(command(SKICK))
 @adminsOnly("can_restrict_members")
-async def kickFunc(_, message: Message):
+@language
+async def kickFunc(client, message: Message, _):
     if len(message.text.split()) == 1 and not message.reply_to_message:
         return
     try:
@@ -125,7 +120,7 @@ async def kickFunc(_, message: Message):
     except Exception:
         return   
     if not user_id:
-        await message.reply_text("Cannot find user to kick")
+        await message.reply_text(_["ban2"])
         return  
     try:
         await message.chat.ban_member(user_id)
@@ -133,67 +128,50 @@ async def kickFunc(_, message: Message):
         if message.reply_to_message:
             await message.reply_to_message.delete()
         await message.chat.unban_member(user_id)
-    except RPCError as ef:
+    except Exception as ef:
         await message.reply_text(f"{ef}")
     return
 
-@app.on_message(
-    filters.command(["kick", "dkick"]) 
-)
+@app.on_message(command(KICK))
 @adminsOnly("can_restrict_members")
-async def kickFunc(_, message: Message):
+@language
+async def kickFunc(client, message: Message, _):
     user_id, reason = await extract_user_and_reason(message)
     if not user_id:
-        return await message.reply_text("I can't find that user.")
+        return await message.reply_text(_["ban3"])
     if user_id == BOT_ID:
-        return await message.reply_text(
-            "I can't kick myself, i can leave if you want."
-        )
+        return await message.reply_text(_["ban4"])
     if user_id in SUDOERS:
-        return await message.reply_text("You Wanna Kick The Elevated One?")
+        return await message.reply_text(_["ban6"])
     if user_id in (await list_admins(message.chat.id)):
-        return await message.reply_text(
-            "I can't kick an admin, You know the rules, so do i."
-        )
+        return await message.reply_text(_["ban7"])
     mention = (await app.get_users(user_id)).mention
     msg = f"""
-**Kicked User:** {mention}
-**Kicked By:** {message.from_user.mention if message.from_user else 'Anon'}
+{mention}** Was Kicked By:** {message.from_user.mention if message.from_user else 'Anon'}
 **Reason:** {reason or 'No Reason Provided.'}"""
     if message.command[0][0] == "d":
         await message.reply_to_message.delete()
-    await message.chat.ban_member(user_id)
+    await app.chat.ban_member(user_id)
     await message.reply_text(msg)
     await asyncio.sleep(1)
-    await message.chat.unban_member(user_id)
+    await app.chat.unban_member(user_id)
 
 
-# Ban members
-
-
-@app.on_message(
-    filters.command(["ban", "dban", "tban"])
-    
-)
+@app.on_message(command(BAN))
 @adminsOnly("can_restrict_members")
-async def banFunc(_, message: Message):
+@language
+async def banFunc(client, message: Message, _):
     user_id, reason = await extract_user_and_reason(message, sender_chat=True)
 
     if not user_id:
-        return await message.reply_text("I can't find that user.")
+        return await message.reply_text(_["ban3"])
     if user_id == BOT_ID:
-        return await message.reply_text(
-            "I can't ban myself, i can leave if you want."
-        )
+        return await message.reply_text(_["ban4"])
     if user_id in SUDOERS:
-        return await message.reply_text(
-            "You Wanna Ban The Elevated One?, RECONSIDER!"
-        )
-    if user_id in (await list_admins(message.chat.id)):
-        return await message.reply_text(
-            "I can't ban an admin, You know the rules, so do i."
-        )
-
+        return await message.reply_text(_["ban6"])
+    user_status = (await message.chat.get_member(user_id)).status    
+    if user_status in {"creator", "administrator"}:
+        return
     try:
         mention = (await app.get_users(user_id)).mention
     except IndexError:
@@ -204,8 +182,8 @@ async def banFunc(_, message: Message):
         )
 
     msg = (
-        f"**Banned User:** {mention}\n"
-        f"**Banned By:** {message.from_user.mention if message.from_user else 'Anon'}\n"
+        f"{mention}\n"
+        f"**Was Banned By:** {message.from_user.mention if message.from_user else 'Anon'}\n"
     )
     if message.command[0][0] == "d":
         await message.reply_to_message.delete()
@@ -215,67 +193,41 @@ async def banFunc(_, message: Message):
         temp_reason = split[1] if len(split) > 1 else ""
         temp_ban = await time_converter(message, time_value)
         msg += f"**Banned For:** {time_value}\n"
-        keyboard = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "❗️ Unban",
-                        callback_data=f"unban_={user_id}",
-                    ),
-                ],
-            ],
-        )
         if temp_reason:
             msg += f"**Reason:** {temp_reason}"
         try:
             if len(time_value[:-1]) < 3:
                 await message.chat.ban_member(user_id, until_date=temp_ban)
-                await message.reply_text(msg,reply_markup=keyboard)
+                await message.reply_text(msg)
             else:
-                await message.reply_text("You can't use more than 99 !")
+                await message.reply_text(_["ban14"])
         except AttributeError:
             pass
         return
     if reason:
         msg += f"**Reason:** {reason}"
     await message.chat.ban_member(user_id)
-    keyboard = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "❗️ Unban",
-                        callback_data=f"unban_={user_id}",
-                    ),
-                ],
-            ],
-        )
-    await message.reply_text(msg,reply_markup=keyboard)
+    await message.reply_text(msg)
 
 
-# Unban members
-
-
-@app.on_message(filters.command("unban") &  filters.incoming)
+@app.on_message(command(UNBAN) &  filters.incoming)
 @adminsOnly("can_restrict_members")
-async def unbanFunc(_, message: Message):
+@language
+async def unbanFunc(client, message: Message, _):
     if len(message.command) == 2:
         user = message.text.split(None, 1)[1]
     elif len(message.command) == 1 and message.reply_to_message:
         user = message.reply_to_message.from_user.id
     else:
-        return await message.reply_text(
-            "Provide a username or reply to a user's message to unban."
-        )
+        return await message.reply_text(_["ban15"])
     await message.chat.unban_member(user)
     umention = (await app.get_users(user)).mention
-    await message.reply_text(f"Unbanned! {umention}")
+    await message.reply_text(_["ban14"].format({umention}))
 
 
-@app.on_message(
-    filters.command("sban") &  filters.incoming
-)
+@app.on_message(command(SBAN) &  filters.incoming)
 @adminsOnly("can_restrict_members")
-async def kickFunc(_, message: Message):
+async def kickFunc(client, message: Message, _):
     if len(message.text.split()) == 1 and not message.reply_to_message:
         return
     try:
@@ -290,11 +242,11 @@ async def kickFunc(_, message: Message):
         await message.delete()
         if message.reply_to_message:
             await message.reply_to_message.delete()
-    except RPCError as ef:
+    except Exception as ef:
         await message.reply_text(f"{ef}")
     return
 
-__MODULE__ = "Bans"
+__MODULE__ = "Restrict"
 __HELP__ = """
 Some people need to be publicly banned; spammers, annoyances, or just trolls.
 

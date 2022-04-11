@@ -1,8 +1,3 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
 from threading import RLock
 from time import time
 from Rose.mongo import MongoDB
@@ -11,8 +6,6 @@ INSERTION_LOCK = RLock()
 
 
 class Reporting(MongoDB):
-    """Class for managing report settings of users and groups."""
-
     db_name = "reporting"
 
     def __init__(self, chat_id: int) -> None:
@@ -50,7 +43,6 @@ class Reporting(MongoDB):
             return new_data
         return chat_data
 
-    # Migrate if chat id changes!
     def migrate_chat(self, new_chat_id: int):
         old_chat_db = self.find_one({"_id": self.chat_id})
         new_data = old_chat_db.update({"_id": new_chat_id})

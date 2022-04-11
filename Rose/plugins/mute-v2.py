@@ -1,35 +1,25 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
 from pyrogram.errors import (
     ChatAdminRequired,
     RightForbidden,
-    RPCError,
     UserNotParticipant,
 )
-from pyrogram.filters import regex
 from pyrogram.types import (
-    CallbackQuery,
     ChatPermissions,
-    InlineKeyboardButton,
-    InlineKeyboardMarkup,
-    Message,
 )
-
-from Rose import  OWNER_ID
 from Rose import app, BOT_ID
 from Rose.utils.caching import ADMIN_CACHE, admin_cache_reload
 from Rose.utils.custom_filters import command, restrict_filter
 from Rose.utils.extract_user import extract_user
 from Rose.utils.parser import mention_html
 from Rose.utils.string import extract_time
-
+from Rose.utils.lang import *
+from Rose.utils.commands import *
+from Rose.core.keyboard import ikb
 
 
 @app.on_message(command("tmute") & restrict_filter)
-async def tmute_usr(_, message): 
+@language
+async def tmute_usr(client, message: Message, _): 
     if len(message.text.split()) == 1 and not message.reply_to_message:
         await message.reply_text("I can't mute nothing!")
         return
@@ -39,33 +29,29 @@ async def tmute_usr(_, message):
         return
 
     if not user_id:
-        await message.reply_text("Cannot find user to mute !")
+        await message.reply_text(_["mute2"])
         return
     if user_id == BOT_ID:
-        await message.reply_text("I can't mute myself !")
+        await message.reply_text(_["mute1"])
         return
-
     try:
         admins_group = {i[0] for i in ADMIN_CACHE[message.chat.id]}
     except KeyError:
         admins_group = await admin_cache_reload(message, "mute")
-
     if user_id in admins_group:
-        await message.reply_text("This user is admin in this chat, I can't Mute them!")
+        await message.reply_text(_["mute3"])
         return
-
     r_id = message.reply_to_message.message_id if message.reply_to_message else message.message_id
-
     if message.reply_to_message and len(message.text.split()) >= 2:
         reason = message.text.split(None, 2)[1]
     elif not message.reply_to_message and len(message.text.split()) >= 3:
         reason = message.text.split(None, 2)[2]
     else:
-        await message.reply_text("Read /help again!!")
+        await message.reply_text(_["mute4"])
         return
 
     if not reason:
-        await message.reply_text("You haven't specified a time to mute this user for!")
+        await message.reply_text(_["mute5"])
         return
 
     split_reason = reason.split(None, 1)
@@ -84,42 +70,31 @@ async def tmute_usr(_, message):
             ChatPermissions(),
             mutetime,
         )
-        admin=(await mention_html(message.from_user.first_name, message.from_user.id)),
-        muted=(await mention_html(user_first_name, user_id)),
+        admin=await mention_html(message.from_user.first_name, message.from_user.id)
+        muted=await mention_html(user_first_name, user_id)
 
         txt = (f"""
-**Muted User**: {muted} 
-**Muted By:** {admin} 
+{muted} **was muted By** {message.from_user.first_name}
         """)
             
         if reason:
             txt += f"\n<b>Reason</b>: {reason}"
         if mutetime:    
             txt += f"\n<b>Mute Time</b>: {mutetime}"
-        keyboard = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "❗️ Unmute",
-                        callback_data=f"unmute_={user_id}",
-                    ),
-                ],
-            ],
-        )
-        await message.reply_text(txt, reply_markup=keyboard, reply_to_message_id=r_id)
+        keyboard = ikb({"Unmute": f"_unmute_{user_id}"})   
+        await app.send_message(message.chat.id, txt,reply_markup=keyboard)
     except ChatAdminRequired:
         await message.reply_text("You need to be an admin to do this.")
     except RightForbidden:
         await message.reply_text("I need to be an admin to do this.")
     except UserNotParticipant:
         await message.reply_text("How can I mute a user who is not a part of this chat?")
-    except RPCError as ef:
-        await message.reply_text("sad")
     return
 
 
 @app.on_message(command("dtmute") & restrict_filter)
-async def dtmute_usr(_, message): 
+@language
+async def dtmute_usr(client, message: Message, _): 
     if len(message.text.split()) == 1 and not message.reply_to_message:
         await message.reply_text("I can't mute nothing!")
         return
@@ -143,7 +118,7 @@ async def dtmute_usr(_, message):
         admins_group = await admin_cache_reload(message, "mute")
 
     if user_id in admins_group:
-        await message.reply_text("This user is admin in this chat, I can't Mute them!")
+        await message.reply_text(_["mute3"])
         return
 
     if message.reply_to_message and len(message.text.split()) >= 2:
@@ -151,11 +126,11 @@ async def dtmute_usr(_, message):
     elif not message.reply_to_message and len(message.text.split()) >= 3:
         reason = message.text.split(None, 2)[2]
     else:
-        await message.reply_text("Read /help again!!")
+        await message.reply_text(_["mute4"])
         return
 
     if not reason:
-        await message.reply_text("You haven't specified a time to mute this user for!")
+        await message.reply_text(_["mute5"])
         return
 
     split_reason = reason.split(None, 1)
@@ -178,47 +153,25 @@ async def dtmute_usr(_, message):
         muted=(await mention_html(user_first_name, user_id)),
 
         txt = (f"""
-**Muted User**: {muted} 
-**Muted By:** {admin} 
+{muted} **was muted By** {message.from_user.first_name}
         """)
         if reason:
             txt += f"\n<b>Reason</b>: {reason}"
-        keyboard = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "❗️ Unmute",
-                        callback_data=f"unmute_={user_id}",
-                    ),
-                ],
-            ],
-        )
-        await app.send_message(message.chat.id, txt, reply_markup=keyboard)
+        keyboard = ikb({"Unmute": f"_unmute_{user_id}"})   
+        await app.send_message(message.chat.id, txt,reply_markup=keyboard)
     except ChatAdminRequired:
         await message.reply_text("You need to be an admin to do this.")
     except RightForbidden:
         await message.reply_text("I need to be an admin to do this.")
     except UserNotParticipant:
         await message.reply_text("How can I mute a user who is not a part of this chat?")
-    except RPCError as ef:
-        await message.reply_text("sad")
     return
-
-
-
-
 
 #not modify
 
-
-
-
-
-
-
-
 @app.on_message(command("stmute") & restrict_filter)
-async def stmute_usr(_, message): 
+@language
+async def stmute_usr(client, message: Message, _):
     if len(message.text.split()) == 1 and not message.reply_to_message:
         await message.reply_text("I can't mute nothing!")
         return
@@ -280,13 +233,12 @@ async def stmute_usr(_, message):
         await message.reply_text("I need to be an admin to do this.")
     except UserNotParticipant:
         await message.reply_text("How can I mute a user who is not a part of this chat?")
-    except RPCError as ef:
-        await message.reply_text("sad")
     return
 
 
 @app.on_message(command("mute") & restrict_filter)
-async def mute_usr(_, message):
+@language
+async def mute_usrs(client, message: Message, _):
     if len(message.text.split()) == 1 and not message.reply_to_message:
         await message.reply_text("I can't mute nothing!")
         return
@@ -309,9 +261,8 @@ async def mute_usr(_, message):
         await message.reply_text("Cannot find user to mute")
         return
     if user_id == BOT_ID:
-        await message.reply_text("why would I mute myself?")
+        await message.reply_text(_["mute1"])
         return
-
     try:
         admins_group = {i[0] for i in ADMIN_CACHE[message.chat.id]}
     except KeyError:
@@ -330,35 +281,25 @@ async def mute_usr(_, message):
         muted=(await mention_html(user_first_name, user_id)),
 
         txt = (f"""
-**Muted User**: {muted} 
-**Muted By:** {admin} 
+{muted} **was muted By** {message.from_user.first_name}
         """)
         if reason:
             txt += f"\n<b>Reason</b>: {reason}"
-        keyboard = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "❗️ Unmute",
-                        callback_data=f"unmute_={user_id}",
-                    ),
-                ],
-            ],
-        )
-        await message.reply_text(txt, reply_markup=keyboard, reply_to_message_id=r_id)
+
+        keyboard = ikb({"Unmute": f"_unmute_{user_id}"})   
+        await app.send_message(message.chat.id, txt,reply_markup=keyboard)
     except ChatAdminRequired:
         await message.reply_text("You need to be an admin to do this.")
     except RightForbidden:
         await message.reply_text("I need to be an admin to do this.")
     except UserNotParticipant:
         await message.reply_text("How can I mute a user who is not a part of this chat?")
-    except RPCError as ef:
-        await message.reply_text("sad")
     return
 
 
 @app.on_message(command("smute") & restrict_filter)
-async def smute_usr(_, message): 
+@language
+async def smute_usr(client, message: Message, _):
     if len(message.text.split()) == 1 and not message.reply_to_message:
         await message.reply_text("I can't mute nothing!")
         return
@@ -399,13 +340,12 @@ async def smute_usr(_, message):
         await message.reply_text("I need to be an admin to do this.")
     except UserNotParticipant:
         await message.reply_text("How can I mute a user who is not a part of this chat?")
-    except RPCError as ef:
-        await message.reply_text("sad")
     return
 
 
 @app.on_message(command("dmute") & restrict_filter)
-async def dmute_usr(_, message): 
+@language
+async def dmute_usr(client, message: Message, _): 
     if len(message.text.split()) == 1 and not message.reply_to_message:
         await message.reply_text("I can't mute nothing!")
         return
@@ -445,38 +385,27 @@ async def dmute_usr(_, message):
         )
         await message.reply_to_message.delete()
         admin= await mention_html(message.from_user.first_name, message.from_user.id),
-        muted= await mention_html(user_first_name, user_id),
+        muted= await mention_html(user_first_name, user_id)
 
         txt = (f"""
-**Muted User**: {muted} 
-**Muted By:** {admin} 
+{muted} **was muted By** {message.from_user.first_name}
         """)
         if reason:
             txt += f"\n<b>Reason</b>: {reason}"
-        keyboard = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "❗️ Unmute",
-                        callback_data=f"unmute_={user_id}",
-                    ),
-                ],
-            ],
-        )
-        await app.send_message(message.chat.id, txt, reply_markup=keyboard)
+        keyboard = ikb({"Unmute": f"_unmute_{user_id}"})   
+        await app.send_message(message.chat.id, txt,reply_markup=keyboard)
     except ChatAdminRequired:
         await message.reply_text("You need to be an admin to do this.")
     except RightForbidden:
         await message.reply_text("I need to be an admin to do this.")
     except UserNotParticipant:
         await message.reply_text("How can I mute a user who is not a part of this chat?")
-    except RPCError as ef:
-        await message.reply_text("sad")
     return
 
 
 @app.on_message(command("unmute") & restrict_filter)
-async def unmute_usr(_, message):     
+@language
+async def unmute_usr(client, message: Message, _):     
     if len(message.text.split()) == 1 and not message.reply_to_message:
         await message.reply_text("I can't unmute nothing!")
         return
@@ -492,12 +421,11 @@ async def unmute_usr(_, message):
 
     try:
         await message.chat.unban_member(user_id)
-        admin= await mention_html(message.from_user.first_name, message.from_user.id),
+        admin= await mention_html(message.from_user.first_name, message.from_user.id)
         unmuted=await mention_html(user_first_name, user_id)
         group = message.chat.title
         await message.reply_text(f"""
-**Alright!**
-{unmuted} was unmuted by {admin}  in {group}.   
+{unmuted} was unmuted by {message.from_user.first_name}  in {group}.   
         """)
     except ChatAdminRequired:
         await message.reply_text("You need to be an admin to do this.")
@@ -505,28 +433,7 @@ async def unmute_usr(_, message):
         await message.reply_text("I need to be an admin to do this.")
     except UserNotParticipant:
         await message.reply_text("How can I mute a user who is not a part of this chat?")
-    except RPCError as ef:
-        await message.reply_text("sad")
     return
 
 
-@app.on_callback_query(regex("^unmute_"))
-async def unmutebutton(c: app, q: CallbackQuery):
-    splitter = (str(q.data).replace("unmute_", "")).split("=")
-    user_id = int(splitter[1])
-    user = await q.message.chat.get_member(q.from_user.id)
 
-    if not user.can_restrict_members and user.id != OWNER_ID:
-        await q.answer(
-            "You don't have enough permission to do this!",
-            show_alert=True,
-        )
-        return
-    whoo = await c.get_users(user_id)
-    try:
-        await q.message.chat.unban_member(user_id)
-    except RPCError as e:
-        await q.message.edit_text(f"Error: {e}")
-        return
-    await q.message.edit_text(f"{q.from_user.mention} unmuted {whoo.mention}!")
-    return

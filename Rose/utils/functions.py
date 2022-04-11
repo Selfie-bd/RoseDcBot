@@ -1,19 +1,11 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
-from asyncio import gather
 from datetime import datetime, timedelta
-from math import atan2, cos, radians, sin, sqrt
 from os import execvp
 from re import findall
 from re import sub as re_sub
 from sys import executable
 from pyrogram.types import Message
 from Rose import aiohttpsession as aiosession
-from Rose.utils.dbfunctions import start_restart_stage
-from Rose.utils.http import get
+from Rose.mongo.restart import *
 
 
 async def restart(m: Message):
@@ -21,30 +13,9 @@ async def restart(m: Message):
         await start_restart_stage(m.chat.id, m.message_id)
     execvp(executable, [executable, "-m", "Rose"])
 
-
-
 async def get_http_status_code(url: str) -> int:
     async with aiosession.head(url) as resp:
         return resp.status
-
-
-
-async def calc_distance_from_ip(ip1: str, ip2: str) -> float:
-    Radius_Earth = 6371.0088
-    data1, data2 = await gather(
-        get(f"http://ipinfo.io/{ip1}"),
-        get(f"http://ipinfo.io/{ip2}"),
-    )
-    lat1, lon1 = data1["loc"].split(",")
-    lat2, lon2 = data2["loc"].split(",")
-    lat1, lon1 = radians(float(lat1)), radians(float(lon1))
-    lat2, lon2 = radians(float(lat2)), radians(float(lon2))
-    dlon = lon2 - lon1
-    dlat = lat2 - lat1
-    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
-    c = 2 * atan2(sqrt(a), sqrt(1 - a))
-    distance = Radius_Earth * c
-    return distance
 
 
 def get_urls_from_text(text: str) -> bool:
@@ -74,9 +45,6 @@ async def time_converter(message: Message, time_value: str) -> int:
 
 
 async def extract_userid(message, text: str):
-    """
-    NOT TO BE USED OUTSIDE THIS FILE
-    """
 
     def is_int(text: str):
         try:
@@ -109,7 +77,6 @@ async def extract_user_and_reason(message, sender_chat=False):
     reason = None
     if message.reply_to_message:
         reply = message.reply_to_message
-        # if reply to a message and no reason is given
         if not reply.from_user:
             if (
                 reply.sender_chat
@@ -127,13 +94,9 @@ async def extract_user_and_reason(message, sender_chat=False):
         else:
             reason = text.split(None, 1)[1]
         return id_, reason
-
-    # if not reply to a message and no reason is given
     if len(args) == 2:
         user = text.split(None, 1)[1]
         return await extract_userid(message, user), None
-
-    # if reason is given
     if len(args) > 2:
         user, reason = text.split(None, 2)[1:]
         return await extract_userid(message, user), reason

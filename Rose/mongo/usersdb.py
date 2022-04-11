@@ -1,19 +1,12 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
 from threading import RLock
 from time import time
-
 from Rose.mongo import MongoDB
 
 INSERTION_LOCK = RLock()
 
+from Rose.mongo import usersdb
 
 class Users(MongoDB):
-    """Class to manage users for bot."""
-
     db_name = "users"
 
     def __init__(self, user_id: int) -> None:
@@ -56,7 +49,6 @@ class Users(MongoDB):
             if isinstance(user_id, int):
                 curr = collection.find_one({"_id": user_id})
             elif isinstance(user_id, str):
-                # user_id[1:] because we don't want the '@' in the username search!
                 curr = collection.find_one({"username": user_id[1:]})
             else:
                 curr = None
@@ -65,3 +57,26 @@ class Users(MongoDB):
                 return curr
 
             return {}
+
+#users
+async def is_served_user(user_id: int) -> bool:
+    user = await usersdb.find_one({"bot_users": user_id})
+    if not user:
+        return False
+    return True
+
+async def get_served_users() -> list:
+    users = usersdb.find({"bot_users": {"$gt": 0}})
+    if not users:
+        return []
+    users_list = []
+    for user in await users.to_list(length=1000000000):
+        users_list.append(user)
+    return users_list
+
+
+async def add_served_user(user_id: int):
+    is_served = await is_served_user(user_id)
+    if is_served:
+        return
+    return await usersdb.insert_one({"bot_users": user_id})

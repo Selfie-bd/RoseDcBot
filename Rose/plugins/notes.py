@@ -1,17 +1,9 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
 from secrets import choice
-from traceback import format_exc
 from pyrogram import filters
 from pyrogram.errors import RPCError
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, Message
 from Rose import app
 from Rose.mongo.notesdb import Notes, NotesSettings
-
-
 from Rose.utils.cmd_senders import send_cmd
 from Rose.utils.custom_filters import admin_filter, command, owner_filter
 from Rose.utils.kbhelpers import rkb as ikb
@@ -21,20 +13,61 @@ from Rose.utils.string import (
     escape_mentions_using_curly_brackets,
     parse_button,
 )
+from Rose.mongo.connectiondb import active_connection
+from lang import get_command
 
-
-# Initialise
+SAVE = get_command("SAVE")
+GET = get_command("GET")
+PNOTES = get_command("PNOTES")
+NOTES = get_command("NOTES")
+CLEAR = get_command("CLEAR")
+CLEARALL = get_command("CLEARALL")
 db = Notes()
 db_settings = NotesSettings()
 
 
-@app.on_message(command("save") & admin_filter & ~filters.bot)
+@app.on_message(command(SAVE) & admin_filter & ~filters.bot)
 async def save_note(_, m: Message):
-    existing_notes = {i[0] for i in db.get_all_notes(m.chat.id)}
-    name, text, data_type, content = await get_note_type(m)
-    total_notes = db.get_all_notes(m.chat.id)
+    chat_type = m.chat.type
+    userid = m.from_user.id if m.from_user else None
+    if not userid:
+        return await m.reply(f"""
+You are anonymous admin. Use `/connect {m.chat.id}` in PM
+""")
+    if chat_type == "private":
+        userid = m.from_user.id
+        grpid = await active_connection(str(userid))
+        if grpid is not None:
+            grp_id = grpid
+            try:
+                chat = await app.get_chat(grpid)
+                title = chat.title
+            except:
+                await m.reply_text("Make sure I'm present in your group!!", quote=True)
+                return
+        else:
+            await m.reply_text("I'm not connected to any groups!", quote=True)
+            return
 
-    if len(total_notes) >= 1000:
+    elif chat_type in ["group", "supergroup"]:
+        grp_id = m.chat.id
+        title = m.chat.title
+
+    else:
+        return
+
+    st = await app.get_chat_member(grp_id, userid)
+    if (
+        st.status != "administrator"
+        and st.status != "creator"
+    ):
+        return
+
+    existing_notes = {i[0] for i in db.get_all_notes(grp_id)}
+    name, text, data_type, content = await get_note_type(m)
+    total_notes = db.get_all_notes(grp_id)
+
+    if len(total_notes) >= 100:
         await m.reply_text(
             "Only 1000 Notes are allowed per chat!\nTo add more Notes, remove the existing ones.",
         )
@@ -60,7 +93,7 @@ async def save_note(_, m: Message):
         )
         return
 
-    db.save_note(m.chat.id, note_name, text, data_type, content)
+    db.save_note(grp_id, note_name, text, data_type, content)
     await m.reply_text(
         f"Saved note <code>{note_name}</code>!\nGet it with <code>/get {note_name}</code> or <code>#{note_name}</code>",
     )
@@ -260,7 +293,7 @@ async def hash_get(c: app, m: Message):
     return
 
 
-@app.on_message(command("get") & filters.group & ~filters.bot)
+@app.on_message(command(GET) & filters.group & ~filters.bot)
 async def get_note(c: app, m: Message):
 
     if len(m.text.split()) == 2:
@@ -283,43 +316,53 @@ async def get_note(c: app, m: Message):
     return
 
 
-@app.on_message(command(["privnotes", "privatenotes"]) & admin_filter & ~filters.bot)
-async def priv_notes(_, m: Message):
-
-    chat_id = m.chat.id
-    if len(m.text.split()) == 2:
-        option = (m.text.split())[1]
-        if option in ("on", "yes"):
-            db_settings.set_privatenotes(chat_id, True)
-            msg = "Set private notes to On"
-        elif option in ("off", "no"):
-            db_settings.set_privatenotes(chat_id, False)
-
-            msg = "Set private notes to Off"
-        else:
-            msg = "Enter correct option"
-        await m.reply_text(msg)
-    elif len(m.text.split()) == 1:
-        curr_pref = db_settings.get_privatenotes(m.chat.id)
-        msg = msg = f"Private Notes: {curr_pref}"
-        await m.reply_text(msg)
-    else:
-        await m.replt_text("Check help on how to use this command!")
-
-    return
-
-
-@app.on_message(command("notes") & filters.group & ~filters.bot)
+@app.on_message(command(NOTES) & filters.group & ~filters.bot)
 async def local_notes(_, m: Message):
-    getnotes = db.get_all_notes(m.chat.id)
+    chat_type = m.chat.type
+    userid = m.from_user.id if m.from_user else None
+    if not userid:
+        return await m.reply(f"""
+You are anonymous admin. Use `/connect {m.chat.id}` in PM
+""")
+    if chat_type == "private":
+        userid = m.from_user.id
+        grpid = await active_connection(str(userid))
+        if grpid is not None:
+            grp_id = grpid
+            try:
+                chat = await app.get_chat(grpid)
+                title = chat.title
+            except:
+                await m.reply_text("Make sure I'm present in your group!!", quote=True)
+                return
+        else:
+            await m.reply_text("I'm not connected to any groups!", quote=True)
+            return
+
+    elif chat_type in ["group", "supergroup"]:
+        grp_id = m.chat.id
+        title = m.chat.title
+
+    else:
+        return
+
+    st = await app.get_chat_member(grp_id, userid)
+    if (
+        st.status != "administrator"
+        and st.status != "creator"
+    ):
+        return
+
+
+    getnotes = db.get_all_notes(grp_id)
 
     if not getnotes:
-        await m.reply_text(f"There are no notes in <b>{m.chat.title}</b>.")
+        await m.reply_text(f"There are no notes in <b>{title}</b>.")
         return
 
     msg_id = m.reply_to_message.message_id if m.reply_to_message else m.message_id
 
-    curr_pref = db_settings.get_privatenotes(m.chat.id)
+    curr_pref = db_settings.get_privatenotes(grp_id)
     if curr_pref:
 
         pm_kb = ikb(
@@ -327,7 +370,7 @@ async def local_notes(_, m: Message):
                 [
                     (
                         "All Notes",
-                        f"https://t.me/szRosebot?start=notes_{m.chat.id}",
+                        f"https://t.me/szRosebot?start=notes_{grp_id}",
                         "url",
                     ),
                 ],
@@ -340,16 +383,16 @@ async def local_notes(_, m: Message):
         )
         return
 
-    rply = f"Notes in <b>{m.chat.title}</b>:\n"
+    rply = f"Notes in <b>{title}</b>:\n"
     for x in getnotes:
-        rply += f"× <code>#{x[0]}</code>\n"
+        rply += f"- <code>#{x[0]}</code>\n"
     rply += "\nYou can get a note by #notename or <code>/get notename</code>"
 
     await m.reply_text(rply, reply_to_message_id=msg_id)
     return
 
 
-@app.on_message(command("clear") & admin_filter & ~filters.bot)
+@app.on_message(command(CLEAR) & admin_filter & ~filters.bot)
 async def clear_note(_, m: Message):
 
     if len(m.text.split()) <= 1:
@@ -366,7 +409,7 @@ async def clear_note(_, m: Message):
     return
 
 
-@app.on_message(command("clearall") & owner_filter & ~filters.bot)
+@app.on_message(command(CLEARALL) & owner_filter & ~filters.bot)
 async def clear_allnote(_, m: Message):
 
     all_notes = {i[0] for i in db.get_all_notes(m.chat.id)}
@@ -383,25 +426,6 @@ async def clear_allnote(_, m: Message):
     return
 
 
-@app.on_callback_query(filters.regex("^clear_notes$"))
-async def clearallnotes_callback(_, q: CallbackQuery):
-    user_id = q.from_user.id
-    user_status = (await q.message.chat.get_member(user_id)).status
-    if user_status not in {"creator", "administrator"}:
-        await q.answer(
-            "You're not even an admin, don't try this explosive shit!",
-            show_alert=True,
-        )
-        return
-    if user_status != "creator":
-        await q.answer(
-            "You're just an admin, not owner\nStay in your limits!",
-            show_alert=True,
-        )
-        return
-    db.rm_all_notes(q.message.chat.id)
-    await q.message.edit_text("Cleared all notes!")
-    return
 
 __MODULE__ = "Notes"
 __HELP__ = """
@@ -418,5 +442,4 @@ Notes are great to save random tidbits of information; a phone number, a nice gi
 - /notes: List all notes in the current chat.
 - /saved: Same as /notes.
 - /clearall: Delete ALL notes in a chat. This cannot be undone.
-- /privatenotes: Whether or not to send notes in PM. Will send a message with a button which users can click to get the note in PM.
 """

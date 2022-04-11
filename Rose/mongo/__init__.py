@@ -1,25 +1,34 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
-
 from sys import exit as exiter
 from pymongo import MongoClient
 from pymongo.errors import PyMongoError
-from motor.motor_asyncio import AsyncIOMotorClient as RoseMongoClient
 from Rose import DB_URI
+from Rose import *
+import pymongo
 
-MONGO_PORT = "27017"
-Rosemongo = RoseMongoClient(DB_URI)
-rdb = Rosemongo.szRose
-#filters
-filtersdb = rdb.filters
-#notes
-notesdb = rdb.notes
-chatbotdb = rdb.chatbot
+langdb = db.language
+chatsdb = db.chats
+nexaub_antif = db.nexa_mongodb
+antiservicedb = db.antiservice
+flooddb = db.flood_toggle
+usersdb = db.users
+restartdb = db.restart_stage
+chatb = db.chatbot
+kukib = db.kuki
+lunab = db.luna
+nm = db.nightmode
+nightmod =db.nightmode2
+taggeddb = db.tagallert
+lockdb = db.lockdb1
+botlock =db.botlock
 
-from Rose import  DB_URI
+
+#my method
+myapp = pymongo.MongoClient(MONGO_URL)
+dbx = myapp["AsyncIOMotorCursor"]
+
+federation = dbx['federation']
+nm = dbx['Nightmode']
+#end
 
 try:
     client = MongoClient(DB_URI)
@@ -29,41 +38,34 @@ main_db = client["maindb"]
 
 
 class MongoDB:
-    """Class for interacting with Bot database."""
 
     def __init__(self, collection) -> None:
         self.collection = main_db[collection]
 
-    # Insert one entry into collection
     def insert_one(self, document):
         result = self.collection.insert_one(document)
         return repr(result.inserted_id)
 
-    # Find one entry from collection
     def find_one(self, query):
         result = self.collection.find_one(query)
         if result:
             return result
         return False
 
-    # Find entries from collection
     def find_all(self, query=None):
         if query is None:
             query = {}
         return list(self.collection.find(query))
 
-    # Count entries from collection
     def count(self, query=None):
         if query is None:
             query = {}
         return self.collection.count_documents(query)
 
-    # Delete entry/entries from collection
     def delete_one(self, query):
         self.collection.delete_many(query)
         return self.collection.count_documents({})
 
-    # Replace one entry in collection
     def replace(self, query, new_data):
         old = self.collection.find_one(query)
         _id = old["_id"]
@@ -71,7 +73,6 @@ class MongoDB:
         new = self.collection.find_one({"_id": _id})
         return old, new
 
-    # Update one entry from collection
     def update(self, query, update):
         result = self.collection.update_one(query, {"$set": update})
         new_document = self.collection.find_one(query)

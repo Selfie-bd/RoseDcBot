@@ -1,40 +1,7 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
-
 from Rose import bot as app
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton,InlineKeyboardMarkup
 
-
-supun = """
-your groups to stop anonymous channels sending messages into your chats.
-**Type of messages**
-        - document
-        - photo
-        - sticker
-        - animation
-        - video
-        - text
-        
-**Admin Commands:**
-
- - /antichannel [on / off] - Anti- channel  function 
-
-**Note** : If linked_channel  send any containing characters in this type when on  function no del    
-"""
-
-@app.on_callback_query(filters.regex("_anc"))
-async def commands_callbacc(_, CallbackQuery):
-    await app.send_message(
-        CallbackQuery.message.chat.id,
-        text=supun,
-        reply_markup=close,
-        disable_web_page_preview=True,
-    )
-    await CallbackQuery.message.delete()
 
 supunm = """
 Delete messages containing characters from one of the following automatically
@@ -69,58 +36,6 @@ async def commands_callbacc(_, CallbackQuery):
     )
     await CallbackQuery.message.delete()
 
-
-supunma = """
-Is users send porn on your group. Don't worry Rose can delete it all
-When enabled Rose will delete photos, stickers, gifs, videos contain porn
-
-**Commmands**
-- /antinsfw [on/off]: Enable/disable porn cleaning
-- /nsfwscan : Reply to an image/document/sticker/animation to scan it
-"""
-@app.on_callback_query(filters.regex("_anp"))
-async def commands_callbacc(_, CallbackQuery):
-    await app.send_message(
-        CallbackQuery.message.chat.id,
-        text=supunma,
-        reply_markup=close,
-        disable_web_page_preview=True,
-    )
-    await CallbackQuery.message.delete()
-
-
-supunmas = """
-I can remove spam , restrict permissions for spammers 
-stop members from adding spam bots to your group.
-
-**Admin commands:**
-- /spamscan - `Get Spam predictions of replied message.`
-- /antispam on|off - on or off spam delete.
-
-Note : **Assign admin permissions (delete messages, ban users).**
-"""
-@app.on_callback_query(filters.regex("_ans"))
-async def commands_callbacc(_, CallbackQuery):
-    await app.send_message(
-        CallbackQuery.message.chat.id,
-        text=supunmas,
-        reply_markup=close,
-        disable_web_page_preview=True,
-    )
-    await CallbackQuery.message.delete()    
-
-supunmasc = """
-soon
-"""
-@app.on_callback_query(filters.regex("_anss"))
-async def commands_callbacc(_, CallbackQuery):
-    await app.send_message(
-        CallbackQuery.message.chat.id,
-        text=supunmasc,
-        reply_markup=close,
-        disable_web_page_preview=True,
-    )
-    await CallbackQuery.message.delete() 
 
 supunmascv = """
 I Can Remove Service Message In Groups 
@@ -167,32 +82,12 @@ asuttons = InlineKeyboardMarkup(
         [[
             InlineKeyboardButton
                 (
-                    "Anti-Channel", callback_data="_anc"
-                ),            
+                    "Anti-service", callback_data="_anssx"
+                ),           
             InlineKeyboardButton
                 (
                     "Anti-language", callback_data="_anl"
                 )
-        ],
-        [
-            InlineKeyboardButton
-                (
-                    "Anti-porn", callback_data="_anp"
-                ),  
-            InlineKeyboardButton
-                (
-                    "Anti-spam", callback_data="_ans"
-                )
-        ],
-        [       
-            InlineKeyboardButton           
-                (
-                    "Anti-spoiler", callback_data="_anss"
-                ),
-            InlineKeyboardButton
-                (
-                    "Anti-service", callback_data="_anssx"
-                )    
         ],
         [
             InlineKeyboardButton('Anti-Flood', callback_data='_fld')

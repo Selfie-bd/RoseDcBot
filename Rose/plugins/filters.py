@@ -1,19 +1,13 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
-
+import io
 from re import escape as re_escape
 from secrets import choice
-from traceback import format_exc
 from pyrogram import filters
 from pyrogram.errors import RPCError
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, Message, InlineKeyboardButton
 from Rose import app
 from Rose.mongo.filterdb import Filters
 from Rose.utils.cmd_senders import send_cmd
-from Rose.utils.custom_filters import admin_filter, command, owner_filter
+from Rose.utils.custom_filters import command, owner_filter
 from Rose.utils.kbhelpers import rkb as ikb
 from Rose.utils.msg_types import Types, get_filter_type
 from Rose.utils.regex_utils import regex_searcher
@@ -23,123 +17,228 @@ from Rose.utils.string import (
     parse_button,
     split_quotes,
 )
+from pyrogram import filters
+from Rose.mongo.connectiondb import active_connection
+from lang import get_command
+from Rose.utils.lang import *
+from Rose.utils.filter_groups import *
 
-
-# Initialise
 db = Filters()
+FILTERS = get_command("FILTERS")
+ADD = get_command("ADDFILTER")
+STOP = get_command("STOPFILTER")
+RMALLFILTERS = get_command("RMALLFILTERS")
 
+@app.on_message(filters.command(FILTERS) & filters.incoming)
+@language
+async def view_filters(client, message: Message, _):
+    chat_type = message.chat.type
+    userid = message.from_user.id if message.from_user else None
+    chat_id = message.chat.id
+    if not userid:
+        return await message.reply(_["connection1"].format(chat_id))
+    if chat_type == "private":
+        userid = message.from_user.id
+        grpid = await active_connection(str(userid))
+        if grpid is not None:
+            grp_id = grpid
+            try:
+                chat = await client.get_chat(grpid)
+                title = chat.title
+            except:
+                await message.reply_text(_["filter1"])
+                return
+        else:
+            await message.reply_text(_["filter2"])
+            return
 
+    elif chat_type in ["group", "supergroup"]:
+        grp_id = message.chat.id
+        title = message.chat.title
 
-@app.on_message(command("filters") )
-async def view_filters(_, m: Message):
-    filters_chat = f"Total number of filters in :"
-    all_filters = db.get_all_filters(m.chat.id)
-    actual_filters = [j for i in all_filters for j in i.split("|")]
-
-    if not actual_filters:
-        await m.reply_text(f"There are no filters")
+    else:
         return
 
-    filters_chat += "\n".join(
-        [
-            f" × {' | '.join([f'<code>{i}</code>' for i in i.split('|')])}"
-            for i in all_filters
-        ],
+    st = await client.get_chat_member(grp_id, userid)
+    if (
+        st.status != "administrator"
+        and st.status != "creator"
+    ):
+        return
+
+    texts = db.get_all_filters(grp_id)
+    if texts:
+        filterlist = f"**Total number of filters in** {title} \n\n"
+
+        for text in texts:
+            keywords = "•`{}`\n".format(text)
+
+            filterlist += keywords
+
+        if len(filterlist) > 4096:
+            with io.BytesIO(str.encode(filterlist.replace("`", ""))) as keyword_file:
+                keyword_file.name = "keywords.txt"
+                await message.reply_document(
+                    document=keyword_file,
+                    quote=True
+                )
+            return
+    else:
+        filterlist = f"There are no active filters in **{title}**"
+
+    await message.reply_text(
+        text=filterlist,
+        quote=True,
+        parse_mode="md"
     )
-    return await m.reply_text(filters_chat, disable_web_page_preview=True)
 
+@app.on_message(filters.command(ADD) & filters.incoming)
+@language
+async def addfilter(client, message: Message, _):
+    chat_type = message.chat.type
+    userid = message.from_user.id if message.from_user else None
+    chat_id = message.chat.id
+    if not userid:
+        return await message.reply(_["connection1"].format(chat_id))
+    if chat_type == "private":
+        userid = message.from_user.id
+        grpid = await active_connection(str(userid))
+        if grpid is not None:
+            grp_id = grpid
+            try:
+                chat = await client.get_chat(grpid)
+                title = chat.title
+            except:
+                await message.reply_text(_["filter1"])
+                return
+        else:
+            await message.reply_text(_["filter2"])
+            return
 
-@app.on_message(command(["filter", "addfilter"]) & admin_filter )
-async def add_filter(_, m: Message):
-    args = m.text.split(" ", 1)
-    all_filters = db.get_all_filters(m.chat.id)
-    actual_filters = {j for i in all_filters for j in i.split("|")}
-    if (len(all_filters) >= 200) and (len(actual_filters) >= 150):
-        await m.reply_text(
-            "Only 200 filters and 150 aliases are allowed per chat!\nTo add more filters, remove the existing ones.",
-        )
+    elif chat_type in ["group", "supergroup"]:
+        grp_id = message.chat.id
+        title = message.chat.title
+
+    else:
         return
 
-    if not m.reply_to_message and len(m.text.split()) < 3:
-        return await m.reply_text("Please read help section for how to save a filter!")
+    st = await client.get_chat_member(grp_id, userid)
+    if (
+        st.status != "administrator"
+        and st.status != "creator"
+    ):
+        return
+    args = message.command
 
-    if m.reply_to_message and len(args) < 2:
-        return await m.reply_text("Please read help section for how to save a filter!")
+    if len(args) < 2:
+        await message.reply_text(_["filter3"])
+        return
 
+    all_filters = db.get_all_filters(grp_id)
+    actual_filters = {j for i in all_filters for j in i.split("|")}
+    if (len(all_filters) >= 100) and (len(actual_filters) >= 50):
+        await message.reply_text(_["filter4"])
+        return
+    if not message.reply_to_message and len(message.text.split()) < 3:
+        return await message.reply_text(_["filter5"])
+    if message.reply_to_message and len(args) < 2:
+        return await message.reply_text(_["filter5"])
     extracted = await split_quotes(args[1])
     keyword = extracted[0].lower()
 
     for k in keyword.split("|"):
         if k in actual_filters:
-            return await m.reply_text(f"Filter <code>{k}</code> already exists!")
+            return await message.reply_text(_["filter6"].format(k))
 
     if not keyword:
-        return await m.reply_text(
-            f"<code>{m.text}</code>\n\nError: You must give a name for this Filter!",
+        return await message.reply_text(
+            f"<code>{message.text}</code>\n\nError: You must give a name for this Filter!",
         )
 
     if keyword.startswith("<") or keyword.startswith(">"):
-        return await m.reply_text("Cannot save a filter which starts with '<' or '>'")
+        return await message.reply_text(_["filter7"])
 
-    eee, msgtype, file_id = await get_filter_type(m)
-    lol = eee if m.reply_to_message else extracted[1]
+    eee, msgtype, file_id = await get_filter_type(message)
+    lol = eee if message.reply_to_message else extracted[1]
     teks = lol if msgtype == Types.TEXT else eee
 
-    if not m.reply_to_message and msgtype == Types.TEXT and len(m.text.split()) < 3:
-        return await m.reply_text(
-            f"<code>{m.text}</code>\n\nError: There is no text in here!",
-        )
+    if not message.reply_to_message and msgtype == Types.TEXT and len(message.text.split()) < 3:
+        return await message.reply_text(_["filter8"])
 
     if not teks and not msgtype:
-        return await m.reply_text(
-            'Please provide keyword for this filter reply with!\nEnclose filter in <code>"double quotes"</code>',
-        )
+        return await message.reply_text(_["filter9"])
 
     if not msgtype:
-        return await m.reply_text(
-            "Please provide data for this filter reply with!",
-        )
+        return await message.reply_text(_["filter10"])
 
-    add = db.save_filter(m.chat.id, keyword, teks, msgtype, file_id)
+    add = db.save_filter(grp_id, keyword, teks, msgtype, file_id)
     if add:
-        await m.reply_text(
-            f"Saved filter for '<code>{', '.join(keyword.split('|'))}</code>' in <b>{m.chat.title}</b>!",
+        await message.reply_text(
+            f"Saved filter for '<code>{', '.join(keyword.split('|'))}</code>' in <b>{title}</b>!",
         )
-    await m.stop_propagation()
+    await message.stop_propagation()
 
 
+@app.on_message(filters.command(STOP) & filters.incoming)
+@language
+async def stop_filter(client, message: Message, _):
+    chat_type = message.chat.type
+    userid = message.from_user.id if message.from_user else None
+    chat_id = message.chat.id
+    if not userid:
+        return await message.reply(_["connection1"].format(chat_id))
+    if chat_type == "private":
+        userid = message.from_user.id
+        grpid = await active_connection(str(userid))
+        if grpid is not None:
+            grp_id = grpid
+            try:
+                chat = await client.get_chat(grpid)
+                title = chat.title
+            except:
+                await message.reply_text(_["filter1"])
+                return
+        else:
+            await message.reply_text(_["filter2"])
+            return
 
-@app.on_message(command(["stop", "unfilter"]) & admin_filter )
-async def stop_filter(_, m: Message):
-    args = m.command
+    elif chat_type in ["group", "supergroup"]:
+        grp_id = message.chat.id
+        title = message.chat.title
+
+    else:
+        return
+
+    st = await client.get_chat_member(grp_id, userid)
+    if (
+        st.status != "administrator"
+        and st.status != "creator"
+    ):
+        return
+
+    args = message.command
 
     if len(args) < 1:
-        return await m.reply_text("What should I stop replying to?")
+        return await message.reply_text(_["filter11"])
 
-    chat_filters = db.get_all_filters(m.chat.id)
+    chat_filters = db.get_all_filters(grp_id)
     act_filters = {j for i in chat_filters for j in i.split("|")}
 
     if not chat_filters:
-        return await m.reply_text("No filters active here!")
+        return await message.reply_text(_["filter12"])
 
     for keyword in act_filters:
-        if keyword == m.text.split(None, 1)[1].lower():
-            db.rm_filter(m.chat.id, m.text.split(None, 1)[1].lower())
-            await m.reply_text(
-                f"Okay, I'll stop replying to that filter",
-            )
-            await m.stop_propagation()
+        if keyword == message.text.split(None, 1)[1].lower():
+            db.rm_filter(grp_id, message.text.split(None, 1)[1].lower())
+            await message.reply_text(_["filter13"])
+            await message.stop_propagation()
 
-    await m.reply_text(
-        "That's not a filter - Click: /filters to get currently active filters.",
-    )
-    await m.stop_propagation()
+    await message.reply_text(_["filter14"])
+    await message.stop_propagation()
 
 
 @app.on_message(
-    command(
-        ["rmallfilters", "removeallfilters", "stopall", "stopallfilters"],
-    )
+    command(RMALLFILTERS)
     & owner_filter ,
 )
 async def rm_allfilters(_, m: Message):
@@ -173,28 +272,25 @@ async def rm_allfilters_callback(_, q: CallbackQuery):
         return
     db.rm_all_filters(q.message.chat.id)
     await q.message.edit_text(f"Cleared all filters for {q.message.chat.title}")
-    await q.answer("Cleared all Filters!", show_alert=True)
+    await q.answer("Cleared all Filters!")
     return
 
 
 async def send_filter_reply(c: app, m: Message, trigger: str):
-    """Reply with assigned filter for the trigger"""
     getfilter = db.get_filter(m.chat.id, trigger)
     if m and not m.from_user:
         return
 
     if not getfilter:
-        return await m.reply_text(
-            "<b>Error:</b> Cannot find a type for this filter!!",
+        return await m.reply_text("Cannot find a type for this filter!!",
             quote=True,
         )
 
     msgtype = getfilter["msgtype"]
     if not msgtype:
-        return await m.reply_text("<b>Error:</b> Cannot find a type for this filter!!")
+        return await m.reply_text("Cannot find a type for this filter!!")
 
     try:
-        # support for random filter texts
         splitter = "%%%"
         filter_reply = getfilter["filter_reply"].split(splitter)
         filter_reply = choice(filter_reply)
@@ -221,7 +317,6 @@ async def send_filter_reply(c: app, m: Message, trigger: str):
                 try:
                     await m.reply_text(
                         textt,
-                        # parse_mode="markdown",
                         reply_markup=button,
                         disable_web_page_preview=True,
                         quote=True,
@@ -259,18 +354,18 @@ async def send_filter_reply(c: app, m: Message, trigger: str):
                 m.chat.id,
                 getfilter["fileid"],
                 caption=textt,
-                #   parse_mode="markdown",
+                # parse_mode="markdown",
                 reply_markup=button,
                 reply_to_message_id=m.message_id,
             )
     except Exception as ef:
-        await m.reply_text(f"Error in filters: {ef}")
+        await app.send_message(LOG_GROUP_ID,text= f"{ef}")
         return msgtype
 
     return msgtype
 
 
-@app.on_message(filters.text & filters.group & ~filters.bot, group=69)
+@app.on_message(filters.text & filters.group & ~filters.bot, group=chat_filters_group)
 async def filters_watcher(c: app, m: Message):
 
     chat_filters = db.get_all_filters(m.chat.id)
@@ -281,12 +376,15 @@ async def filters_watcher(c: app, m: Message):
         match = await regex_searcher(pattern, m.text.lower())
         if match:
             try:
-                msgtype = await send_filter_reply(c, m, trigger)
+                await send_filter_reply(c, m, trigger)
             except Exception as ef:
-                await m.reply_text(f"Error: {ef}")
+                await app.send_message(LOG_GROUP_ID,text= f"{ef}")
             break
         continue
     return
+
+
+
 
 __MODULE__ = "Filters"
 __HELP__ = """
@@ -299,20 +397,10 @@ Filters are case insensitive; every time someone says your trigger words, Rose w
 - /stop <trigger>: Stop the bot from replying to "trigger".
 - /stopall: Stop ALL filters in the current chat. This cannot be undone.
 
-**Examples:**
-- Set a filter:
-× ` /filter hello Hello there! How are you?`
-- Set a multiword filter:
-× ` /filter "hello friend" Hello back! Long time no see!`
-- Set a filter that can only be used by admins:
-×  `/filter "example" This filter wont happen if a normal user says it {admin}`
-- To save a "protected" filter, which cant be forwarded:
-× ` /filter "example" This filter cant be forwarded {protect}`
-- To save a file, image, gif, or any other attachment, simply reply to file with:
-×  `/filter trigger`
-- To get the unformatted version of a filter, to copy and edit it, simply say the trigger followed by the keyword "noformat":
-×  `trigger noformat`
+**Example:**
 
+- Set a filter:
+> ` /filter hello ` reply some message like : Hello there! How are you?
 """
 __helpbtns__ = (
         [[
@@ -320,6 +408,6 @@ __helpbtns__ = (
         InlineKeyboardButton('Fillings', callback_data='_fillings')
         ],
         [
-        InlineKeyboardButton('Random Content', callback_data="_random")
+        InlineKeyboardButton('Random Filters', callback_data="_random")
         ]]
 )

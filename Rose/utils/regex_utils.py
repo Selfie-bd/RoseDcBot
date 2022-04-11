@@ -1,15 +1,6 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
-from traceback import format_exc
 from regex import search
 
-
-
 async def regex_searcher(regex_string: str, string: str) -> str:
-    """Search for Regex in string."""
     try:
         re_search = search(regex_string, string, timeout=6)
     except TimeoutError:
@@ -21,7 +12,6 @@ async def regex_searcher(regex_string: str, string: str) -> str:
 
 
 async def infinite_loop_check(regex_string: str) -> bool:
-    """Clear Regex in string."""
     loop_matches = (
         r"\((.{1,}[\+\*]){1,}\)[\+\*]."
         r"[\(\[].{1,}\{\d(,)?\}[\)\]]\{\d(,)?\}"

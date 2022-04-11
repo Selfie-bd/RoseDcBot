@@ -1,4 +1,3 @@
-
 from Rose import bot as app
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton,InlineKeyboardMarkup
@@ -34,6 +33,10 @@ email
 url
 bots
 all
+spoiler
+spam
+porn
+anonchannel
 
 Rose will delete user's message if locked content is sent
 """
@@ -105,8 +108,6 @@ supunmas = """
 - You can lock/unlock multiple items by chaining them:
 > /lock sticker photo gif video
 
-Block links sent by users in your group 
-- /urllock `on/off`: Enable/Disable URL Lock
 """
 
 @app.on_callback_query(filters.regex("_lcd"))

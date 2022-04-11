@@ -1,12 +1,7 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
 from html import escape
 from re import compile as compilere
 from re import sub
-from pyrogram.types import InlineKeyboardButton, Message
+from pyrogram.types import InlineKeyboardButton
 
 async def cleanhtml(raw_html: str) -> str:
     """Clean html data."""

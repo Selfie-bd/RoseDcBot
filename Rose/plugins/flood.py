@@ -1,30 +1,23 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
 from asyncio import get_running_loop, sleep
 from time import time
 from pyrogram import filters
-from pyrogram.types import (CallbackQuery, ChatPermissions,
-                            InlineKeyboardButton, InlineKeyboardMarkup,
-                            Message)
-from Rose import SUDOERS, app
+from pyrogram.types import ChatPermissions,Message
+from Rose import app
 from Rose.core.decorators.errors import capture_err
 from Rose.core.decorators.permissions import adminsOnly
-from Rose.plugins.admin import list_admins, member_permissions
-from Rose.utils.dbfunctions import flood_off, flood_on, is_flood_on
 from Rose.utils.filter_groups import flood_group
+from lang import get_command
+from Rose.utils.lang import *
+from Rose.mongo.flooddb import *
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
-
-DB = {}  # TODO Use mongodb instead of a fucking dict.
-
+FLOOD = get_command("FLOOD")
+DB = {}  
 
 def reset_flood(chat_id, user_id=0):
     for user in DB[chat_id].keys():
         if user != user_id:
             DB[chat_id][user] = 0
-
 
 @app.on_message(
     ~filters.service
@@ -36,13 +29,12 @@ def reset_flood(chat_id, user_id=0):
     group=flood_group,
 )
 @capture_err
-async def flood_control_func(_, message: Message):
+async def flood_control(_, message: Message):
     if not message.chat:
         return
     chat_id = message.chat.id
     if not (await is_flood_on(chat_id)):
         return
-    # Initialize db if not already.
     if chat_id not in DB:
         DB[chat_id] = {}
 
@@ -56,37 +48,25 @@ async def flood_control_func(_, message: Message):
     if user_id not in DB[chat_id]:
         DB[chat_id][user_id] = 0
 
-    # Reset floodb of current chat if some other user sends a message
     reset_flood(chat_id, user_id)
 
-    # Mute if user sends more than 10 messages in a row
     if DB[chat_id][user_id] >= 10:
         DB[chat_id][user_id] = 0
         try:
             await message.chat.restrict_member(
                 user_id,
                 permissions=ChatPermissions(),
-                until_date=int(time() + 3600),
+                until_date=int(time() + 300),
             )
         except Exception:
             return
-        keyboard = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        text="❗️ Unmute",
-                        callback_data=f"unmute_{user_id}",
-                    )
-                ]
-            ]
-        )
+
         m = await message.reply_text(
-            f"Imagine flooding the chat in front of me, Muted {mention} for an hour!",
-            reply_markup=keyboard,
+            f" Muted {mention} for 5 min",
         )
 
         async def delete():
-            await sleep(3600)
+            await sleep(300)
             try:
                 await m.delete()
             except Exception:
@@ -97,39 +77,47 @@ async def flood_control_func(_, message: Message):
     DB[chat_id][user_id] += 1
 
 
-@app.on_callback_query(filters.regex("unmute_"))
-async def flood_callback_func(_, cq: CallbackQuery):
-    from_user = cq.from_user
-    permissions = await member_permissions(cq.message.chat.id, from_user.id)
-    permission = "can_restrict_members"
-    if permission not in permissions:
-        return await cq.answer(
-            "You don't have enough permissions to perform this action.\n"
-            + f"Permission needed: {permission}",
-            show_alert=True,
-        )
-    user_id = cq.data.split("_")[1]
-    await cq.message.chat.unban_member(user_id)
-    text = cq.message.text.markdown
-    text = f"~~{text}~~\n\n"
-    text += f"__User unmuted by {from_user.mention}__"
-    await cq.message.edit(text)
-
-
-@app.on_message(filters.command("flood") )
+@app.on_message(filters.command(FLOOD))
 @adminsOnly("can_change_info")
-async def flood_toggle(_, message: Message):  
+@language
+async def flood_c(client, message: Message, _):  
     if len(message.command) != 2:
-        return await message.reply_text("Usage: /flood [ENABLE|DISABLE]")
+        return await message.reply_text(_["flood1"])
     status = message.text.split(None, 1)[1].strip()
     status = status.lower()
     chat_id = message.chat.id
     if status == "enable":
         await flood_on(chat_id)
-        await message.reply_text("Enabled Flood Checker.")
+        await message.reply_text(_["flood2"])
     elif status == "disable":
         await flood_off(chat_id)
-        await message.reply_text("Disabled Flood Checker.")
+        await message.reply_text(_["flood3"])
     else:
-        await message.reply_text("Unknown Suffix, Use /flood [ENABLE|DISABLE]")
+        await message.reply_text(_["flood4"])
 
+__MODULE__ = "Protection"
+__HELP__ = """
+Here is the help for Anti-Function :
+
+**Anti-Function**:
+
+- /nsfwscan : Reply to an image/document/sticker/animation to scan it
+- /spamscan - Get Spam predictions of replied message.
+
+Group's Anti-Function is also an very essential fact to consider in group management
+Anti-Function is the inbuilt toolkit in Rose for avoid spammers, and to improve Anti-Function of your group"""
+__helpbtns__ = (
+        [[
+            InlineKeyboardButton
+                (
+                    "Anti-service", callback_data="_anssx"
+                ),           
+            InlineKeyboardButton
+                (
+                    "Anti-language", callback_data="_anl"
+                )
+        ],
+        [
+            InlineKeyboardButton('Anti-Flood', callback_data='_fld')
+        ]]
+)

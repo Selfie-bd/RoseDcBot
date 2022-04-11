@@ -1,9 +1,3 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
-
 from html import escape
 from re import compile as compile_re
 from time import time
@@ -18,7 +12,7 @@ async def extract_time(m: Message, time_val: str):
     """Extract time from message."""
     if any(time_val.endswith(unit) for unit in ("m", "h", "d")):
         unit = time_val[-1]
-        time_num = time_val[:-1]  # type: str
+        time_num = time_val[:-1]  
         if not time_num.isdigit():
             await m.reply("Unspecified amount of time.")
             return ""
@@ -30,7 +24,6 @@ async def extract_time(m: Message, time_val: str):
         elif unit == "s":
             bantime = int(time() + int(time_num) * 24 * 60 * 60)
         else:
-            # how even...?
             return ""
         return bantime
     await m.reply(
@@ -46,20 +39,15 @@ async def parse_button(text: str):
     note_data = ""
     buttons = []
     for match in BTN_URL_REGEX.finditer(markdown_note):
-        # Check if btnurl is escaped
         n_escapes = 0
         to_check = match.start(1) - 1
         while to_check > 0 and markdown_note[to_check] == "\\":
             n_escapes += 1
             to_check -= 1
-
-        # if even, not escaped -> create button
         if n_escapes % 2 == 0:
-            # create a thruple with button label, url, and newline status
             buttons.append((match.group(2), match.group(3), bool(match.group(4))))
             note_data += markdown_note[prev : match.start(1)]
             prev = match.end(1)
-        # if odd, escaped -> move along
         else:
             note_data += markdown_note[prev:to_check]
             prev = match.start(1) - 1
@@ -70,7 +58,6 @@ async def parse_button(text: str):
 
 
 async def build_keyboard(buttons):
-    """Build keyboards from provided buttons."""
     keyb = []
     for btn in buttons:
         if btn[-1] and keyb:
@@ -159,7 +146,7 @@ async def split_quotes(text: str):
     """Split quotes in text."""
     if not any(text.startswith(char) for char in START_CHAR):
         return text.split(None, 1)
-    counter = 1  # ignore first char -> is some kind of quote
+    counter = 1 
     while counter < len(text):
         if text[counter] == "\\":
             counter += 1
@@ -171,9 +158,7 @@ async def split_quotes(text: str):
     else:
         return text.split(None, 1)
 
-    # 1 to avoid starting quote, and counter is exclusive so avoids ending
     key = await remove_escapes(text[1:counter].strip())
-    # index will be in range, or `else` would have been executed and returned
     rest = text[counter + 1 :].strip()
     if not key:
         key = text[0] + text[0]

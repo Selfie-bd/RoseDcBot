@@ -1,7 +1,4 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
 
-# This file is part of @szrosebot (Telegram Bot)
 
 import codecs
 import pickle
@@ -132,25 +129,7 @@ def get_session(chat_id):
         return stark
 
 
-async def is_nightmode_indb(chat_id: int) -> bool:
-    chat = await nightdb.find_one({"chat_id": chat_id})
-    if not chat:
-        return True
-    return False
 
-
-async def add_nightmode(chat_id: int):
-    is_antiservice = await is_nightmode_indb(chat_id)
-    if is_antiservice:
-        return
-    return await nightdb.delete_one({"chat_id": chat_id})
-
-
-async def rmnightmode(chat_id: int):
-    is_antiservice = await is_nightmode_indb(chat_id)
-    if not is_antiservice:
-        return
-    return await nightdb.insert_one({"chat_id": chat_id})
 
 def get_all_chat_id():
     r = list(nightdb.find())

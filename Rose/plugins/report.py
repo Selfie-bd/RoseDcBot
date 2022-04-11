@@ -1,23 +1,15 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
-from traceback import format_exc
 from pyrogram import filters
 from pyrogram.errors import RPCError
 from pyrogram.types import CallbackQuery, Message
-
-#from repo
 from Rose import app
 from Rose.mongo.reportdb import Reporting
 from Rose.core.decorators.permissions import adminsOnly
 from Rose.utils.kbhelpers import rkb as ikb
 from Rose.utils.parser import mention_html
+from Rose.utils.commands import *
 
 
-
-@app.on_message(filters.command("reports") & ~filters.edited )
+@app.on_message(command("reports") & ~filters.edited )
 @adminsOnly("can_delete_messages")
 async def report_setting(_, m: Message):
     args = m.text.split()
@@ -60,7 +52,7 @@ async def report_setting(_, m: Message):
             f"""
 Reports are currently `{(db.get_settings())}` in this chat.
 
-Tochange this setting, try this command again, with one of the following args: yes/no/on/off"""
+Tochange this setting, try this command again, with one of the following args: `yes/no/on/off`"""
         )
 
 @app.on_message(
@@ -103,31 +95,26 @@ async def report_watcher(c: app, m: Message):
 
         reply_markup = ikb(
             [
-                [("💬 Message", link, "url")],
+                [("📨 Message", link, "url")],
                 [
                     (
                         "⚠ Kick",
                         f"report_{m.chat.id}=kick={reported_user.id}={reported_msg_id}",
                     ),
                     (
-                        "⛔️ Ban",
+                        "❗️ Ban",
                         f"report_{m.chat.id}=ban={reported_user.id}={reported_msg_id}",
                     ),
                 ],
                 [
                     (
-                        "❎ Delete Message",
+                        "🗑 Delete Message",
                         f"report_{m.chat.id}=del={reported_user.id}={reported_msg_id}",
                     ),
                 ],
             ],
         )
-        await c.send_message(
-                        m.chat.id,
-                        msg,
-                        reply_markup=reply_markup,
-                        disable_web_page_preview=True,)
-                    
+ 
         await m.reply_text(
             (
                 f"{(await mention_html(m.from_user.first_name, m.from_user.id))} "
@@ -157,46 +144,10 @@ async def report_watcher(c: app, m: Message):
                         pass
                 except Exception:
                     pass
-                except RPCError as ef:
-                  return ""
+                except RPCError:
+                  return
 
 
-@app.on_callback_query(filters.regex("^report_"))
-async def report_buttons(c: app, q: CallbackQuery):
-    splitter = (str(q.data).replace("report_", "")).split("=")
-    chat_id = int(splitter[0])
-    action = str(splitter[1])
-    user_id = int(splitter[2])
-    message_id = int(splitter[3])
-    if action == "kick":
-        try:
-            await c.ban_chat_member(chat_id, user_id)
-            await q.answer("✅ Succesfully kicked")
-            await c.unban_chat_member(chat_id, user_id)
-            return
-        except RPCError as err:
-            await q.answer(
-                f"🛑 Failed to Kick\n<b>Error:</b>\n</code>{err}</code>",
-                show_alert=True,
-            )
-    elif action == "ban":
-        try:
-            await c.ban_chat_member(chat_id, user_id)
-            await q.answer("✅ Succesfully Banned")
-            return
-        except RPCError as err:
-            await q.answer(f"🛑 Failed to Ban\n<b>Error:</b>\n`{err}`", show_alert=True)
-    elif action == "del":
-        try:
-            await c.delete_messages(chat_id, message_id)
-            await q.answer("✅ Message Deleted")
-            return
-        except RPCError as err:
-            await q.answer(
-                f"🛑 Failed to delete message!\n<b>Error:</b>\n`{err}`",
-                show_alert=True,
-            )
-    return
 __MODULE__ = "Reports"
 __HELP__ = """
 We're all busy people who don't have time to monitor our groups 24/7. 

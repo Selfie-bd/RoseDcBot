@@ -1,8 +1,3 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
 from threading import RLock
 from Rose.mongo import MongoDB
 from Rose.utils.msg_types import Types
@@ -25,7 +20,6 @@ class Filters(MongoDB):
         fileid="",
     ):
         with INSERTION_LOCK:
-            # Database update
             curr = self.find_one({"chat_id": st, "keyword": keyword})
             if curr:
                 return False
@@ -71,6 +65,7 @@ class Filters(MongoDB):
         with INSERTION_LOCK:
             return self.count()
 
+
     def count_filter_aliases(self):
         with INSERTION_LOCK:
             curr = self.find_all()
@@ -98,7 +93,6 @@ class Filters(MongoDB):
         with INSERTION_LOCK:
             return self.find_all()
 
-    # Migrate if chat id changes!
     def migrate_chat(self, old_chat_id: int, new_chat_id: int):
         with INSERTION_LOCK:
             old_chat_db = self.find_one({"_id": old_chat_id})

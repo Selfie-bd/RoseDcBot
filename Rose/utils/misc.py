@@ -1,8 +1,3 @@
-# Copyright (C) 2022 szsupunma
-# Copyright (C) 2021 @szrosebot
-
-# This file is part of @szrosebot (Telegram Bot)
-
 from typing import Dict, List
 from pyrogram.types import InlineKeyboardButton
 from Rose import MOD_LOAD, MOD_NOLOAD
@@ -57,8 +52,6 @@ def paginate_modules(page_n: int, module_dict: Dict, prefix, chat=None) -> List:
         pairs += [[EqInlineKeyboardButton("« Back", callback_data="startcq")]]
 
     return pairs
-
-
 
 def is_module_loaded(name):
     return (not MOD_LOAD or name in MOD_LOAD) and name not in MOD_NOLOAD
