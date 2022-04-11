@@ -1,4 +1,4 @@
-<img src="https://telegra.ph/file/c787915485e8645acfca1.jpg" align="right" width="200" height="200"/>
+<img src="https://telegra.ph/file/5468dda790c9d744880a5.jpg" align="right" width="200" height="200"/>
 
 # Rose Bot ✨ <img src="https://img.shields.io/github/v/release/szsupunma/sz-rosebot?color=black&logo=github&logoColor=black&style=social" alt="RELEASE">
 [![Stars](https://img.shields.io/github/stars/szsupunma/sz-rosebot?style=flat-square&color=Dark)](https://github.com/szsupunma/sz-rosebot/stargazers)
