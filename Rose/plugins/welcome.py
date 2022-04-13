@@ -253,11 +253,11 @@ my news channel @Theszrosebot.
         return
 
 
-@app.on_message(filters.new_chat_members, group=newwelcome)
+@app.on_message(filters.left_chat_member, group=newwelcome)
 async def member_has_left(_, message: Message):
     group_id = message.chat.id
     db = Greetings(group_id)
-    for member in message.new_chat_members:
+    for member in message.left_chat_member:
         try:
             if member.id == OWNER_ID:
                await app.send_message(
