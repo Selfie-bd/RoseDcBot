@@ -1,7 +1,6 @@
 emoji
 aiohttp
 aiofiles
-ffmpeg-python
 gTTS
 dnspython
 future
@@ -36,3 +35,4 @@ rich
 gitpython
 pytimeparse
 googletrans==3.1.0a0
+telegraph

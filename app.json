@@ -59,16 +59,8 @@
             "description": "now you can set custom command handler for rose like : / ! ,",
             "required": true
         }
-    },
-    "buildpacks": [
-        {
-            "url": "heroku/python"
-        }
-    ],
-    "formation": {
-        "worker": {
-            "quantity": 1,
-            "size": "free"
-        }
     }
 }
+
+
+

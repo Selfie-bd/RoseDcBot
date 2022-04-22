@@ -97,6 +97,7 @@ app12 : "{} is not an approved user. They are affected by normal commands."
 setting_1 : "Hello {}, I can speek many languages\n Select your language from bellow !"
 setting_2 : "[🌎](https://crwd.in/szrosebot)Language was changed Successfully \n.Changed by {}"
 
+
 #plugin - ban.py
 ban2 : "Cannot find user to kick."
 ban3 : "I can't find that user."
