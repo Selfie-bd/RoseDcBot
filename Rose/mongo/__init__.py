@@ -15,7 +15,6 @@ restartdb = db.restart_stage
 chatb = db.chatbot
 kukib = db.kuki
 lunab = db.luna
-nm = db.nightmode
 nightmod =db.nightmode2
 taggeddb = db.tagallert
 lockdb = db.lockdb1
