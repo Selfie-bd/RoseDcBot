@@ -10,7 +10,7 @@ fbuttons = InlineKeyboardMarkup(
         ]]
 )
 
-keyboard = InlineKeyboardMarkup(
+keyboard =InlineKeyboardMarkup(
     [
         [
             InlineKeyboardButton(
@@ -23,17 +23,6 @@ keyboard = InlineKeyboardMarkup(
         [
             InlineKeyboardButton(
                 text="हिन्दी🇮🇳", callback_data="languages_hi"
-            ),
-            InlineKeyboardButton(
-                text="Tamil🇮🇳", callback_data="languages_ta"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="मराठी 🇮🇳", callback_data="languages_ma"
-            ),
-            InlineKeyboardButton(
-                text="తెలుగు 🇮🇳", callback_data="languages_ta"
             )
         ],
         [

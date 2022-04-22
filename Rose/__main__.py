@@ -120,14 +120,13 @@ keyboard = InlineKeyboardMarkup(
 @app.on_message(filters.command(START_COMMAND))
 @language
 async def start(client, message: Message, _):
+    chat_id = message.chat.id
     if message.sender_chat:
         return
-    else:
-        await add_served_user(message.from_user.id)
     if message.chat.type != "private":
         await message.reply(
             _["main2"].format(BOT_NAME), reply_markup=keyboard)
-        return await add_served_chat(message.chat.id)
+        return await add_served_chat(message.chat.id) 
     if len(message.text.split()) > 1:
         name = (message.text.split(None, 1)[1]).lower()
         if name.startswith("rules"):
@@ -232,12 +231,10 @@ async def help_parser(name, keyboard=None):
     return (
 """
 **Welcome to help menu**
-
 I'm a group management bot with some useful features.
 You can choose an option below, by clicking a button.
 If you have any bugs or questions on how to use me, 
 have a look at my [Docs](https://szsupunma.gitbook.io/rose-bot/), or head to @szteambots.
-
 **All commands can be used with the following: / **""",
         keyboard,
     )
