@@ -9,7 +9,7 @@ from Rose.utils.commands import *
 from Rose.utils.lang import *
 
 
-@app.on_message(command("nsfwscan"), group=porn)
+@app.on_message(command("nsfwscan"))
 async def nsfw_scan_command(_, message: Message):
     err = "Reply to an image/document/sticker/animation to scan it."
     if not message.reply_to_message:
@@ -53,7 +53,7 @@ async def nsfw_scan_command(_, message: Message):
     )
 
 
-@app.on_message(command("spamscan"), group=antispam_group )
+@app.on_message(command("spamscan"))
 async def scanNLP(_, message: Message):
     if not message.reply_to_message:
         return await message.reply("Reply to a message to scan it.")

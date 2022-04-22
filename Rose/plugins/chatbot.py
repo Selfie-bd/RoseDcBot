@@ -1,5 +1,4 @@
 import requests
-import json
 from pyrogram import filters
 from googletrans import Translator
 from Rose import *
@@ -9,9 +8,9 @@ from lang import get_command
 from Rose.utils.lang import *
 from Rose.utils.commands import *
 from Rose import *
-from Rose.mongo import chatb,kukib,lunab
+from Rose.mongo import chatb
 from Rose.plugins.antlangs import get_arg
-from asyncio import gather, sleep
+
 
 tr = Translator()
 CBOT = get_command("CBOT")
@@ -72,8 +71,16 @@ async def szcbot(_, message: Message):
        lang = tr.translate(message.text).src
        trtoen = (message.text if lang=="en" else tr.translate(message.text, dest="en").text).replace(" ", "%20")
        text = trtoen.replace(" ", "%20") if len(message.text) < 2 else trtoen
-       affiliateplus = requests.get(f"https://api.affiliateplus.xyz/api/chatbot?message={text}&botname=Rose%20Bot&ownername=Supun%20Maduranga%20Contact%20him%20@supunma&user=1")
+       affiliateplus = requests.get(f"https://api.affiliateplus.xyz/api/chatbot?message={text}&botname=Rose&ownername=@supunma&user=1")
        textmsg = (affiliateplus.json()["message"])
+       if "Affiliate+" in textmsg:
+        textmsg = textmsg.replace("Affiliate+", "Rose bot created by @szteambots")
+       if "Lebyy_Dev" in textmsg:
+        textmsg = textmsg.replace("Lebyy_Dev", "Supun Maduranga Owner of @szteambots")
+       if "God Brando" in textmsg:
+        textmsg = textmsg.replace("God Brando", f"{message.from_user.first_name}")
+       if "seeker" in textmsg:
+        textmsg = textmsg.replace("seeker", f"wow")
        msg = tr.translate(textmsg, src='en', dest=lang)
        await message.reply_text(msg.text)
 
