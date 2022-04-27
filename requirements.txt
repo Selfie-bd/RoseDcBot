@@ -9,7 +9,7 @@ pymongo[srv]
 pillow
 psutil
 pykeyboard
-pyrogram
+pyrogram==1.4.16
 python-arq
 requests
 search_engine_parser
