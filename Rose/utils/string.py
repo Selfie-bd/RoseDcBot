@@ -9,7 +9,6 @@ BTN_URL_REGEX = compile_re(r"(\[([^\[]+?)\]\(buttonurl:(?:/{0,2})(.+?)(:same)?\)
 
 
 async def extract_time(m: Message, time_val: str):
-    """Extract time from message."""
     if any(time_val.endswith(unit) for unit in ("m", "h", "d")):
         unit = time_val[-1]
         time_num = time_val[:-1]  
@@ -33,7 +32,6 @@ async def extract_time(m: Message, time_val: str):
 
 
 async def parse_button(text: str):
-    """Parse button from text."""
     markdown_note = text
     prev = 0
     note_data = ""
@@ -143,7 +141,6 @@ async def escape_mentions_using_curly_brackets(
 
 
 async def split_quotes(text: str):
-    """Split quotes in text."""
     if not any(text.startswith(char) for char in START_CHAR):
         return text.split(None, 1)
     counter = 1 
@@ -166,7 +163,6 @@ async def split_quotes(text: str):
 
 
 async def remove_escapes(text: str) -> str:
-    """Remove the escaped from message."""
     res = ""
     is_escaped = False
     for counter in range(len(text)):

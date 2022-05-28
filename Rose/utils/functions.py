@@ -17,7 +17,6 @@ async def get_http_status_code(url: str) -> int:
     async with aiosession.head(url) as resp:
         return resp.status
 
-
 def get_urls_from_text(text: str) -> bool:
     regex = r"""(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]
                 [.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(
@@ -45,19 +44,15 @@ async def time_converter(message: Message, time_value: str) -> int:
 
 
 async def extract_userid(message, text: str):
-
     def is_int(text: str):
         try:
             int(text)
         except ValueError:
             return False
         return True
-
     text = text.strip()
-
     if is_int(text):
         return int(text)
-
     entities = message.entities
     app = message._client
     if len(entities) < 2:

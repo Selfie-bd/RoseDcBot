@@ -6,6 +6,7 @@ from Rose.utils.custom_filters import admin_filter, command
 from Rose.utils.kbhelpers import rkb as ikb
 from Rose.utils.string import build_keyboard, parse_button
 from Rose.utils.lang import *
+from button import *
 
 @app.on_message(command("pin") & admin_filter )
 @language
@@ -164,7 +165,7 @@ async def perma_pin(client, message: Message, _):
     return
 
 
-__MODULE__ = "Pin"
+__MODULE__ = f"{Pin}"
 __HELP__ = f"""
 All the pin related commands can be found here; 
 keep your chat up to date on the latest news with 

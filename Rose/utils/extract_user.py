@@ -9,12 +9,10 @@ async def extract_user(c: app, m: Message) -> Tuple[int, str, str]:
     user_id = None
     user_first_name = None
     user_name = None
-
     if m.reply_to_message and m.reply_to_message.from_user:
         user_id = m.reply_to_message.from_user.id
         user_first_name = m.reply_to_message.from_user.first_name
         user_name = m.reply_to_message.from_user.username
-
     elif len(m.text.split()) > 1:
         if len(m.entities) > 1:
             required_entity = m.entities[1]
@@ -44,7 +42,7 @@ async def extract_user(c: app, m: Message) -> Tuple[int, str, str]:
                     try:
                         user = await c.get_users(user_found)
                     except Exception as ef:
-                        return await m.reply_text(f"User not found ! Error: {ef}")
+                        return await m.reply_text(f"User not found !Error: {ef}")
                     user_id = user.id
                     user_first_name = user.first_name
                     user_name = user.username

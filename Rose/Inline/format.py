@@ -38,7 +38,6 @@ close = InlineKeyboardMarkup(
         ]], 
 )
 
-#markdown help
 tex = """
 <b>Markdown Formatting</b>
 You can format your message using bold, italics, underline,

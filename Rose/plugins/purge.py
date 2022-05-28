@@ -5,7 +5,7 @@ from Rose import app
 from Rose.utils.custom_filters import admin_filter, command
 from Rose.utils.lang import *
 from Rose.utils.commands import *
-
+from button import *
 
 @app.on_message(command("purge") & admin_filter)
 @language
@@ -37,7 +37,7 @@ async def purge(client, m: Message, _):
         await sleep(3)
         await z.delete()
         return
-    await m.reply_text(_["purge3"])
+    await m.reply_text(_["purge3"].format(count_del_msg))
     return
 
 
@@ -71,7 +71,6 @@ async def spurge(client, m: Message, _):
 
 @app.on_message(
     command("del") & admin_filter,
-    group=9,
 )
 async def del_msg(client, m: Message, _):
     if m.reply_to_message:
@@ -84,7 +83,7 @@ async def del_msg(client, m: Message, _):
         await m.reply_text(_["purge6"])
     return
 
-__MODULE__ = "Purges"
+__MODULE__ = f"{Purges}"
 __HELP__ = """
 Need to delete lots of messages? That's what purges are for!
 

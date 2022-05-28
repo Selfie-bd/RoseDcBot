@@ -1,20 +1,21 @@
 #no need Multi-lang for this plugin !!!!
-
 from pyrogram import filters
 from Rose import *
 from gpytranslate import Translator
-from pyrogram.types import InlineKeyboardButton
 from pyrogram.errors import PeerIdInvalid
 from pyrogram.types import Message, User
 from datetime import datetime
-from search_engine_parser import GoogleSearch
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from aiohttp import ClientSession
 import os
 import re
 import aiofiles
+from telegraph import upload_file
+from io import BytesIO
+from traceback import format_exc
+from Rose.utils.custom_filters import admin_filter
+from button import *
 
-# id
 @app.on_message(filters.command("id"))
 async def getid(client, message):
     chat = message.chat
@@ -24,7 +25,6 @@ async def getid(client, message):
 
     text = f"**Message ID:** `{message_id}`\n"
     text += f"**Your ID:** `{your_id}`\n"
-
     
     if not message.command:
         message.command = message.text.split()
@@ -51,7 +51,6 @@ async def getid(client, message):
         disable_web_page_preview=True,
         parse_mode="md",
     )
-
 
 @app.on_message(filters.command("tr"))
 async def tr(_, message):
@@ -83,9 +82,6 @@ async def tr(_, message):
         f"<b>Translated:</b> from {detectlang} to {target_lang} \n<code>``{tekstr.text}``</code>",
     )
 
-
-#user info added
-
 def ReplyCheck(message: Message):
     reply_id = None
 
@@ -97,7 +93,6 @@ def ReplyCheck(message: Message):
 
     return reply_id
 
-
 infotext = (
     "**[{full_name}](tg://user?id={user_id})**\n"
     " - User id : `{user_id}`\n"
@@ -107,7 +102,6 @@ infotext = (
     " - Last Online: `{last_online}`\n"
     " - Bio: {bio}"
 )
-
 
 def LastOnline(user: User):
     if user.is_bot:
@@ -127,10 +121,8 @@ def LastOnline(user: User):
             "%a, %d %b %Y, %H:%M:%S"
         )
 
-
 def FullName(user: User):
     return user.first_name + " " + user.last_name if user.last_name else user.first_name
-
 
 @app.on_message(filters.command(["info"]))
 async def whois(client, message):
@@ -166,83 +158,6 @@ async def whois(client, message):
         disable_web_page_preview=True,
     )
 
-
-#search engine
-
-# google
-@app.on_message(filters.command("google") & ~filters.edited)
-async def google(_, message):
-    try:
-        if len(message.command) < 2:
-            await message.reply_text("`/google` Needs An Argument")
-            return
-        text = message.text.split(None, 1)[1]
-        gresults = await GoogleSearch().async_search(text, 1)
-        result = ""
-        for i in range(4):
-            try:
-                title = gresults["titles"][i].replace("\n", " ")
-                source = gresults["links"][i]
-                description = gresults["descriptions"][i]
-                result += f"[{title}]({source})\n"
-                result += f"`{description}`\n\n"
-            except IndexError:
-                pass
-        await message.reply_text(result, disable_web_page_preview=True)
-    except Exception as e:
-        await message.reply_text(str(e))
-
-
-# StackOverflow 
-@app.on_message(filters.command("so") & ~filters.edited)
-async def stack(_, message):
-    try:
-        if len(message.command) < 2:
-            await message.reply_text('"/so" Needs An Argument')
-            return
-        gett = message.text.split(None, 1)[1]
-        text = gett + ' "site:stackoverflow.com"'
-        gresults = await GoogleSearch().async_search(text, 1)
-        result = ""
-        for i in range(4):
-            try:
-                title = gresults["titles"][i].replace("\n", " ")
-                source = gresults["links"][i]
-                description = gresults["descriptions"][i]
-                result += f"[{title}]({source})\n"
-                result += f"`{description}`\n\n"
-            except IndexError:
-                pass
-        await message.reply_text(result, disable_web_page_preview=True)
-    except Exception as e:
-        await message.reply_text(str(e))
-
-
-# Github 
-@app.on_message(filters.command("github") & ~filters.edited)
-async def github(_, message):
-    try:
-        if len(message.command) < 2:
-            await message.reply_text('"/github" Needs An Argument')
-            return
-        gett = message.text.split(None, 1)[1]
-        text = gett + ' "site:github.com"'
-        gresults = await GoogleSearch().async_search(text, 1)
-        result = ""
-        for i in range(4):
-            try:
-                title = gresults["titles"][i].replace("\n", " ")
-                source = gresults["links"][i]
-                description = gresults["descriptions"][i]
-                result += f"[{title}]({source})\n"
-                result += f"`{description}`\n\n"
-            except IndexError:
-                pass
-        await message.reply_text(result, disable_web_page_preview=True)
-    except Exception as e:
-        await message.reply_text(str(e))
-
-#paste here
 session = ClientSession()
 pattern = re.compile(r"^text/|json$|yaml$|xml$|toml$|x-sh$|x-shellscript$")
 BASE = "https://batbin.me/"
@@ -312,67 +227,159 @@ async def paste_func(_, message: Message):
         await m.edit("Here's your paste", reply_markup=InlineKeyboardMarkup(kb))
 
 
+@app.on_message(filters.command(["telegraph", "tm", "tgm"]))
+async def telegraph(client, message):
+    replied = message.reply_to_message
+    if not replied:
+        await message.reply("Reply to a supported media file")
+        return
+    if not (
+        (replied.photo and replied.photo.file_size <= 5242880)
+        or (replied.animation and replied.animation.file_size <= 5242880)
+        or (
+            replied.video
+            and replied.video.file_name.endswith(".mp4")
+            and replied.video.file_size <= 5242880
+        )
+        or (
+            replied.document
+            and replied.document.file_name.endswith(
+                (".jpg", ".jpeg", ".png", ".gif", ".mp4"),
+            )
+            and replied.document.file_size <= 5242880
+        )
+    ):
+        await message.reply("Not supported!")
+        return
+    download_location = await client.download_media(
+        message=message.reply_to_message,
+        file_name="root/downloads/",
+    )
+    try:
+        response = upload_file(download_location)
+    except Exception as document:
+        await message.reply(message, text=document)
+    else:
+        button_s = InlineKeyboardMarkup([[InlineKeyboardButton("Goto Link🔗", url=f"https://telegra.ph{response[0]}")]])
+        await message.reply(
+            f"**Link »**\n`https://telegra.ph{response[0]}`",
+            disable_web_page_preview=True,
+            reply_markup=button_s
+        )
+    finally:
+        os.remove(download_location)
+
+async def quotify(messages: list):
+    response = await arq.quotly(messages)
+    if not response.ok:
+        return [False, response.result]
+    sticker = response.result
+    sticker = BytesIO(sticker)
+    sticker.name = "sticker.webp"
+    return [True, sticker]
+
+
+def getArg(message: Message) -> str:
+    arg = message.text.strip().split(None, 1)[1].strip()
+    return arg
+
+
+def isArgInt(message: Message) -> list:
+    count = getArg(message)
+    try:
+        count = int(count)
+        return [True, count]
+    except ValueError:
+        return [False, 0]
 
 
 
+@app.on_message(filters.command(["quote", "q"]))
+async def quote(client, message: Message):
+    await message.delete()
+    if not message.reply_to_message:
+        return await message.reply_text("Reply to a message to quote it.")
+    if not message.reply_to_message.text:
+        return await message.reply_text(
+            "Replied message has no text, can't quote it."
+        )
+    m = await message.reply_text("`Quoting Message..`")
+    if len(message.command) < 2:
+        messages = [message.reply_to_message]
 
+    elif len(message.command) == 2:
+        arg = isArgInt(message)
+        if arg[0]:
+            if arg[1] < 2 or arg[1] > 10:
+                return await m.edit("Argument must be between 2-10.")
 
+            count = arg[1]
 
-
-
-
-
-
-
-
-
-
-
-
-
-__MODULE__ = "Player"
-__HELP__ = """
-**A Telegram Music+Video Streaming bot with some useful features.**
-
-**Few Features Here**[?](https://notreallyshikhar.gitbook.io/Rosemusicbot/about/getting-started/features)
-
-- Zero lagtime Video + Audio + live stream player.
-- Working Queue and Interactive Queue Checker.
-- Youtube Downloader Bar.
-- Auth Users Function .
-- Download Audios/Videos from Youtube.
-- Multi Assistant Mode for High Number of Chats.
-- Interactive UI, Fonts and Thumbnails.
-- Channel player.
-
-**Original work is done by** : @TheYukki
-"""
-__helpbtns__ = (
-        [[
-            InlineKeyboardButton
-                (
-                    "Admin Commands", callback_data="_adc"
-                ),            
-            InlineKeyboardButton
-                (
-                    "Bot Commands", callback_data="_bcd"
-                ) 
-        ],
-        [
-            InlineKeyboardButton
-                (
-                    "Extra commands", callback_data="_ecd"
-                ),            
-            InlineKeyboardButton
-                (
-                    "Play Commands", callback_data="_pcd"
-                )  
-        ], 
-        [
-            InlineKeyboardButton
-                (
-                    "Assistant Info", callback_data="_aci"
+            # Fetching 5 extra messages so tha twe can ignore media
+            # messages and still end up with correct offset
+            messages = [
+                i
+                for i in await client.get_messages(
+                    message.chat.id,
+                    range(
+                        message.reply_to_message.message_id,
+                        message.reply_to_message.message_id + (count + 5),
+                    ),
+                    replies=0,
                 )
-        ]
-    ]
+                if not i.empty and not i.media
+            ]
+            messages = messages[:count]
+        else:
+            if getArg(message) != "r":
+                return await m.edit(
+                    "Incorrect Argument, Pass **'r'** or **'INT'**, **EX:** __/q 2__"
+                )
+            reply_message = await client.get_messages(
+                message.chat.id,
+                message.reply_to_message.message_id,
+                replies=1,
+            )
+            messages = [reply_message]
+    else:
+        return await m.edit(
+            "Incorrect argument, check quotly module in help section."
+        )
+    try:
+        if not message:
+            return await m.edit("Something went wrong.")
+
+        sticker = await quotify(messages)
+        if not sticker[0]:
+            await message.reply_text(sticker[1])
+            return await m.delete()
+        sticker = sticker[1]
+        await message.reply_sticker(sticker)
+        await m.delete()
+        sticker.close()
+    except Exception as e:
+        await m.edit(
+            "Something went wrong while quoting messages,"
+            + " This error usually happens when there's a "
+            + " message containing something other than text,"
+            + " or one of the messages in-between are deleted."
+        )
+        e = format_exc()
+        print(e)
+
+
+
+@app.on_message(
+    filters.command("invitelink") & ~filters.edited & ~filters.bot & ~filters.private & admin_filter
 )
+async def invitelink(client, message):
+    chid = message.chat.id
+    try:
+        invitelink = await client.export_chat_invite_link(chid)
+    except:
+        await message.reply_text(
+            "Add me as admin of yor group first",
+        )
+        return
+    await message.reply_text(f"**Invite link generated successfully** \n {invitelink}")
+

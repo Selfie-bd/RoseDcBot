@@ -1,117 +1,24 @@
 from Rose import app 
-from Rose.utils.custom_filters import (
-    owner_filter,
-)
-from Rose.core.decorators.permissions import adminsOnly
+from Rose.utils.custom_filters import *
 from pyrogram import filters
 from pyrogram.types import Message
 from Rose.utils.caching import ADMIN_CACHE, TEMP_ADMIN_CACHE_BLOCK, admin_cache_reload
 from Rose.utils.parser import mention_html
-from pyrogram.errors import (
-    FloodWait,
-    RPCError,
-    UserAdminInvalid,
-)
 from asyncio import sleep
 from time import time
 import os
 from pyrogram import filters
 from pyrogram.types import Message
 from Rose.plugins.rules import *
-from Rose import BOT_ID, SUDOERS, app
-from lang import get_command
+from Rose import BOT_ID, app
 from Rose.utils.functions import extract_user
 from Rose.utils.commands import *
-from Rose.core.decorators.permissions import adminsOnly
 from Rose.utils.lang import *
-from pyrogram.errors import (
-    FloodWait,
-    RPCError,
-    UserAdminInvalid,
-)
+from pyrogram.errors import FloodWait,UserAdminInvalid
+from Rose.plugins.fsub import ForceSub
+from button import *
 
-SEND_COMMAND = get_command("SEND_COMMAND")
-HIGH_PROMOTE = get_command("HIGH_PROMOTE")
-PROMOTE = get_command("PROMOTE")
-MID_PROMOTE = get_command("MID_PROMOTE")
-DEMOTE = get_command("DEMOTE")
-BAN_GHOST = get_command("BAN_GHOST")
-G_TITLE = get_command("G_TITLE")
-A_TITLE = get_command("A_TITLE")
-G_PIC = get_command("G_PIC")
-ADMINS = get_command("ADMINS")
-ZOMBIE = get_command("ZOMBIE")
-
-async def member_permissions(chat_id: int, user_id: int):
-    perms = []
-    try:
-        member = await app.get_chat_member(chat_id, user_id)
-    except Exception:
-        return []
-    if member.can_post_messages:
-        perms.append("can_post_messages")
-    if member.can_edit_messages:
-        perms.append("can_edit_messages")
-    if member.can_delete_messages:
-        perms.append("can_delete_messages")
-    if member.can_restrict_members:
-        perms.append("can_restrict_members")
-    if member.can_promote_members:
-        perms.append("can_promote_members")
-    if member.can_change_info:
-        perms.append("can_change_info")
-    if member.can_invite_users:
-        perms.append("can_invite_users")
-    if member.can_pin_messages:
-        perms.append("can_pin_messages")
-    if member.can_manage_voice_chats:
-        perms.append("can_manage_voice_chats")
-    return perms
-
-admins_in_chat = {}
-
-async def list_admins(chat_id: int):
-    global admins_in_chat
-    if chat_id in admins_in_chat:
-        interval = time() - admins_in_chat[chat_id]["last_updated_at"]
-        if interval < 3600:
-            return admins_in_chat[chat_id]["data"]
-    admins_in_chat[chat_id] = {
-        "last_updated_at": time(),
-        "data": [
-            member.user.id
-            async for member in app.iter_chat_members(
-                chat_id, filter="administrators"
-            )
-        ],
-    }
-    return admins_in_chat[chat_id]["data"]
-
-
-async def current_chat_permissions(chat_id):
-    perms = []
-    perm = (await app.get_chat(chat_id)).permissions
-    if perm.can_send_messages:
-        perms.append("can_send_messages")
-    if perm.can_send_media_messages:
-        perms.append("can_send_media_messages")
-    if perm.can_send_other_messages:
-        perms.append("can_send_other_messages")
-    if perm.can_add_web_page_previews:
-        perms.append("can_add_web_page_previews")
-    if perm.can_send_polls:
-        perms.append("can_send_polls")
-    if perm.can_change_info:
-        perms.append("can_change_info")
-    if perm.can_invite_users:
-        perms.append("can_invite_users")
-    if perm.can_pin_messages:
-        perms.append("can_pin_messages")
-
-    return perms
-
-@app.on_message(command(SEND_COMMAND))
-@adminsOnly("can_edit_messages")
+@app.on_message(command("send") & admin_filter)
 @language
 async def sendasbot(client, message: Message, _):
     await message.delete()
@@ -131,30 +38,29 @@ async def sendasbot(client, message: Message, _):
         await app.send_message(chat_id, text=message.text.split(None, 1)[1])
 
 
-
 @app.on_message(
     filters.command(["promote", "fullpromote"])
     & ~filters.edited
     & ~filters.private
+    & promote_filter
 )
-@adminsOnly("can_promote_members")
 async def promoteFunc(_, message: Message):
+    FSub = await ForceSub(app, message)
+    if FSub == 400:
+        return
     user_id = await extract_user(message)
+    chat = message.chat.id
     umention = (await app.get_users(user_id)).mention
     if not user_id:
-        return await message.reply_text("I can't find that user.")
+        await message.reply_text("I can't find that user.")
+        return
     bot = await app.get_chat_member(message.chat.id, BOT_ID)
     if user_id == BOT_ID:
-        return await message.reply_text("I can't promote myself.")
+        await message.reply_text("I can't promote myself.")
+        return
     if not bot.can_promote_members:
-        return await message.reply_text("I don't have enough permissions")
-    title = ""  
-    if len(message.text.split()) == 3 and not message.reply_to_message:
-            title = message.text.split()[2]
-    elif len(message.text.split()) == 2 and message.reply_to_message:
-            title = message.text.split()[1]
-    if title and len(title) > 16:
-            title = title[0:16]            
+        await message.reply_text("I don't have enough permissions.")
+        return
     if message.command[0][0] == "f":
         await message.chat.promote_member(
             user_id=user_id,
@@ -167,12 +73,17 @@ async def promoteFunc(_, message: Message):
             can_manage_chat=bot.can_manage_chat,
             can_manage_voice_chats=bot.can_manage_voice_chats,
         )
-    try:
-            await app.set_administrator_title(message.chat.id, user_id, title)
-            await message.reply_text(f"Fully Promoted! {umention}")
-    except Exception as e:
-            return await app.send_message(LOG_GROUP_ID,text= f"{e}")    
-
+        title = ""
+        if len(message.text.split()) == 3 and not message.reply_to_message:
+            title = message.text.split()[2]
+        elif len(message.text.split()) == 2 and message.reply_to_message:
+            title = message.text.split()[1]
+        if title and len(title) > 16:
+            title = title[0:16]
+        await message.reply_text(f"""
+{umention} **Was Fullpromoted By** {message.from_user.mention} **with** {title} **title**
+""")
+        return
     await message.chat.promote_member(
         user_id=user_id,
         can_change_info=False,
@@ -184,26 +95,33 @@ async def promoteFunc(_, message: Message):
         can_manage_chat=bot.can_manage_chat,
         can_manage_voice_chats=bot.can_manage_voice_chats,
     )
-    try:
-            await app.set_administrator_title(message.chat.id, user_id, title)
-    except RPCError as e:
-            print(f"{e}")
-    await message.reply_text(f"Promoted! {umention}")
+    title = ""
+    if len(message.text.split()) == 3 and not message.reply_to_message:
+            title = message.text.split()[2]
+    elif len(message.text.split()) == 2 and message.reply_to_message:
+            title = message.text.split()[1]
+    if title and len(title) > 16:
+            title = title[0:16]
+    await app.set_administrator_title(message.chat.id, 
+                                      user_id,
+                                      title)
+    await message.reply_text(f"""
+{umention}** Was Promoted By** {message.from_user.mention} **with **
+`{title}` **title**
+""")
 
 
 
-
-@app.on_message(command(DEMOTE) )
-@adminsOnly("can_promote_members")
-@language
-async def demote(client, message: Message, _):
+@app.on_message(filters.command("demote") & ~filters.edited & ~filters.private & promote_filter)
+async def demote(_, message: Message):
+    FSub = await ForceSub(app, message)
+    if FSub == 400:
+        return
     user_id = await extract_user(message)
+    if not user_id:
+        return await message.reply_text("I can't find that user.")
     if user_id == BOT_ID:
-        return await message.reply_text(_["admin4"])
-    if user_id in SUDOERS:
-        return await message.reply_text(
-            "You can't demote my developer"
-        )
+        return await message.reply_text("I can't demote myself.") 
     await message.chat.promote_member(
         user_id=user_id,
         can_change_info=False,
@@ -216,19 +134,22 @@ async def demote(client, message: Message, _):
         can_manage_voice_chats=False,
     )
     umention = (await app.get_users(user_id)).mention
-    await message.reply_text(_["admin22"].format(umention)) 
+    await message.reply_text(f"Demoted! {umention}")
 
-@app.on_message(command(BAN_GHOST) )
-@adminsOnly("can_restrict_members")
+
+
+@app.on_message(command("banghost") & restrict_filter)
 @language
 async def ban_deleted_accounts(client, message: Message, _):
+    FSub = await ForceSub(app, message)
+    if FSub == 400:
+        return
     chat_id = message.chat.id
     deleted_users = []
     banned_users = 0
     m = await message.reply(_["admin5"])
-
     async for i in app.iter_chat_members(chat_id):
-        if i.user.is_deleted:
+     if i.user.is_deleted:
             deleted_users.append(i.user.id)
     if len(deleted_users) > 0:
         for deleted_user in deleted_users:
@@ -242,54 +163,81 @@ async def ban_deleted_accounts(client, message: Message, _):
         await m.edit(_["admin6"])
 
 
-@app.on_message(command(G_TITLE))
-@adminsOnly("can_change_info")
+@app.on_message(command("setgrouptitle") & can_change_filter)
 @language
 async def set_chat_title(client, message: Message, _):
+    FSub = await ForceSub(app, message)
+    if FSub == 400:
+        return
     if len(message.command) < 2:
         return await message.reply_text(_["admin7"])
+
     old_title = message.chat.title
+
     new_title = message.text.split(None, 1)[1]
+
     await message.chat.set_title(new_title)
+
     await message.reply_text(_["admin24"].format(old_title,new_title))
 
-@app.on_message(command(A_TITLE) )
-@adminsOnly("can_change_info")
+@app.on_message(command("settitle") & can_change_filter)
 @language
 async def set_user_title(client, message: Message, _):
+    FSub = await ForceSub(app, message)
+    if FSub == 400:
+        return
     if not message.reply_to_message:
         return await message.reply_text(_["admin25"])
+
     if not message.reply_to_message.from_user:
         return await message.reply_text(_["admin26"])
+
     chat_id = message.chat.id
+
     from_user = message.reply_to_message.from_user
+
     if len(message.command) < 2:
         return await message.reply_text(_["admin27"])
+
     title = message.text.split(None, 1)[1]
+
     await app.set_administrator_title(chat_id, from_user.id, title)
+
     await message.reply_text(_["admin28"].format(from_user.mention,title))
 
 
-@app.on_message(command(G_PIC))
-@adminsOnly("can_change_info")
+@app.on_message(command("setgrouppic") & can_change_filter)
 @language
 async def set_chat_photo(client, message: Message, _):
+    FSub = await ForceSub(app, message)
+    if FSub == 400:
+        return
     reply = message.reply_to_message
+
     if not reply:
         return await message.reply_text(_["admin29"])
+
     file = reply.document or reply.photo
+
     if not file:
         return await message.reply_text(_["admin30"])
+
     if file.file_size > 5000000:
         return await message.reply(_["admin31"])
+
     photo = await reply.download()
+
     await message.chat.set_photo(photo)
+
     await message.reply_text(_["admin32"])
     os.remove(photo)
     
 
-@app.on_message(command(ADMINS))
+@app.on_message(command("admins"))
 async def adminlist_show(_, m: Message):
+    FSub = await ForceSub(app, m)
+    if FSub == 400:
+        return
     global ADMIN_CACHE
     try:
         try:
@@ -335,23 +283,34 @@ async def adminlist_show(_, m: Message):
     return
 
 
-@app.on_message(filters.command(ZOMBIE) & owner_filter )
+@app.on_message(filters.command("zombie") & owner_filter )
 async def zombie_clean(_, message: Message):
-
+    FSub = await ForceSub(app, message)
+    if FSub == 400:
+        return
     zombie = 0
 
     wait = await message.reply_text("Searching ... and banning ...")
+
     async for member in app.iter_chat_members(message.chat.id):
+
         if member.user.is_deleted:
+
             zombie += 1
+
             try:
                 await app.kick_chat_member(message.chat.id, member.user.id)
+
             except UserAdminInvalid:
                 zombie -= 1
+
             except FloodWait as e:
                 await sleep(e.x)
+
     if zombie == 0:
+
         return await wait.edit_text("Group is clean!")
+
     return await wait.edit_text(
         f"<b>{zombie}</b> Zombies found and has been banned!",
     )
@@ -359,6 +318,9 @@ async def zombie_clean(_, message: Message):
 
 @app.on_message(filters.group & filters.regex(pattern="/reload"))
 async def reload_admins(_, message: Message):
+    FSub = await ForceSub(app, message)
+    if FSub == 400:
+        return
     global TEMP_ADMIN_CACHE_BLOCK
 
     if message.chat.type != "supergroup":
@@ -381,7 +343,9 @@ async def reload_admins(_, message: Message):
         await message.reply_text(f"{ef}")
     return
 
-__MODULE__ = "Admin"
+
+
+__MODULE__ = f"{Admin}"
 __HELP__ = """
 Make it easy to promote and demote users with the admin module!
 

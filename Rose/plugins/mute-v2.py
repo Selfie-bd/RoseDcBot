@@ -14,8 +14,7 @@ from Rose.utils.parser import mention_html
 from Rose.utils.string import extract_time
 from Rose.utils.lang import *
 from Rose.utils.commands import *
-from Rose.core.keyboard import ikb
-
+from button import *
 
 @app.on_message(command("tmute") & restrict_filter)
 @language
@@ -81,8 +80,7 @@ async def tmute_usr(client, message: Message, _):
             txt += f"\n<b>Reason</b>: {reason}"
         if mutetime:    
             txt += f"\n<b>Mute Time</b>: {mutetime}"
-        keyboard = ikb({"Unmute": f"_unmute_{user_id}"})   
-        await app.send_message(message.chat.id, txt,reply_markup=keyboard)
+        await app.send_message(message.chat.id, txt)
     except ChatAdminRequired:
         await message.reply_text("You need to be an admin to do this.")
     except RightForbidden:
@@ -157,8 +155,7 @@ async def dtmute_usr(client, message: Message, _):
         """)
         if reason:
             txt += f"\n<b>Reason</b>: {reason}"
-        keyboard = ikb({"Unmute": f"_unmute_{user_id}"})   
-        await app.send_message(message.chat.id, txt,reply_markup=keyboard)
+        await app.send_message(message.chat.id, txt)
     except ChatAdminRequired:
         await message.reply_text("You need to be an admin to do this.")
     except RightForbidden:
@@ -286,8 +283,7 @@ async def mute_usrs(client, message: Message, _):
         if reason:
             txt += f"\n<b>Reason</b>: {reason}"
 
-        keyboard = ikb({"Unmute": f"_unmute_{user_id}"})   
-        await app.send_message(message.chat.id, txt,reply_markup=keyboard)
+        await app.send_message(message.chat.id, txt)
     except ChatAdminRequired:
         await message.reply_text("You need to be an admin to do this.")
     except RightForbidden:
@@ -392,8 +388,7 @@ async def dmute_usr(client, message: Message, _):
         """)
         if reason:
             txt += f"\n<b>Reason</b>: {reason}"
-        keyboard = ikb({"Unmute": f"_unmute_{user_id}"})   
-        await app.send_message(message.chat.id, txt,reply_markup=keyboard)
+        await app.send_message(message.chat.id, txt)
     except ChatAdminRequired:
         await message.reply_text("You need to be an admin to do this.")
     except RightForbidden:

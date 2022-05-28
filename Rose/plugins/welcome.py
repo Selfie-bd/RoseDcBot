@@ -1,3 +1,4 @@
+import html
 from pyrogram import filters
 from pyrogram.errors import ChatAdminRequired
 from pyrogram.types import  InlineKeyboardMarkup, Message
@@ -9,20 +10,20 @@ from Rose.utils.string import (
     build_keyboard,
     parse_button,
 )
-from Rose.core.decorators.permissions import adminsOnly
 from pyrogram.types import (InlineKeyboardButton,
                             InlineKeyboardMarkup,Message)
 from pyrogram.types import (InlineKeyboardButton,
                             InlineKeyboardMarkup, Message)
-from Rose.mongo.captcha import captchas    
 from .captcha import send_captcha     
 from Rose.utils.lang import *
 from Rose.utils.filter_groups import *
-
+from Rose.mongo.feddb import (get_fed_from_chat,
+                                              get_fed_reason, is_user_fban)
+from Rose.mongo.chatsdb import *
+from button import *
 
 gdb = GBan()
 
-#welcome cleanner
 @app.on_message(command("cleanwelcome") & admin_filter)
 @language
 async def cleanwlcm(client, message: Message, _):    
@@ -89,8 +90,7 @@ async def cleanservice(client, message: Message, _):
     return
 
 #set welcome
-@app.on_message(command("setwelcome") )
-@adminsOnly("can_change_info")
+@app.on_message(command("setwelcome") & admin_filter)
 @language
 async def save_wlcm(client, message: Message, _):   
     db = Greetings(message.chat.id)
@@ -108,8 +108,7 @@ async def save_wlcm(client, message: Message, _):
     return
 
 #set good bye
-@app.on_message(command("setgoodbye") )
-@adminsOnly("can_change_info")
+@app.on_message(command("setgoodbye") & admin_filter)
 @language
 async def save_gdbye(client, message: Message, _):
     db = Greetings(message.chat.id)
@@ -126,8 +125,7 @@ async def save_gdbye(client, message: Message, _):
     return
 
 #reset
-@app.on_message(command("resetgoodbye") )
-@adminsOnly("can_change_info")
+@app.on_message(command("resetgoodbye") & admin_filter)
 @language
 async def resetgb(client, message: Message, _):   
     db = Greetings(message.chat.id)
@@ -137,8 +135,7 @@ async def resetgb(client, message: Message, _):
     return
 
 
-@app.on_message(command("resetwelcome"))
-@adminsOnly("can_change_info")
+@app.on_message(command("resetwelcome") & admin_filter)
 @language
 async def resetwlcm(client, message: Message, _):
     db = Greetings(message.chat.id)
@@ -165,9 +162,29 @@ async def welcome(_, message: Message):
     group_name = message.chat.title
     db = Greetings(group_id)
     chat_title = html.escape(message.chat.title)
+    fed_id = get_fed_from_chat(group_id)
     for member in message.new_chat_members:   
         user_id = member.id
-        if user_id == BOT_ID:
+        chat_id = message.chat.id
+        status = db.get_welcome_status()
+        user_id = message.from_user.id
+        chat_id = int(message.chat.id)
+        if is_user_fban(fed_id, user_id):
+                fed_reason = get_fed_reason(fed_id, user_id)
+                text = (
+                        "**This user is banned in the current federation:**\n\n"
+                        f"User: {member.mention} (`{member.id}`)\n"
+                        f"Reason: `{fed_reason}`"
+                    )
+
+                if await app.chat.ban_member(chat_id, user_id): 
+                        text += '\nAction: `Banned`'
+                        
+                await message.reply(
+                    text
+                )
+                return 
+        if member.id == BOT_ID:
                 await message.reply_text(
                     f"""
 Thanks for adding me to your {group_name}! Don't forget follow
@@ -193,7 +210,7 @@ my news channel @Theszrosebot.
                 "Wow ! Owner has just joined your chat.",
             )
                return
-        if user_id == 1467358214:#for @supunma 
+        if member.id == 1467358214:#for @supunma 
                await app.send_message(
                 message.chat.id,
                 "Wow ! Developer has just joined your chat.",
@@ -202,18 +219,15 @@ my news channel @Theszrosebot.
         if member.is_bot:
                adder = message.from_user.mention
                botname = member.username
-               return await message.reply_text(f" @{botname} was added by {adder} 🤖", quote=False)
-        user_id = message.from_user.id
+               await message.reply_text(f" @{botname} was added by {adder} 🤖", quote=False)
+               return
         chat_id = message.chat.id
-        chat = captchas().chat_in_db(chat_id)
-        if not member.is_bot and chat:
-               return await send_captcha(message)
-        status = db.get_welcome_status()
-        user_id = message.from_user.id
+        captcha = await send_captcha(app, message)
+        if captcha == 400:
+         return
         raw_text = db.get_welcome_text()
-        chat_id = int(message.chat.id)
         if not raw_text:
-                return
+            return
         text, button = await parse_button(raw_text)
         button = await build_keyboard(button)
         button = InlineKeyboardMarkup(button) if button else None
@@ -227,93 +241,80 @@ my news channel @Theszrosebot.
         if "{username}" in text:
                 text = text.replace("{username}", (await app.get_users(user_id)).username)
         if "{first}" in text:
-                text = text.replace("{first}", (await app.get_users(user_id)).first_name)         
+                text = text.replace("{first}", (await app.get_users(user_id)).first_name)     
         if "{last}" in text:
-                text = text.replace("{last}", (await app.get_users(user_id)).last_name)   
+                text = text.replace("{last}", (await app.get_users(user_id)).last_name) 
         if "{count}" in text:
-                text = text.replace("{count}", (await app.get_chat_members_count(chat_id)))   
+                text = text.replace("{count}", await app.get_chat_members_count(chat_id)) 
         if status:
-                 await app.send_message(
+          await app.send_message(
         message.chat.id,
         text=text,
         reply_markup=button,
         disable_web_page_preview=True,
     )
-                 return
-    status = db.get_welcome_status()
-    if status:
         lol = db.get_current_cleanwelcome_id()
         xx = db.get_current_cleanwelcome_settings()
+
         if lol and xx:
             try:
                 await app.delete_messages(message.chat.id, int(lol))
             except Exception as e:
                 return await app.send_message(LOG_GROUP_ID,text= f"{e}")
+        else:
+         return       
     else:
         return
 
 
-@app.on_message(filters.left_chat_member, group=newwelcome)
+@app.on_message(filters.left_chat_member, group=leftwelcome)
 async def member_has_left(_, message: Message):
     group_id = message.chat.id
-    db = Greetings(group_id)
-    for member in message.left_chat_member:
-        try:
-            if member.id == OWNER_ID:
-               await app.send_message(
-                message.chat.id,
-                "Owner was left ",
-            )
+    db =  Greetings(group_id)
+    status = db.get_goodbye_status()
+    chat_title = html.escape(message.chat.title)
+    try:
+            user_id = message.from_user.id
+            raw_text = db.get_goodbye_text()
+
+            if not raw_text:
                return
 
-            if member.is_bot:
-               botname = member.username
-               return await message.reply_text(f" @{botname} was left ", quote=False)
-        
-        except ChatAdminRequired:
-            return
+            text, button = await parse_button(raw_text)
+            button = await build_keyboard(button)
+            button = InlineKeyboardMarkup(button) if button else None
 
-    status = db.get_goodbye_status()
-    user_id = message.from_user.id
-    raw_text = db.get_goodbye_text()
-
-    if not raw_text:
-        return
-
-    text, button = await parse_button(raw_text)
-    button = await build_keyboard(button)
-    button = InlineKeyboardMarkup(button) if button else None
-
-    if "{chatname}" in text:
-        text = text.replace("{chatname}", message.chat.title)
-    if "{mention}" in text:
-        text = text.replace("{mention}", (await app.get_users(user_id)).mention)
-    if "{id}" in text:
-        text = text.replace("{id}", (await app.get_users(user_id)).id)
-    if "{username}" in text:
-        text = text.replace("{username}", (await app.get_users(user_id)).username)
-    if "{first}" in text:
-        text = text.replace("{first}", (await app.get_users(user_id)).first_name)         
-    if "{last}" in text:
-        text = text.replace("{last}", (await app.get_users(user_id)).last_name)   
-    if status:
-        return await app.send_message(
-        message.chat.id,
-        text=text,
-        reply_markup=button,
-        disable_web_page_preview=True,
+            if "{chatname}" in text:
+                text = text.replace("{chatname}", message.chat.title)
+            if "{mention}" in text:
+                text = text.replace("{mention}", (await app.get_users(user_id)).mention)
+            if "{id}" in text:
+                text = text.replace("{id}", (await app.get_users(user_id)).id)
+            if "{username}" in text:
+                text = text.replace("{username}", (await app.get_users(user_id)).username)
+            if "{first}" in text:
+                text = text.replace("{first}", (await app.get_users(user_id)).first_name)         
+            if "{last}" in text:
+                text = text.replace("{last}", (await app.get_users(user_id)).last_name)   
+            if status:
+                await app.send_message(
+                     message.chat.id,
+                     text=text,
+                     reply_markup=button,
+                     disable_web_page_preview=True,
     )
-    if status:
-        lol = db.get_current_cleangoodbye_id()
-        xx = db.get_current_cleangoodbye_settings()
-        if lol and xx:
-            try:
+            if status:
+             lol = db.get_current_cleangoodbye_id()
+             xx = db.get_current_cleangoodbye_settings()
+             if lol and xx:
+              try:
                 await app.delete_messages(message.chat.id, int(lol))
-            except Exception as e:
+              except Exception as e:
                 return await app.send_message(LOG_GROUP_ID,text= f"{e}")
-    else:
-        return
-
+             else:
+               return
+    except ChatAdminRequired:
+             return
 
 @app.on_message(command("welcome") & admin_filter )
 @language
@@ -403,7 +404,7 @@ async def goodbye(client, message: Message, _):
     await app.send_message(message.chat.id, text=tek, reply_markup=button)
     return
 
-__MODULE__ = "Greetings"
+__MODULE__ = f"{Greeting}"
 __HELP__ = """
 Give your members a warm welcome with the greetings module! Or a sad goodbye... Depends!
 

@@ -16,6 +16,7 @@ async def get_private_rules(_, m: Message, help_option: str):
     await m.reply_text(
         f"""
 ** Rules are**:
+
 {rules}
 """,
         quote=True,

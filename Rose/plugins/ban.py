@@ -1,17 +1,16 @@
-import asyncio
 from time import time
-from pyrogram import filters
+import asyncio
 from pyrogram.types import Message
-from pyrogram.errors import RPCError
 from Rose.utils.extract_user import extract_user
-from Rose import BOT_ID, SUDOERS, app
-from Rose.utils.functions import (extract_user_and_reason,
-                                 time_converter)
-from Rose.core.decorators.permissions import adminsOnly
+from Rose import BOT_ID,app
+from Rose.utils.functions import extract_user_and_reason,time_converter
 from pyrogram.types import Message
 from lang import get_command
 from Rose.utils.commands import *
 from Rose.utils.lang import *
+from Rose.utils.custom_filters import restrict_filter
+from Rose.plugins.fsub import ForceSub
+from button import *
 
 KICK_ME = get_command("KICK_ME")
 SKICK = get_command("SKICK")
@@ -19,78 +18,6 @@ KICK = get_command("KICK")
 BAN = get_command("BAN")
 UNBAN = get_command("UNBAN")
 SBAN = get_command("SBAN")
-
-
-async def member_permissions(chat_id: int, user_id: int):
-    perms = []
-    try:
-        member = await app.get_chat_member(chat_id, user_id)
-    except Exception:
-        return []
-    if member.can_post_messages:
-        perms.append("can_post_messages")
-    if member.can_edit_messages:
-        perms.append("can_edit_messages")
-    if member.can_delete_messages:
-        perms.append("can_delete_messages")
-    if member.can_restrict_members:
-        perms.append("can_restrict_members")
-    if member.can_promote_members:
-        perms.append("can_promote_members")
-    if member.can_change_info:
-        perms.append("can_change_info")
-    if member.can_invite_users:
-        perms.append("can_invite_users")
-    if member.can_pin_messages:
-        perms.append("can_pin_messages")
-    if member.can_manage_voice_chats:
-        perms.append("can_manage_voice_chats")
-    return perms
-
-admins_in_chat = {}
-
-
-async def list_admins(chat_id: int):
-    global admins_in_chat
-    if chat_id in admins_in_chat:
-        interval = time() - admins_in_chat[chat_id]["last_updated_at"]
-        if interval < 3600:
-            return admins_in_chat[chat_id]["data"]
-    admins_in_chat[chat_id] = {
-        "last_updated_at": time(),
-        "data": [
-            member.user.id
-            async for member in app.iter_chat_members(
-                chat_id, filter="administrators"
-            )
-        ],
-    }
-    return admins_in_chat[chat_id]["data"]
-
-
-async def current_chat_permissions(chat_id):
-    perms = []
-    perm = (await app.get_chat(chat_id)).permissions
-    if perm.can_send_messages:
-        perms.append("can_send_messages")
-    if perm.can_send_media_messages:
-        perms.append("can_send_media_messages")
-    if perm.can_send_other_messages:
-        perms.append("can_send_other_messages")
-    if perm.can_add_web_page_previews:
-        perms.append("can_add_web_page_previews")
-    if perm.can_send_polls:
-        perms.append("can_send_polls")
-    if perm.can_change_info:
-        perms.append("can_change_info")
-    if perm.can_invite_users:
-        perms.append("can_invite_users")
-    if perm.can_pin_messages:
-        perms.append("can_pin_messages")
-
-    return perms
-
-
 
 
 @app.on_message(command(KICK_ME) )
@@ -101,7 +28,7 @@ async def kickFunc(client, message: Message, _):
         reason = message.text.split(None, 1)[1]
     try:
         await message.chat.ban_member(message.from_user.id)
-        txt = "you're right - get out."
+        txt = f" Bye {message.from_user.mention}, you're right - get out."
         txt += f"\n<b>Reason</b>: {reason}" if reason else ""
         await message.reply_text(txt)
         await message.chat.unban_member(message.from_user.id)
@@ -109,19 +36,25 @@ async def kickFunc(client, message: Message, _):
         await message.reply_text(f"{ef}")
     return
 
-@app.on_message(command(SKICK))
-@adminsOnly("can_restrict_members")
+
+@app.on_message(command(SKICK) & restrict_filter)
 @language
 async def kickFunc(client, message: Message, _):
     if len(message.text.split()) == 1 and not message.reply_to_message:
         return
     try:
-        user_id = await extract_user(app, message)
+        user_id = await extract_user(message)
     except Exception:
         return   
     if not user_id:
         await message.reply_text(_["ban2"])
         return  
+    st = await client.get_chat_member(message.chat.id, user_id)
+    if (
+                st.status == "administrator"
+                and st.status == "creator"
+        ):
+            return
     try:
         await message.chat.ban_member(user_id)
         await message.delete()
@@ -132,18 +65,24 @@ async def kickFunc(client, message: Message, _):
         await message.reply_text(f"{ef}")
     return
 
-@app.on_message(command(KICK))
-@adminsOnly("can_restrict_members")
+
+
+@app.on_message(command(KICK) & restrict_filter)
 @language
 async def kickFunc(client, message: Message, _):
-    user_id, reason = await extract_user_and_reason(message)
+    FSub = await ForceSub(app, message)
+    if FSub == 400:
+        return
+    user_id, reason = await extract_user_and_reason(message, sender_chat=True)
     if not user_id:
         return await message.reply_text(_["ban3"])
     if user_id == BOT_ID:
         return await message.reply_text(_["ban4"])
-    if user_id in SUDOERS:
-        return await message.reply_text(_["ban6"])
-    if user_id in (await list_admins(message.chat.id)):
+    st = await client.get_chat_member(message.chat.id, user_id)
+    if (
+                st.status == "administrator"
+                and st.status == "creator"
+        ):
         return await message.reply_text(_["ban7"])
     mention = (await app.get_users(user_id)).mention
     msg = f"""
@@ -151,14 +90,13 @@ async def kickFunc(client, message: Message, _):
 **Reason:** {reason or 'No Reason Provided.'}"""
     if message.command[0][0] == "d":
         await message.reply_to_message.delete()
-    await app.chat.ban_member(user_id)
+    await message.chat.ban_member(user_id)
     await message.reply_text(msg)
     await asyncio.sleep(1)
-    await app.chat.unban_member(user_id)
+    await message.chat.unban_member(user_id)
 
 
-@app.on_message(command(BAN))
-@adminsOnly("can_restrict_members")
+@app.on_message(command(BAN)& restrict_filter)
 @language
 async def banFunc(client, message: Message, _):
     user_id, reason = await extract_user_and_reason(message, sender_chat=True)
@@ -167,11 +105,12 @@ async def banFunc(client, message: Message, _):
         return await message.reply_text(_["ban3"])
     if user_id == BOT_ID:
         return await message.reply_text(_["ban4"])
-    if user_id in SUDOERS:
-        return await message.reply_text(_["ban6"])
-    user_status = (await message.chat.get_member(user_id)).status    
-    if user_status in {"creator", "administrator"}:
-        return
+    st = await client.get_chat_member(message.chat.id, user_id)
+    if (
+                st.status == "administrator"
+                and st.status == "creator"
+        ):
+        return await message.reply_text("I can't ban admin in this group !")
     try:
         mention = (await app.get_users(user_id)).mention
     except IndexError:
@@ -180,7 +119,7 @@ async def banFunc(client, message: Message, _):
             if message.reply_to_message
             else "Anon"
         )
-
+    await message.chat.ban_member(user_id)
     msg = (
         f"{mention}\n"
         f"**Was Banned By:** {message.from_user.mention if message.from_user else 'Anon'}\n"
@@ -210,33 +149,44 @@ async def banFunc(client, message: Message, _):
     await message.reply_text(msg)
 
 
-@app.on_message(command(UNBAN) &  filters.incoming)
-@adminsOnly("can_restrict_members")
+@app.on_message(command(UNBAN)  & restrict_filter)
 @language
 async def unbanFunc(client, message: Message, _):
-    if len(message.command) == 2:
-        user = message.text.split(None, 1)[1]
-    elif len(message.command) == 1 and message.reply_to_message:
-        user = message.reply_to_message.from_user.id
+    if len(message.text.split()) == 1 and not message.reply_to_message:
+        await message.reply_text("Provide a username or reply to a user's message to unban.")
+        await message.stop_propagation()
+
+    if message.reply_to_message and not message.reply_to_message.from_user:
+        user_id, user_first_name = (
+            message.reply_to_message.sender_chat.id,
+            message.reply_to_message.sender_chat.title,
+        )
     else:
-        return await message.reply_text(_["ban15"])
-    await message.chat.unban_member(user)
-    umention = (await app.get_users(user)).mention
-    await message.reply_text(_["ban14"].format({umention}))
+        try:
+            user_id, user_first_name, _ = await extract_user(app, message)
+        except Exception:
+            return
+    await message.chat.unban_member(user_id)
+    await message.reply_text(f"{user_first_name} was unbanned by {message.from_user.mention}")
 
 
-@app.on_message(command(SBAN) &  filters.incoming)
-@adminsOnly("can_restrict_members")
-async def kickFunc(client, message: Message, _):
+@app.on_message(command(SBAN) & restrict_filter)
+async def kickunc(client, message: Message, _):
     if len(message.text.split()) == 1 and not message.reply_to_message:
         return
     try:
-        user_id = await extract_user(app, message)
+        user_id = await extract_user(message)
     except Exception:
         return   
     if not user_id:
-        await message.reply_text("Cannot find user to kick")
-        return  
+        await message.reply_text("Can't find user to kick")
+        return   
+    st = await app.get_chat_member(message.chat.id, user_id)
+    if (
+                st.status == "administrator"
+                and st.status == "creator"
+        ):
+        return     
     try:
         await message.chat.ban_member(user_id)
         await message.delete()
@@ -246,7 +196,8 @@ async def kickFunc(client, message: Message, _):
         await message.reply_text(f"{ef}")
     return
 
-__MODULE__ = "Restrict"
+
+__MODULE__ = f"{Restrict}"
 __HELP__ = """
 Some people need to be publicly banned; spammers, annoyances, or just trolls.
 

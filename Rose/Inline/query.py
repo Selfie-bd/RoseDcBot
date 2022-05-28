@@ -2,7 +2,6 @@ from  Rose import bot as app
 from Rose.mongo.captcha import captchas
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from Rose.plugins.antlangs import *
-import random
 from Rose.plugins.captcha import *
 from Rose.mongo.connectiondb import *
 from Rose.plugins.lang import *
@@ -16,11 +15,53 @@ from Rose.mongo.disabledb import Disabling
 from Rose.mongo.filterdb import Filters
 from Rose.mongo.notesdb import Notes
 from Rose.mongo.blacklistdb import Blacklist
-from Rose.mongo import chatb
+from Rose.mongo.feddb import *
+import uuid
+from Rose.mongo.welcomedb import Greetings
+from Rose.utils.string import (
+    build_keyboard,
+    parse_button,
+)
 
 db = {}
 dbf = Filters()
 dbns = Notes()
+LocalDB = {}
+
+def MakeCaptchaMarkup(markup, _number, sign):
+    __markup = markup
+    for i in markup:
+        for k in i:
+            if k["text"] == _number:
+                k["text"] = f"{sign}"
+                k["callback_data"] = "done_"
+                return __markup
+
+def emoji_() -> dict:
+    maker = emoji_captcha().generate()
+    emojis_list = ['🃏', '🎤', '🎥', '🎨', '🎩', '🎬', '🎭', '🎮', '🎯', '🎱', '🎲', '🎷', '🎸', '🎹', '🎾', '🏀', '🏆', '🏈', '🏉', '🏐', '🏓', '💠', '💡', '💣', '💨', '💸', '💻', '💾', '💿', '📈', '📉', '📊', '📌', '📍', '📎', '📏', '📐', '📞', '📟', '📠', '📡', '📢', '📣', '📦', '📹', '📺', '📻', '📼', '📽', '🖥', '🖨', '🖲', '🗂', '🗃', '🗄', '🗜', '🗝', '🗡', '🚧', '🚨', '🛒', '🛠', '🛢', '🧀', '🌭', '🌮', '🌯', '🌺', '🌻', '🌼', '🌽', '🌾', '🌿', '🍊', '🍋', '🍌', '🍍', '🍎', '🍏', '🍚', '🍛', '🍜', '🍝', '🍞', '🍟', '🍪', '🍫', '🍬', '🍭', '🍮', '🍯', '🍺', '🍻', '🍼', '🍽', '🍾', '🍿', '🎊', '🎋', '🎍', '🎏', '🎚', '🎛', '🎞', '🐌', '🐍', '🐎', '🐚', '🐛', '🐝', '🐞', '🐟', '🐬', '🐭', '🐮', '🐯', '🐻', '🐼', '🐿', '👛', '👜', '👝', '👞', '👟', '💊', '💋', '💍', '💎', '🔋', '🔌', '🔪', '🔫', '🔬', '🔭', '🔮', '🕯', '🖊', '🖋', '🖌', '🖍', '🥚', '🥛', '🥜', '🥝', '🥞', '🦊', '🦋', '🦌', '🦍', '🦎', '🦏', '🌀', '🌂', '🌑', '🌕', '🌡', '🌤', '⛅️', '🌦', '🌧', '🌨', '🌩', '🌰', '🌱', '🌲', '🌳', '🌴', '🌵', '🌶', '🌷', '🌸', '🌹', '🍀', '🍁', '🍂', '🍃', '🍄', '🍅', '🍆', '🍇', '🍈', '🍉', '🍐', '🍑', '🍒', '🍓', '🍔', '🍕', '🍖', '🍗', '🍘', '🍙', '🍠', '🍡', '🍢', '🍣', '🍤', '🍥', '🍦', '🍧', '🍨', '🍩', '🍰', '🍱', '🍲', '🍴', '🍵', '🍶', '🍷', '🍸', '🍹', '🎀', '🎁', '🎂', '🎃', '🎄', '🎈', '🎉', '🎒', '🎓', '🎙', '🐀', '🐁', '🐂', '🐃', '🐄', '🐅', '🐆', '🐇', '🐕', '🐉', '🐓', '🐖', '🐗', '🐘', '🐙', '🐠', '🐡', '🐢', '🐣', '🐤', '🐥', '🐦', '🐧', '🐨', '🐩', '🐰', '🐱', '🐴', '🐵', '🐶', '🐷', '🐸', '🐹', '👁\u200d🗨', '👑', '👒', '👠', '👡', '👢', '💄', '💈', '🔗', '🔥', '🔦', '🔧', '🔨', '🔩', '🔰', '🔱', '🕰', '🕶', '🕹', '🖇', '🚀', '🤖', '🥀', '🥁', '🥂', '🥃', '🥐', '🥑', '🥒', '🥓', '🥔', '🥕', '🥖', '🥗', '🥘', '🥙', '🦀', '🦁', '🦂', '🦃', '🦄', '🦅', '🦆', '🦇', '🦈', '🦉', '🦐', '🦑', '⭐️', '⏰', '⏲', '⚠️', '⚡️', '⚰️', '⚽️', '⚾️', '⛄️', '⛅️', '⛈', '⛏', '⛓', '⌚️', '☎️', '⚜️', '✏️', '⌨️', '☁️', '☃️', '☄️', '☕️', '☘️', '☠️', '♨️', '⚒', '⚔️', '⚙️', '✈️', '✉️', '✒️']
+    r = random.random()
+    random.shuffle(emojis_list, lambda: r)
+    new_list = [] + maker["answer"]
+    for i in range(15):
+        if emojis_list[i] not in new_list:
+            new_list.append(emojis_list[i])
+    n_list = new_list[:15]
+    random.shuffle(n_list, lambda: r)
+    maker.update({"list": n_list})
+    return maker
+
+def number_() -> dict:
+    filename = "./cache/" + uuid.uuid4().hex + '.png'
+    image = ImageCaptcha(width = 280, height = 140, font_sizes=[80,83])
+    final_number = str(random.randint(0000, 9999))
+    image.write("   " + final_number, str(filename))
+    try:
+        data = {"answer":list(final_number),"captcha": filename}
+    except Exception as t_e:
+        print(t_e)
+        data = {"is_error": True, "error":t_e}
+    return data
 
 
 @app.on_callback_query()
@@ -28,6 +69,52 @@ async def cb_handler(bot, query):
     cb_data = query.data
     if query.data == "close_data":
         await query.message.delete()
+       
+    if query.data == 'promote':
+        user_id = query.data.split("_")[1]
+        owner_id = query.data.split("_")[2]
+        fed_id = get_fed_from_ownerid(owner_id)
+        fed_name = get_fed_name(owner_id=owner_id)
+        user = await bot.get_users(
+        user_ids=user_id
+     )
+        owner = await bot.get_users(
+        user_ids=owner_id
+     ) 
+        if user_id == query.from_user.id:
+            fed_promote(fed_id, user_id)
+            await query.edit_message_text(
+                text=(
+                    f"User {user.mention} is now admin of {fed_name} ({fed_id})"
+                )
+            )
+        else:
+            await query.answer(
+                text=(
+                    "You aren't the user being promoted."
+                )
+            )
+
+    if query.data == 'cancel':
+        if user_id == query.from_user.id:
+            await query.edit_message_text(
+                text=(
+                    f"Fedadmin promotion has been refused by {user.mention}."
+                )
+            )
+
+        elif owner_id == query.from_user.id:
+            await query.edit_message_text(
+                text=(
+                    f"Fedadmin promotion cancelled by {owner.mention}."
+                )
+            )
+        else:
+            await query.answer(
+                text=(
+                    "You aren't the user being promoted."
+                )
+            )
     if "report_" in query.data: 
      splitter = (str(query.data).replace("report_", "")).split("=")
      chat_id = int(splitter[0])
@@ -380,12 +467,14 @@ async def cb_handler(bot, query):
                 "Your connected group details ;\n\n",
                 reply_markup=InlineKeyboardMarkup(buttons)
             )
+
+
     if cb_data.startswith("new_"):
         chat_id = query.data.rsplit("_")[1]
         user_id = query.data.split("_")[2]
         captcha = query.data.split("_")[3]
         if query.from_user.id != int(user_id):
-            await query.answer("❗️ This Message is Not For You!")
+            await query.answer("❗️ This Message is Not For You!", show_alert=True)
             return
         if captcha == "N":
             type_ = "Number"
@@ -397,24 +486,34 @@ async def cb_handler(bot, query):
             return
         else:
             await query.message.edit(f"{type_} Captcha turned on for this chat.")
+    if cb_data.startswith("off_"):
+        chat_id = query.data.rsplit("_")[1]
+        user_id = query.data.split("_")[2]
+        if query.from_user.id != int(user_id):
+            await query.answer("❗️ This Message is Not For You!", show_alert=True)
+            return
+        j = captchas().delete_chat(chat_id)
+        if j:
+            await query.message.edit("Captcha turned off on this chat")
+
     if cb_data.startswith("verify_"):
         chat_id = query.data.split("_")[1]
         user_id = query.data.split("_")[2]
         if query.from_user.id != int(user_id):
-            await query.answer("❗️ This Message is Not For You!")
+            await query.answer("❗️ This Message is Not For You!", show_alert=True)
             return
         chat = captchas().chat_in_db(int(chat_id))
         if chat:
             c = chat["captcha"]
             markup = [[],[],[]]
             if c == "N":
-                await query.answer("Creating captcha for you ❕")
+                await query.answer("Creating captcha for you", show_alert=True)
                 data_ = number_()
                 _numbers = data_["answer"]
                 list_ = ["0","1","2","3","5","6","7","8","9"]
                 random.shuffle(list_)
                 tot = 2
-                db[int(user_id)] = {"answer": _numbers, "list": list_, "mistakes": 0, "captcha": "N", "total":tot, "msg_id": None}
+                LocalDB[int(user_id)] = {"answer": _numbers, "list": list_, "mistakes": 0, "captcha": "N", "total":tot, "msg_id": None}
                 count = 0
                 for i in range(3):
                     markup[0].append(InlineKeyboardButton(f"{list_[count]}", callback_data=f"jv_{chat_id}_{user_id}_{list_[count]}"))
@@ -425,8 +524,8 @@ async def cb_handler(bot, query):
                 for i in range(3):
                     markup[2].append(InlineKeyboardButton(f"{list_[count]}", callback_data=f"jv_{chat_id}_{user_id}_{list_[count]}"))
                     count += 1
-            elif c == "E":
-                await query.answer("Creating captcha for you ❕")
+            if c == "E":
+                await query.answer("Creating captcha for you", show_alert=True)
                 data_ = emoji_()
                 _numbers = data_["answer"]
                 list_ = data_["list"]
@@ -441,8 +540,8 @@ async def cb_handler(bot, query):
                 for i in range(5):
                     markup[2].append(InlineKeyboardButton(f"{list_[count]}", callback_data=f"jv_{chat_id}_{user_id}_{list_[count]}"))
                     count += 1
-                db[int(user_id)] = {"answer": _numbers, "list": list_, "mistakes": 0, "captcha": "E", "total":tot, "msg_id": None}
-            c = db[query.from_user.id]['captcha']
+                LocalDB[int(user_id)] = {"answer": _numbers, "list": list_, "mistakes": 0, "captcha": "E", "total":tot, "msg_id": None}
+            c = LocalDB[query.from_user.id]['captcha']
             if c == "N":
                 typ_ = "number"
             if c == "E":
@@ -451,82 +550,95 @@ async def cb_handler(bot, query):
                             photo=data_["captcha"],
                             caption=f"{query.from_user.mention} Please click on each {typ_} button that is showen in image, {tot} mistacks are allowed.",
                             reply_markup=InlineKeyboardMarkup(markup))
-            db[query.from_user.id]['msg_id'] = msg.message_id
+            LocalDB[query.from_user.id]['msg_id'] = msg.message_id
             await query.message.delete()
     if cb_data.startswith("jv_"):
         chat_id = query.data.rsplit("_")[1]
         user_id = query.data.split("_")[2]
         _number = query.data.split("_")[3]
         if query.from_user.id != int(user_id):
-            await query.answer("This Message is Not For You!")
+            await query.answer("This Message is Not For You!", show_alert=True)
             return
-        if query.from_user.id not in db:
-            await query.answer("Try Again After Re-Join !")
+        if query.from_user.id not in LocalDB:
+            await query.answer("Try Again After Re-Join!", show_alert=True)
             return
-        c = db[query.from_user.id]['captcha']
-        tot = db[query.from_user.id]["total"]
+        c = LocalDB[query.from_user.id]['captcha']
+        tot = LocalDB[query.from_user.id]["total"]
         if c == "N":
             typ_ = "number"
         if c == "E":
             typ_ = "emoji"
-        if _number not in db[query.from_user.id]["answer"]:
-            db[query.from_user.id]["mistakes"] += 1
-            await query.answer(f"You pressed wrong {typ_}!")
-            n = tot - db[query.from_user.id]['mistakes']
+        if _number not in LocalDB[query.from_user.id]["answer"]:
+            LocalDB[query.from_user.id]["mistakes"] += 1
+            await query.answer(f"You pressed wrong {typ_}!", show_alert=True)
+            n = tot - LocalDB[query.from_user.id]['mistakes']
             if n == 0:
-                await query.message.delete(True)
-                await app.send_message(
-                    chat_id=chat_id,
-                    text=f"{query.from_user.mention}, you failed to solve the captcha!\n\n"
-                        f"You can try again after 3 minutes.",
-                    disable_web_page_preview=True
-                )                              
-                await asyncio.sleep(120)
-                del db[query.from_user.id]
+                await query.message.edit_caption(f"{query.from_user.mention}, you failed to solve the captcha!\n\n"
+                                               f"You can try again after 5 minutes.",
+                                               reply_markup=None)
+                await asyncio.sleep(300)
+                del LocalDB[query.from_user.id]
                 return
             markup = MakeCaptchaMarkup(query.message["reply_markup"]["inline_keyboard"], _number, "❌")
             await query.message.edit_caption(f"{query.from_user.mention}, select all the {typ_}s you see in the picture. "
                                            f"You are allowed only {n} mistakes.",
                                            reply_markup=InlineKeyboardMarkup(markup))
         else:
-            db[query.from_user.id]["answer"].remove(_number)
+            LocalDB[query.from_user.id]["answer"].remove(_number)
             markup = MakeCaptchaMarkup(query.message["reply_markup"]["inline_keyboard"], _number, "✅")
             await query.message.edit_reply_markup(reply_markup=InlineKeyboardMarkup(markup))
-            if not db[query.from_user.id]["answer"]:
-                await query.answer("Verification successful ✅")
-                del db[query.from_user.id]
+            if not LocalDB[query.from_user.id]["answer"]:
+                await query.answer("Verification successful ✅", show_alert=True)
+                del LocalDB[query.from_user.id]
                 await bot.unban_chat_member(chat_id=query.message.chat.id, user_id=query.from_user.id)
                 await query.message.delete(True)
+
+                #send welcome message
+                greatdb = Greetings(chat_id)
+                status = greatdb.get_welcome_status()
+                raw_text = greatdb.get_welcome_text()
+                if not raw_text:
+                  return
+                text, button = await parse_button(raw_text)
+                button = await build_keyboard(button)
+                button = InlineKeyboardMarkup(button) if button else None
+
+                if "{chatname}" in text:
+                   text = text.replace("{chatname}", query.message.chat.title)
+                if "{mention}" in text:
+                   text = text.replace("{mention}", (await app.get_users(user_id)).mention)
+                if "{id}" in text:
+                  text = text.replace("{id}", (await app.get_users(user_id)).id)
+                if "{username}" in text:
+                  text = text.replace("{username}", (await app.get_users(user_id)).username)
+                if "{first}" in text:
+                  text = text.replace("{first}", (await app.get_users(user_id)).first_name)     
+                if "{last}" in text:
+                  text = text.replace("{last}", (await app.get_users(user_id)).last_name) 
+                if "{count}" in text:
+                  text = text.replace("{count}", await app.get_chat_members_count(chat_id)) 
+                if status:
+                   await app.send_message(
+                         chat_id,
+                               text=text,
+        reply_markup=button,
+        disable_web_page_preview=True,
+    )
+                lol = db.get_current_cleanwelcome_id()
+                xx = db.get_current_cleanwelcome_settings()
+
+                if lol and xx:
+                  try:
+                     await app.delete_messages(chat_id, int(lol))
+                  except Exception as e:
+                     return await app.send_message(LOG_GROUP_ID,text= f"{e}")
+                else:
+                    return       
+
+
+
             await query.answer()
-    elif cb_data.startswith("done_"):
-        await query.answer("Don't click on same button again😑")
-    elif cb_data.startswith("wrong_"):
-        await query.answer("Don't click on same button again😑")
-
-
-
-def emoji_() -> dict:
-    maker = emoji_captcha().generate()
-    emojis_list = ['🃏', '🎤', '🎥', '🎨', '🎩', '🎬', '🎭', '🎮', '🎯', '🎱', '🎲', '🎷', '🎸', '🎹', '🎾', '🏀', '🏆', '🏈', '🏉', '🏐', '🏓', '💠', '💡', '💣', '💨', '💸', '💻', '💾', '💿', '📈', '📉', '📊', '📌', '📍', '📎', '📏', '📐', '📞', '📟', '📠', '📡', '📢', '📣', '📦', '📹', '📺', '📻', '📼', '📽', '🖥', '🖨', '🖲', '🗂', '🗃', '🗄', '🗜', '🗝', '🗡', '🚧', '🚨', '🛒', '🛠', '🛢', '🧀', '🌭', '🌮', '🌯', '🌺', '🌻', '🌼', '🌽', '🌾', '🌿', '🍊', '🍋', '🍌', '🍍', '🍎', '🍏', '🍚', '🍛', '🍜', '🍝', '🍞', '🍟', '🍪', '🍫', '🍬', '🍭', '🍮', '🍯', '🍺', '🍻', '🍼', '🍽', '🍾', '🍿', '🎊', '🎋', '🎍', '🎏', '🎚', '🎛', '🎞', '🐌', '🐍', '🐎', '🐚', '🐛', '🐝', '🐞', '🐟', '🐬', '🐭', '🐮', '🐯', '🐻', '🐼', '🐿', '👛', '👜', '👝', '👞', '👟', '💊', '💋', '💍', '💎', '🔋', '🔌', '🔪', '🔫', '🔬', '🔭', '🔮', '🕯', '🖊', '🖋', '🖌', '🖍', '🥚', '🥛', '🥜', '🥝', '🥞', '🦊', '🦋', '🦌', '🦍', '🦎', '🦏', '🌀', '🌂', '🌑', '🌕', '🌡', '🌤', '⛅️', '🌦', '🌧', '🌨', '🌩', '🌰', '🌱', '🌲', '🌳', '🌴', '🌵', '🌶', '🌷', '🌸', '🌹', '🍀', '🍁', '🍂', '🍃', '🍄', '🍅', '🍆', '🍇', '🍈', '🍉', '🍐', '🍑', '🍒', '🍓', '🍔', '🍕', '🍖', '🍗', '🍘', '🍙', '🍠', '🍡', '🍢', '🍣', '🍤', '🍥', '🍦', '🍧', '🍨', '🍩', '🍰', '🍱', '🍲', '🍴', '🍵', '🍶', '🍷', '🍸', '🍹', '🎀', '🎁', '🎂', '🎃', '🎄', '🎈', '🎉', '🎒', '🎓', '🎙', '🐀', '🐁', '🐂', '🐃', '🐄', '🐅', '🐆', '🐇', '🐕', '🐉', '🐓', '🐖', '🐗', '🐘', '🐙', '🐠', '🐡', '🐢', '🐣', '🐤', '🐥', '🐦', '🐧', '🐨', '🐩', '🐰', '🐱', '🐴', '🐵', '🐶', '🐷', '🐸', '🐹', '👁\u200d🗨', '👑', '👒', '👠', '👡', '👢', '💄', '💈', '🔗', '🔥', '🔦', '🔧', '🔨', '🔩', '🔰', '🔱', '🕰', '🕶', '🕹', '🖇', '🚀', '🤖', '🥀', '🥁', '🥂', '🥃', '🥐', '🥑', '🥒', '🥓', '🥔', '🥕', '🥖', '🥗', '🥘', '🥙', '🦀', '🦁', '🦂', '🦃', '🦄', '🦅', '🦆', '🦇', '🦈', '🦉', '🦐', '🦑', '⭐️', '⏰', '⏲', '⚠️', '⚡️', '⚰️', '⚽️', '⚾️', '⛄️', '⛅️', '⛈', '⛏', '⛓', '⌚️', '☎️', '⚜️', '✏️', '⌨️', '☁️', '☃️', '☄️', '☕️', '☘️', '☠️', '♨️', '⚒', '⚔️', '⚙️', '✈️', '✉️', '✒️']
-    r = random.random()
-    random.shuffle(emojis_list, lambda: r)
-    new_list = [] + maker["answer"]
-    for i in range(15):
-        if emojis_list[i] not in new_list:
-            new_list.append(emojis_list[i])
-    n_list = new_list[:15]
-    random.shuffle(n_list, lambda: r)
-    maker.update({"list": n_list})
-    return maker
-
-def number_() -> dict:
-    filename = ".text/lol.png"
-    image = ImageCaptcha(width = 280, height = 140, font_sizes=[80,83])
-    final_number = str(random.randint(0000, 9999))
-    image.write("   " + final_number, str(filename))
-    try:
-        data = {"answer":list(final_number),"captcha": filename}
-    except Exception as t_e:
-        print(t_e)
-        data = {"is_error": True, "error":t_e}
-    return data
+    if cb_data.startswith("done_"):
+        await query.answer("Dont click on same button again", show_alert=True)
+    if cb_data.startswith("wrong_"):
+        await query.answer("Dont click on same button again", show_alert=True)

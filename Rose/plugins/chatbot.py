@@ -2,7 +2,6 @@ import requests
 from pyrogram import filters
 from googletrans import Translator
 from Rose import *
-from Rose.core.decorators.permissions import adminsOnly
 from Rose.utils.filter_groups import *
 from lang import get_command
 from Rose.utils.lang import *
@@ -10,7 +9,8 @@ from Rose.utils.commands import *
 from Rose import *
 from Rose.mongo import chatb
 from Rose.plugins.antlangs import get_arg
-
+from Rose.utils.custom_filters import admin_filter
+from button import *
 
 tr = Translator()
 CBOT = get_command("CBOT")
@@ -21,8 +21,8 @@ CBOTA = get_command("CBOTA")
     filters.command("chatbot")
     & ~filters.edited
     & ~filters.private
+    & admin_filter
 )
-@adminsOnly("can_delete_messages")
 @language
 async def cbots(client, message: Message, _):
     group_id = str(message.chat.id)
@@ -85,14 +85,10 @@ async def szcbot(_, message: Message):
        await message.reply_text(msg.text)
 
 
-async def lunaQuery(query: str, user_id: int):
-    luna = await arq.luna(query, user_id)
-    return luna.result
 
 
 
-
-__MODULE__ = "Chat Bot"
+__MODULE__ = f"{Chat_Bot}"
 __HELP__ = """
 **Chatbot**
 

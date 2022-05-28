@@ -1,16 +1,12 @@
 from pyrogram import filters
-from pyrogram.errors import RPCError
-from pyrogram.types import CallbackQuery, Message
+from pyrogram.types import  Message
 from Rose import app
 from Rose.mongo.reportdb import Reporting
-from Rose.core.decorators.permissions import adminsOnly
-from Rose.utils.kbhelpers import rkb as ikb
-from Rose.utils.parser import mention_html
 from Rose.utils.commands import *
+from Rose.utils.custom_filters import *
+from button import *
 
-
-@app.on_message(command("reports") & ~filters.edited )
-@adminsOnly("can_delete_messages")
+@app.on_message(command("reports") & ~filters.edited & admin_filter)
 async def report_setting(_, m: Message):
     args = m.text.split()
     db = Reporting(m.chat.id)
@@ -55,100 +51,49 @@ Reports are currently `{(db.get_settings())}` in this chat.
 Tochange this setting, try this command again, with one of the following args: `yes/no/on/off`"""
         )
 
+
+
+    
 @app.on_message(
     (
-        filters.command("report")
-        | filters.command(["admins", "admin"], prefixes="@")
+            filters.command("report")
+            | filters.command(["admins", "admin"], prefixes="@")
     )
     & ~filters.edited
     & ~filters.private
 )
-async def report_watcher(c: app, m: Message):
-    if not m.from_user:
+async def report_user(_, message):
+    db = Reporting(message.chat.id)
+    if not db.get_settings():
         return
-
-    me = await c.get_me()
-    db = Reporting(m.chat.id)
-
-    if (m.chat and m.reply_to_message) and (db.get_settings()):
-        reported_msg_id = m.reply_to_message.message_id
-        reported_user = m.reply_to_message.from_user
-        chat_name = m.chat.title or m.chat.username
-        admin_list = await c.get_chat_members(m.chat.id, filter="administrators")
-
-        if reported_user.id == me.id:
-            await m.reply_text("Nice try.")
-            return
-
-        if m.chat.username:
-            msg = (
-                f"<b>⚠️ Report: </b>{m.chat.title}\n"
-                f"<b> • Report by:</b> {(await mention_html(m.from_user.first_name, m.from_user.id))} (<code>{m.from_user.id}</code>)\n"
-                f"<b> • Reported user:</b> {(await mention_html(reported_user.first_name, reported_user.id))} (<code>{reported_user.id}</code>)\n"
-            )
-
-        else:
-            msg = f"{(await mention_html(m.from_user.first_name, m.from_user.id))} is calling for admins in '{chat_name}'!\n"
-
-        link_chat_id = str(m.chat.id).replace("-100", "")
-        link = f"https://t.me/c/{link_chat_id}/{reported_msg_id}"  # message link
-
-        reply_markup = ikb(
-            [
-                [("📨 Message", link, "url")],
-                [
-                    (
-                        "⚠ Kick",
-                        f"report_{m.chat.id}=kick={reported_user.id}={reported_msg_id}",
-                    ),
-                    (
-                        "❗️ Ban",
-                        f"report_{m.chat.id}=ban={reported_user.id}={reported_msg_id}",
-                    ),
-                ],
-                [
-                    (
-                        "🗑 Delete Message",
-                        f"report_{m.chat.id}=del={reported_user.id}={reported_msg_id}",
-                    ),
-                ],
-            ],
-        )
- 
-        await m.reply_text(
-            (
-                f"{(await mention_html(m.from_user.first_name, m.from_user.id))} "
-                "reported the message to the admins."
-            ),
-            quote=True,
+    if not message.reply_to_message:
+        return await message.reply_text(
+            "Reply to a message to report that user."
         )
 
-        for admin in admin_list:
-            if (
-                admin.user.is_bot or admin.user.is_deleted
-            ):  # can't message bots or deleted accounts
-                continue
-            if Reporting(admin.user.id).get_settings():
-                try:
-                    await c.send_message(
-                        admin.user.id,
-                        msg,
-                        reply_markup=reply_markup,
-                        disable_web_page_preview=True,
-                    )
-                    try:
-                        await m.reply_to_message.forward(admin.user.id)
-                        if len(m.text.split()) > 1:
-                            await m.forward(admin.user.id)
-                    except Exception:
-                        pass
-                except Exception:
-                    pass
-                except RPCError:
-                  return
+    reply = message.reply_to_message
+    reply_id = reply.from_user.id if reply.from_user else reply.sender_chat.id
+    user_id = message.from_user.id if message.from_user else message.sender_chat.id
+    if reply_id == user_id:
+        return await message.reply_text("Why are you reporting yourself ?")
+
+    user_mention = reply.from_user.mention if reply.from_user else reply.sender_chat.title
+    text = f"Reported {user_mention} to admins!"
+    admin_data = await app.get_chat_members(
+        chat_id=message.chat.id, filter="administrators"
+    )  # will it giv floods ?
+    for admin in admin_data:
+        if admin.user.is_bot or admin.user.is_deleted:
+            # return bots or deleted admins
+            continue
+        text += f"[\u2063](tg://user?id={admin.user.id})"
+
+    await message.reply_to_message.reply_text(text)
 
 
-__MODULE__ = "Reports"
+
+
+__MODULE__ = f"{Reports}"
 __HELP__ = """
 We're all busy people who don't have time to monitor our groups 24/7. 
 But how do you react if someone in your group is spamming?

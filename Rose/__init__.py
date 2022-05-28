@@ -8,17 +8,17 @@ from pyrogram.types import Message
 from Python_ARQ import ARQ
 import asyncio
 from pyrogram import Client
-from config.config import *
+from config import *
 import pymongo
 
 
-SUPPORT_GROUP = 'https://t.me/slbotzone' #If you Don't Know Codes Any error Fixing method please Don't change this.... ):
+SUPPORT_GROUP = "https://t.me/slbotzone"
 SUDOERS = SUDO_USERS_ID
 LOG_GROUP_ID = LOG_GROUP_ID
 MOD_LOAD = []
 MOD_NOLOAD = []
 bot_start_time = time.time()
-DB_URI = BASE_DB #all of gm DATA
+DB_URI = BASE_DB 
 MONGO_URL = MONGO_URL
 OWNER_ID = 1467358214
 
@@ -33,10 +33,12 @@ db = mongo_client.wbb
 loop = asyncio.get_event_loop()
 aiohttpsession = ClientSession()
 arq = ARQ(ARQ_API_URL, ARQ_API_KEY, aiohttpsession)
+
 bot = Client("supun", bot_token=BOT_TOKEN, api_id=API_ID, api_hash=API_HASH)
 bot.start()
 app = Client("app2", bot_token=BOT_TOKEN, api_id=API_ID1, api_hash=API_HASH1)
 app.start()
+
 x = app.get_me()
 
 BOT_ID = int(BOT_TOKEN.split(":")[0])

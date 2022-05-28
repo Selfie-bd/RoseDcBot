@@ -3,7 +3,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
-#from main db
 connectdb = dbn['CONNECTION']   
 
 async def add_connection(group_id, user_id):

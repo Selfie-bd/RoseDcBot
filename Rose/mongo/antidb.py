@@ -10,7 +10,6 @@ anti = MongoClient(MONGO_DB_URI)[MONGO_DB]
 
 anitcdb = anti["ANTICHANNEL"]
 
-#channel
 async def is_antichnl(group_id):
     data = anitcdb.find_one({"group_id": group_id})
     if not data:

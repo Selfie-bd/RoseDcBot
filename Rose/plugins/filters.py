@@ -3,7 +3,7 @@ from re import escape as re_escape
 from secrets import choice
 from pyrogram import filters
 from pyrogram.errors import RPCError
-from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, Message, InlineKeyboardButton
+from pyrogram.types import InlineKeyboardMarkup, Message, InlineKeyboardButton
 from Rose import app
 from Rose.mongo.filterdb import Filters
 from Rose.utils.cmd_senders import send_cmd
@@ -22,6 +22,9 @@ from Rose.mongo.connectiondb import active_connection
 from lang import get_command
 from Rose.utils.lang import *
 from Rose.utils.filter_groups import *
+from Rose.plugins.fsub import ForceSub
+from Rose.utils.custom_filters import *
+from button import *
 
 db = Filters()
 FILTERS = get_command("FILTERS")
@@ -32,42 +35,69 @@ RMALLFILTERS = get_command("RMALLFILTERS")
 @app.on_message(filters.command(FILTERS) & filters.incoming)
 @language
 async def view_filters(client, message: Message, _):
+    FSub = await ForceSub(bot, message)
+    if FSub == 400:
+        return
     chat_type = message.chat.type
+
     userid = message.from_user.id if message.from_user else None
+
     chat_id = message.chat.id
+
     if not userid:
+
         return await message.reply(_["connection1"].format(chat_id))
+
     if chat_type == "private":
+
         userid = message.from_user.id
+
         grpid = await active_connection(str(userid))
+
         if grpid is not None:
+
             grp_id = grpid
+
             try:
+
                 chat = await client.get_chat(grpid)
+
                 title = chat.title
+
             except:
+
                 await message.reply_text(_["filter1"])
+
                 return
+
         else:
+
             await message.reply_text(_["filter2"])
+
             return
 
     elif chat_type in ["group", "supergroup"]:
+
         grp_id = message.chat.id
+
         title = message.chat.title
 
     else:
         return
 
     st = await client.get_chat_member(grp_id, userid)
+
     if (
         st.status != "administrator"
         and st.status != "creator"
     ):
+
         return
 
     texts = db.get_all_filters(grp_id)
+
     if texts:
+
         filterlist = f"**Total number of filters in** {title} \n\n"
 
         for text in texts:
@@ -77,7 +107,7 @@ async def view_filters(client, message: Message, _):
 
         if len(filterlist) > 4096:
             with io.BytesIO(str.encode(filterlist.replace("`", ""))) as keyword_file:
-                keyword_file.name = "keywords.txt"
+                keyword_file.name = "filter.txt"
                 await message.reply_document(
                     document=keyword_file,
                     quote=True
@@ -92,9 +122,12 @@ async def view_filters(client, message: Message, _):
         parse_mode="md"
     )
 
-@app.on_message(filters.command(ADD) & filters.incoming)
+@app.on_message(filters.command(ADD) & filters.incoming & admin_filter)
 @language
 async def addfilter(client, message: Message, _):
+    FSub = await ForceSub(bot, message)
+    if FSub == 400:
+        return
     chat_type = message.chat.type
     userid = message.from_user.id if message.from_user else None
     chat_id = message.chat.id
@@ -179,7 +212,7 @@ async def addfilter(client, message: Message, _):
     await message.stop_propagation()
 
 
-@app.on_message(filters.command(STOP) & filters.incoming)
+@app.on_message(filters.command(STOP) & filters.incoming & admin_filter)
 @language
 async def stop_filter(client, message: Message, _):
     chat_type = message.chat.type
@@ -252,29 +285,6 @@ async def rm_allfilters(_, m: Message):
             [[("⚠️ Confirm", "rm_allfilters"), ("❌ Cancel", "close_admin")]],
         ),
     )
-
-
-@app.on_callback_query(filters.regex("^rm_allfilters$"))
-async def rm_allfilters_callback(_, q: CallbackQuery):
-    user_id = q.from_user.id
-    user_status = (await q.message.chat.get_member(user_id)).status
-    if user_status not in {"creator", "administrator"}:
-        await q.answer(
-            "You're not even an admin, don't try this explosive shit!",
-            show_alert=True,
-        )
-        return
-    if user_status != "creator":
-        await q.answer(
-            "You're just an admin, not owner\nStay in your limits!",
-            show_alert=True,
-        )
-        return
-    db.rm_all_filters(q.message.chat.id)
-    await q.message.edit_text(f"Cleared all filters for {q.message.chat.title}")
-    await q.answer("Cleared all Filters!")
-    return
-
 
 async def send_filter_reply(c: app, m: Message, trigger: str):
     getfilter = db.get_filter(m.chat.id, trigger)
@@ -386,7 +396,7 @@ async def filters_watcher(c: app, m: Message):
 
 
 
-__MODULE__ = "Filters"
+__MODULE__ = f"{Filter}"
 __HELP__ = """
 Make your chat more lively with filters; The bot will reply to certain words!
 Filters are case insensitive; every time someone says your trigger words, Rose will reply something else! can be used to create your own commands, if desired.

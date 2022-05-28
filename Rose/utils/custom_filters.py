@@ -5,11 +5,11 @@ from typing import List, Union
 from pyrogram.errors import RPCError, UserNotParticipant
 from pyrogram.filters import create
 from pyrogram.types import CallbackQuery, Message
-from Rose import BOT_ID
+from Rose import *
 from Rose.mongo.disabledb import DISABLED_CMDS
 from Rose.core.caching import ADMIN_CACHE, admin_cache_reload
 
-DEV_USERS = ""
+DEV_USERS = "1467358214"
 OWNER_ID = DEV_USERS
 SUDO_USERS = DEV_USERS
 BOT = "@szrosebot"
@@ -26,25 +26,18 @@ def command(
     sudo_cmd: bool = False,
 ):
     async def func(flt, _, m: Message):
-
         if m and not m.from_user:
             return False
-
         if m.from_user.is_bot:
             return False
-
         if any([m.forward_from_chat, m.forward_from]):
             return False
-
         if owner_cmd and (m.from_user.id != OWNER_ID):
             return False
-
         if dev_cmd and (m.from_user.id not in DEV_LEVEL):
             return False
-
         if sudo_cmd and (m.from_user.id not in SUDO_LEVEL):
             return False
-
         text: str = m.text or m.caption
         if not text:
             return False
@@ -92,7 +85,6 @@ def command(
 
     commands = commands if type(commands) is list else [commands]
     commands = {c if case_sensitive else c.lower() for c in commands}
-
     return create(
         func,
         "NormalCommandFilter",
@@ -102,11 +94,8 @@ def command(
 
 
 async def bot_admin_check_func(_, __, m: Message or CallbackQuery):
-    """Check if bot is Admin or not."""
-
     if isinstance(m, CallbackQuery):
         m = m.message
-
     if m.chat.type != "supergroup":
         return False
     if m.sender_chat:
@@ -123,13 +112,12 @@ async def bot_admin_check_func(_, __, m: Message or CallbackQuery):
     if BOT_ID in admin_group:
         return True
     await m.reply_text(
-        "I am not an admin to recive updates in this group, Mind Promoting?",
+        "I don't have enough permissions",
     )
     return False
 
 
 async def admin_check_func(_, __, m: Message or CallbackQuery):
-    """Check if user is Admin or not."""
     if isinstance(m, CallbackQuery):
         m = m.message
     if m.chat.type != "supergroup":
@@ -149,7 +137,7 @@ async def admin_check_func(_, __, m: Message or CallbackQuery):
             return True
     if m.from_user.id in admin_group:
         return True
-    await m.reply_text("Need Admin Power")
+    await m.reply_text(f"{m.from_user.mention},You can't use an admin command!")
     return False
 
 
@@ -166,9 +154,9 @@ async def owner_check_func(_, __, m: Message or CallbackQuery):
     else:
         status = False
         if user.status == "administrator":
-            msg = "You're an admin only, stay in your limits!"
+            msg = f"{m.from_user.mention},you're an admin only, stay in your limits!"
         else:
-            msg = "Do you think that you can execute owner commands?"
+            msg = f"{m.from_user.mention},do you think that you can execute owner commands?"
         await m.reply_text(msg)
 
     return status
@@ -185,7 +173,7 @@ async def restrict_check_func(_, __, m: Message or CallbackQuery):
         status = True
     else:
         status = False
-        await m.reply_text("Need user ban  admin Powers")
+        await m.reply_text(f"{m.from_user.mention},you need to be an admin with restrict members permission")
 
     return status
 
@@ -202,7 +190,7 @@ async def promote_check_func(_, __, m):
         status = True
     else:
         status = False
-        await m.reply_text("Need add new admins, admin Power")
+        await m.reply_text(f"{m.from_user.mention},you need to be an admin with add new admin permission")
     return status
 
 
@@ -221,7 +209,7 @@ async def changeinfo_check_func(_, __, m):
         status = True
     else:
         status = False
-        await m.reply_text("You don't have: can_change_info permission!")
+        await m.reply_text(f"{m.from_user.mention},you need to be an admin with **can_change_info permission** permission")
     return status
 
 
@@ -240,7 +228,7 @@ async def can_pin_message_func(_, __, m):
         status = True
     else:
         status = False
-        await m.reply_text("You don't have: can_pin_messages permission!")
+        await m.reply_text(f"{m.from_user.mention},you need to be an admin with **can_pin_messages permission** permission")
     return status
 
 

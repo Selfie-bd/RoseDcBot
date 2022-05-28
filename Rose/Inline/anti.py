@@ -2,7 +2,6 @@ from Rose import bot as app
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton,InlineKeyboardMarkup
 
-
 supunm = """
 Delete messages containing characters from one of the following automatically
 - Arabic Language
@@ -14,13 +13,12 @@ Delete messages containing characters from one of the following automatically
 
 **Admin Commands:**
 
-- /antilang - viwe pannel
 - /antiarabic `[on | off]` -  anti-arab function
 - /antichinese `[on | off] `-  anti-chinese function
 - /antijapanese `[on | off]` -  anti-japanese function
 - /antirussian `[on | off]` -  anti-russian function
 - /antisinhala `[on | off]` -  anti-sinhala function
-- /antitamil `[on | off]` -  anti-tamilfunction
+- /antitamil `[on | off]` -  anti-tamil function
 
 **Note** : If admin send any containing characters in this lang when on  any function
            it will delete and user send 3 warn and after ban him    
@@ -56,10 +54,10 @@ async def commands_callbacc(_, CallbackQuery):
     
 
 fucks = """
-Anti-Flood system, the one who sends more than 10 messages in a row,
- gets muted for an hour (Except for admins).
- 
-- /flood [ENABLE|DISABLE] - Turn flood detection on or off
+Anti-Flood system, the one who sends more than 10 messages in a row, gets muted for an hour (Except for admins).
+
+**Admin commands:**
+- /antiflood[on/off]: Turn flood detection on or off
 """
 @app.on_callback_query(filters.regex("_fld"))
 async def commands_callbacc(_, CallbackQuery):
@@ -97,7 +95,6 @@ asuttons = InlineKeyboardMarkup(
         ], 
     ]
 )
-
 
 
 supunmascvs = """

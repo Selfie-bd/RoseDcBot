@@ -8,6 +8,8 @@ from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup,Message
 from Rose.utils.lang import *
 from lang import get_command
+from Rose.utils.custom_filters import admin_filter
+from button import *
 
 LANG = get_command("LANG")
 
@@ -26,15 +28,7 @@ keyboard = InlineKeyboardMarkup(
                 text="हिन्दी🇮🇳", callback_data="languages_hi"
             ),
             InlineKeyboardButton(
-                text="Tamil🇮🇳", callback_data="languages_ta"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="मराठी 🇮🇳", callback_data="languages_ma"
-            ),
-            InlineKeyboardButton(
-                text="తెలుగు 🇮🇳", callback_data="languages_ta"
+                text="Italiano🇮🇹", callback_data="languages_it"
             )
         ],
         [
@@ -52,7 +46,7 @@ keyboard = InlineKeyboardMarkup(
 )
 
 
-@app.on_message(filters.command(LANG))
+@app.on_message(filters.command(LANG) & admin_filter)
 @language
 async def langs_command(client, message: Message, _):
     userid = message.from_user.id if message.from_user else None
@@ -60,7 +54,7 @@ async def langs_command(client, message: Message, _):
     user = message.from_user.mention
     lang = await get_lang(message.chat.id)
     if chat_type == "private":
-      await message.reply_text( _["setting_1"].format(lang),
+      await message.reply_text( "Hello {}, I can speek many languages\n Select your language from bellow !".format(lang),
         reply_markup=keyboard,
      )
     elif chat_type in ["group", "supergroup"]:
@@ -73,7 +67,7 @@ async def langs_command(client, message: Message, _):
         ):
          return 
         try:   
-            await message.reply_text( _["setting_1"].format(user),
+            await message.reply_text( "Hello {}, I can speek many languages\n Select your language from bellow !".format(user),
         reply_markup=keyboard,
      )
         except Exception as e:
@@ -105,12 +99,12 @@ async def language_markup(_, CallbackQuery):
     ]
 )
 
-    return await CallbackQuery.message.edit(_["setting_2"].format(user),
+    return await CallbackQuery.message.edit("[🌎](https://crwd.in/szrosebot)Language was changed Successfully \n.Changed by {}".format(user),
         reply_markup=keyboard,
         disable_web_page_preview=True,
     ) 
 
-__MODULE__ = "Languages"
+__MODULE__ = f"{Languages}"
 __HELP__ = """
 Not every group speaks fluent english; some groups would rather have Rose respond in their own language.
 
@@ -139,15 +133,7 @@ __helpbtns__ = (
                 text="हिन्दी🇮🇳", callback_data="languages_hi"
             ),
             InlineKeyboardButton(
-                text="Tamil🇮🇳", callback_data="languages_ta"
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="मराठी 🇮🇳", callback_data="languages_ma"
-            ),
-            InlineKeyboardButton(
-                text="తెలుగు 🇮🇳", callback_data="languages_ta"
+                text="Italiano🇮🇹", callback_data="languages_it"
             )
         ],
         [
@@ -155,6 +141,11 @@ __helpbtns__ = (
                 text="🌎 Help us with translation",
                 url=f"https://crwd.in/szrosebot",
             )
+        ],
+        [
+            InlineKeyboardButton(
+                text="Close ✖️", callback_data="close_data"
+            ),
         ],
     ]
 )

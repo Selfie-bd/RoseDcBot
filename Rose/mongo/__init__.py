@@ -20,14 +20,11 @@ taggeddb = db.tagallert
 lockdb = db.lockdb1
 botlock =db.botlock
 
-
-#my method
 myapp = pymongo.MongoClient(MONGO_URL)
 dbx = myapp["AsyncIOMotorCursor"]
 
 federation = dbx['federation']
 nm = dbx['Nightmode']
-#end
 
 try:
     client = MongoClient(DB_URI)

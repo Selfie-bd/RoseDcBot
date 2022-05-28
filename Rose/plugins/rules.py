@@ -1,10 +1,11 @@
 from pyrogram import filters
-from pyrogram.types import CallbackQuery, Message
+from pyrogram.types import Message
 from Rose import *
 from Rose.mongo.rulesdb import Rules
 from Rose.utils.custom_filters import admin_filter, command
 from Rose.utils.kbhelpers import rkb as ikb
 from Rose.utils.lang import *
+from button import *
 
 @app.on_message(command("rules") & filters.group)
 @language
@@ -106,7 +107,7 @@ async def clear_rules(client, message: Message, _):
     return
 
 
-__MODULE__ = "Rules"
+__MODULE__ = f"{Rule}"
 __HELP__ = """
 Every chat works with different rules; this module will help make those rules clearer!
 

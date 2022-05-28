@@ -2,8 +2,6 @@ from pyrogram.types import Message
 from Rose import *
 from Rose.utils.filter_groups import *
 from Rose.utils.filter_groups import *
-from pyrogram.errors import (ChatAdminRequired, ChatWriteForbidden,
-                             UserAdminInvalid)
 from os import remove         
 from Rose.utils.commands import *
 from Rose.utils.lang import *
@@ -104,94 +102,7 @@ def get_file_id(message):
         if not message.video.thumbs:
             return
         return message.video.thumbs[0].file_id
-
-async def get_user_info(message):
-    user = message.from_user
-    user_ = f"{('@' + user.username) if user.username else user.mention} [`{user.id}`]"
-    data = f"""
-**User Info :**
- » **Username:** {user_}
- » ** User id** : {user.id}
-"""
-    return data
-
-
-async def delete_get_info(message: Message):
-    try:
-        await message.delete()
-    except (ChatAdminRequired, UserAdminInvalid):
-        try:
-            return 
-        except ChatWriteForbidden:
-            return 
-    return await get_user_info(message)
-
-
-async def delete_nsfw_notify(
-    message: Message,
-    result,
-):
-    info = await delete_get_info(message)
-    if not info:
-        return
-    msg = f"""
-`Pron Detected`
-==========================
-• **User:** {message.from_user.mention} [`{message.from_user.id}`]
-• **Neutral:** `{result.neutral} %`
-• **Porn:** `{result.porn} %`
-• **Adult:** `{result.sexy} %`
-• **Hentai:** `{result.hentai} %`
-• **Drawings:** `{result.drawings} %`
-==========================
-"""
-    await app.send_message(message.chat.id, text=msg)
-
-
-
-async def delete_spam_notify(
-    message: Message,
-    spam_probability: float,
-):
-    info = await delete_get_info(message)
-    if not info:
-        return
-    msg = f"""
-{message.from_user.mention} is sending a spam message. 
-Action: Message has been deleted
-
-• ||{content}||
-• **Spam Probability:** `{spam_probability}` %
-"""
-    content = message.text or message.caption
-    content = content[:400] + "..."
-
-    await app.send_message(
-        message.chat.id, text=msg
-    )
-
-
-async def kick_user_notify(message: Message):
-    try:
-        await app.ban_chat_member(
-            message.chat.id, message.from_user.id
-        )
-    except (ChatAdminRequired, UserAdminInvalid):
-        try:
-            return await message.reply_text(
-                "I don't have enough permission to ban "
-                + "this user who is Blacklisted and Flagged as Spammer."
-            )
-        except ChatWriteForbidden:
-            return 
-    info = await get_user_info(message)
-    msg = f"""
-**Ban Event❗** : `Spam alert`
-==========================
-{info}
-==========================
-"""
-    await app.send_message(message.chat.id, msg)        
+  
 
 async def admins(chat_id: int):
     return [ member.user.id

@@ -6,6 +6,8 @@ from Rose import *
 from lang import get_command
 from Rose.utils.commands import *
 from Rose.utils.lang import *
+from button import *
+
 
 CONNECT = get_command("CONNECT")
 DISCONNECT = get_command("DISCONNECT")
@@ -157,7 +159,7 @@ __Select a chat to connect:__
         await message.reply_text(_["connection13"])
 
 
-__MODULE__ = "Connections"
+__MODULE__ = f"{Connections}"
 __HELP__ = """
 
 Sometimes, you just want to add some notes and filters to a group chat, but you don't want everyone to see; This is where connections come in...

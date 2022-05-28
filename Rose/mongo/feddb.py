@@ -1,9 +1,5 @@
 from .import federation
 
-
-
-
-
 def new_fed_db(new_fed, fed_id, created_time, owner_id):
     GetFed = federation.find_one(
         {
@@ -66,7 +62,7 @@ def join_fed_db(chat_id, chat_title, fed_id):
             }
         }
     )
-#new
+
 def leave_fed_db(chat_id, chat_title, fed_id):
     federation.update(
         {

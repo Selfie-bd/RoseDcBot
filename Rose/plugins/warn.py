@@ -7,12 +7,12 @@ from pyrogram.types import (
 from Rose.core.keyboard import ikb
 from Rose import app, BOT_ID
 from Rose.mongo.warnsdb import Warns, WarnSettings
-from Rose.core.decorators.permissions import adminsOnly
 from Rose.utils.caching import ADMIN_CACHE, admin_cache_reload
 from Rose.utils.custom_filters import admin_filter, command, restrict_filter
 from Rose.utils.extract_user import extract_user
 from Rose.utils.parser import mention_html
 from Rose.utils.lang import *
+from button import *
 
 @app.on_message(command(["warn", "swarn", "dwarn"]) & restrict_filter)
 @language
@@ -111,8 +111,7 @@ async def reset_warn(client, message: Message, _):
     await message.reply_text(_["warn5"].format((await mention_html(user_first_name, user_id))))
     return
 
-@app.on_message(filters.command("resetallwarns") )
-@adminsOnly("can_change_info")
+@app.on_message(filters.command("resetallwarns") & restrict_filter)
 @language
 async def clear_warns(client, message: Message, _):     
     warn_db = WarnSettings(message.chat.id)
@@ -241,7 +240,7 @@ async def warnlimit(client, message: Message, _):
     await message.reply_text(_["warn18"].format(warnlimit_var))
     return
 
-__MODULE__ = "Warnings"
+__MODULE__ = f"{Warning}"
 __HELP__ = """
 Keep your members in check with warnings; stop them getting out of control!
 If you're looking for automated warnings, go read about the blocklist module.

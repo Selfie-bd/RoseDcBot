@@ -24,3 +24,6 @@ cleanner = 23
 welcomes = 24
 newwelcome = 25
 fban = 26
+black = 27
+prontify = 28
+leftwelcome = 29

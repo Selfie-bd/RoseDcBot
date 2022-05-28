@@ -6,7 +6,7 @@ DISABLED_CMDS = {}
 
 
 class Disabling(MongoDB):
-    db_name = "disabled"
+    db_name = "disaled"
 
     def __init__(self, chat_id: int) -> None:
         super().__init__(self.db_name)
@@ -15,15 +15,12 @@ class Disabling(MongoDB):
 
     def check_cmd_status(self, cmd: str):
         with INSERTION_LOCK:
-            # cmds = self.chat_info["commands"]
             cmds = DISABLED_CMDS[self.chat_id]["commands"]
-            # return bool(cmd in cmds)
             return bool(cmd in cmds)
 
     def add_disable(self, cmd: str):
         with INSERTION_LOCK:
             if not self.check_cmd_status(cmd):
-                # DISABLED_CMDS[self.chat_id]["commands"].append(cmd)
                 return self.update(
                     {"_id": self.chat_id},
                     {

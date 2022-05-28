@@ -1,7 +1,7 @@
 from secrets import choice
 from pyrogram import filters
 from pyrogram.errors import RPCError
-from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, Message
+from pyrogram.types import InlineKeyboardMarkup, Message
 from Rose import app
 from Rose.mongo.notesdb import Notes, NotesSettings
 from Rose.utils.cmd_senders import send_cmd
@@ -15,6 +15,7 @@ from Rose.utils.string import (
 )
 from Rose.mongo.connectiondb import active_connection
 from lang import get_command
+from button import *
 
 SAVE = get_command("SAVE")
 GET = get_command("GET")
@@ -427,7 +428,7 @@ async def clear_allnote(_, m: Message):
 
 
 
-__MODULE__ = "Notes"
+__MODULE__ = f"{Note}"
 __HELP__ = """
 Save data for future users with notes!
 Notes are great to save random tidbits of information; a phone number, a nice gif, a funny picture - anything!
