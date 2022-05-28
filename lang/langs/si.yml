@@ -1,7 +1,7 @@
 ---
 name: ඉංග්‍රීසි
 #menu - menu.py
-menu: "රොස් නිර්මාණය කරන ලද්දේ **අගෝස්තු 10, 2021**. අපි දැනට **WilliamButcherBot** සහ **Alita_Robot** ප්ලගින සංවර්ධනය කර නඩත්තු කරමින් සිටින්නේ, **Pyrogram** පුස්තකාලය පමණක් භාවිතා කරමිනි.\n\n• **මැවුම්කරු** : [supun](https://t.me/supunma)\n• **භාෂාව** : [python 3](https://www.python.org/)\n• **දත්ත සමුදාය** : [Mongo db](https://cloud.mongodb.com/)\n• **සේවාදායකය** : [Heroku](https://heroku.com/)\n• **බිල්ඩ් අනුවාදය** : `1.0.9`\n\n@Theszrosebot"
+menu: "රොස් නිර්මාණය කරන ලද්දේ **අගෝස්තු 10, 2021**. අපි දැනට **WilliamButcherBot** සහ **Alita_Robot** ප්ලගින සංවර්ධනය කර නඩත්තු කරමින් සිටින්නේ, **Pyrogram** පුස්තකාලය පමණක් භාවිතා කරමිනි.\n\n• **මැවුම්කරු** : [supun](https://t.me/supunma)\n• **භාෂාව** : [python 3](https://www.python.org/)\n• **දත්ත සමුදාය** : [Mongo db](https://cloud.mongodb.com/)\n• **සේවාදායකය** : [Heroku](https://heroku.com/)\n• **බිල්ඩ් අනුවාදය** : `2.0`\n\n @Theszrosebot"
 back: "« ආපසු"
 #main - main.py
 main1: " හෙලෝ ! මම {}\n\nඔබේ උපකාර සඳහා ටෙලිග්‍රැම් සමූහ කළමනාකරණ‍යට නිර්මාණය කරන ලද බොට් කෙනෙකි.\nඔබට ඔබේ කණ්ඩායම් ආරක්ෂා කර ඔබේ සියලු අවශ්‍යතා  ඉටු කරගැනිමට සුදුසු වේ."

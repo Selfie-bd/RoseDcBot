@@ -1,7 +1,7 @@
 name : English
 
 #menu - menu.py
-menu : "Rose was created on **August 10, 2021**. We are currently developing and maintaining the **WilliamButcherBot**  and **Alita_Robot** plugin, using only the **Pyrogram** libarry.\n\n• **creator** : [supun](https://t.me/supunma)\n• **Language** : [python 3](https://www.python.org/)\n• **Database** : [Mongo db](https://cloud.mongodb.com/)\n• **Server** : [Heroku](https://heroku.com/)\n• **Build Version** : `1.0.9`\n\n@Theszrosebot"
+menu : "Rose was created on **August 10, 2021**. We are currently developing and maintaining the **WilliamButcherBot**  and **Alita_Robot** plugin, using only the **Pyrogram** libarry.\n\n• **creator** : [supun](https://t.me/supunma)\n• **Language** : [python 3](https://www.python.org/)\n• **Database** : [Mongo db](https://cloud.mongodb.com/)\n• **Server** : [Heroku](https://heroku.com/)\n• **Build Version** : `2.0`\n\n@Theszrosebot"
 back : "« Back"
 
 #main - main.py
@@ -103,7 +103,7 @@ ban2 : "Cannot find user to kick."
 ban3 : "I can't find that user."
 ban4 : "I can't kick myself, i can leave if you want."
 ban6 : "You Wanna Kick The Elevated One?"
-ban7 : "I can't kick an admin, You know the rules, so do i"
+ban7 : "I can't kick an admin, You know the rules"
 ban8 : "I can't kick myself, i can leave if you want."
 ban9 : "I can't find that user."
 ban10 : "I can't ban myself, i can leave if you want."
