@@ -1,7 +1,7 @@
 name : English
 
 #menu - menu.py
-menu : "Rose was created on **August 10, 2021**. \nWe are currently developing and maintaining **WilliamButcherBot**  and **Alita_Robot** plugins, using only the **Pyrogram** library.\n\n• **creator** : [supun](https://t.me/supunma)\n• **Language** : [python 3](https://www.python.org/)\n• **Database** : [Mongo db](https://cloud.mongodb.com/)\n• **Server** : [Heroku](https://heroku.com/)\n• **Build Version** : `2.0`\n\n@Theszrosebot"
+menu : "Rose was created on **August 10, 2021**. \nWe are currently developing and maintaining plugins of **WilliamButcherBot**  and **Alita_Robot**, using only the **Pyrogram** library.\n\n• **creator** : [supun](https://t.me/supunma)\n• **Language** : [python 3](https://www.python.org/)\n• **Database** : [Mongo db](https://cloud.mongodb.com/)\n• **Server** : [Heroku](https://heroku.com/)\n• **Build Version** : `2.0`\n\n@Theszrosebot"
 back : "« Back"
 
 #main - main.py
