@@ -16,13 +16,13 @@
 
 ## What is Rose for ?
 
-Have you ever received Telegram in your group **spam, adder, flood,** people who send link, channel message, promoteing, arabic.?Rose Bot is the automatic moderator that manages your Telegram group and punishes malicious users automatically for you.
+Have you ever received Telegram in your group **spam, adder, flood,** people who send link, channel message, promoting, arabic ? Rose Bot is the automatic moderator that manages your Telegram group and punishes malicious users automatically for you.
 
 ## How does She work?
 
-Just add Rose Bot to your group as an administrator and configure it with the command /help. It will be ready to protect the your group from spam, flood and attacks.You can set banned words so that the ban or mute of a user in the group when sent.
-There is an anti-porn filter to be enabled to automatically delete and punish those who send content pornographic in your group.
-You can adjust all kinds of punishments including message deletion, user ban, user mute etc.There is a captcha check to prevent the entry of VoIP users who automatically spam your group.You can set <b> filters|note|rules|welcome </b> message also for your group.
+Just add Rose Bot to your group as an administrator and configure it with the command /help. It will be ready to protect the your group from spam, flood and attacks. You can set banned words so that the ban or mute of a user in the group when sent.
+There is an anti-porn filter to be enabled to automatically delete and punish those who send pornographic content in your group.
+You can adjust all kinds of punishments including message deletion, user ban, user mute etc. There is a captcha check to prevent the entry of VoIP users who automatically spam your group. You can set <b> filters|note|rules|welcome </b> message also for your group.
 
 ## Main Rose functions
 ### PROTECTION 
@@ -47,7 +47,7 @@ You can adjust all kinds of punishments including message deletion, user ban, us
    * **Connection Mode** - This allows you to connect to a chat's database, and add things to it without the chat knowing about it! For obvious reasons, you need to be an admin to add things; but any member can view your data. (banned/kicked users can't!)
    * **Admin Commands** - Make it easy to promote and demote users with the admin module!
    * **Restrict** - This module allows you to do that easily, by exposing some common actions, so everyone will see!
-   * **Federations** - Ah, group management. It's all fun and games, until you start getting spammers in, and you need to ban them. Then you need to start banning more, and more, and it gets painful.But then you have multiple groups, and you don't want these spammers in any of your groups - how can you deal? Do you have to ban them manually, in all your groups?No more! With federations, you can make a ban in one chat overlap to all your other chats.You can even appoint federation admins, so that your trustworthiest admins can ban across all the chats that you want to protect.
+   * **Federations** - Ah, group management. It's all fun and games, until you start getting spammers in, and you need to ban them. Then you need to start banning more, and more, and it gets painful. But then you have multiple groups, and you don't want these spammers in any of your groups - how can you deal? Do you have to ban them manually, in all your groups? No more! With federations, you can make a ban in one chat overlap to all your other chats.You can even appoint federation admins, so that your trustworthiest admins can ban across all the chats that you want to protect.
    * **Reports** - An easy way to call all admins.
    * **Approval** - Sometimes, you might trust a user not to send unwanted content.
 Maybe not enough to make them admin, but you might be ok with locks, blocklists, and antiflood not applying to them.
