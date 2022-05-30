@@ -1,15 +1,15 @@
 name : English
 
 #menu - menu.py
-menu : "Rose was created on **August 10, 2021**. We are currently developing and maintaining the **WilliamButcherBot**  and **Alita_Robot** plugin, using only the **Pyrogram** libarry.\n\n• **creator** : [supun](https://t.me/supunma)\n• **Language** : [python 3](https://www.python.org/)\n• **Database** : [Mongo db](https://cloud.mongodb.com/)\n• **Server** : [Heroku](https://heroku.com/)\n• **Build Version** : `2.0`\n\n@Theszrosebot"
+menu : "Rose was created on **August 10, 2021**. \nWe are currently developing and maintaining plugins of **WilliamButcherBot**  and **Alita_Robot**, using only the **Pyrogram** library.\n\n• **creator** : [supun](https://t.me/supunma)\n• **Language** : [python 3](https://www.python.org/)\n• **Database** : [Mongo db](https://cloud.mongodb.com/)\n• **Server** : [Heroku](https://heroku.com/)\n• **Build Version** : `2.0`\n\n@Theszrosebot"
 back : "« Back"
 
 #main - main.py
-main1 : " Hello There ! I'm {}  \n\nAn  advanced telegram Group management Bot For help \nYou Protect Your Groups & Suit For All Your Needs."
-main2 : "**PM me if you have any questions how to use me!**"
+main1 : " Hello There ! I'm {}  \n\nAn  advanced telegram Group management Bot to manage your groups and to protect your groups & for all your needs."
+main2 : "**PM me if you have any questions on how to use me!**"
 main3 : "Click here"
 main4 : "Click on the below button to get help about {}"
-main5 : "**Welcome to help menu**\n\nI'm a group management bot with some useful features.\nYou can choose an option below, by clicking a button.\nIf you have any bugs or questions on how to use me, \nhave a look at my [Docs](https://szsupunma.gitbook.io/rose-bot/), or head to @szteambots.\n\n**All commands can be used with the following: / **"
+main5 : "**Welcome to help menu**\n\nI'm a group management bot with some useful features.\nclick on the buttons below to open help menu about that module \nIf you have found bugs or have questions on how to use me, \nhave a look at my [Docs](https://szsupunma.gitbook.io/rose-bot/), or head to @szteambots.\n\n**All commands can be used with / **"
 main6 : "Here is the help for **{}**"
 
 #plugin - admin.py
@@ -300,28 +300,28 @@ welcome16 : "Turned off!"
 welcome17 : "what are you trying to do ??"
 
 #plugin - warn.py
-warn1 : "I can't warn nothing! Tell me user whom I should warn"
+warn1 : "Bruh how am I supposed to warn someone who doesn't exists?? \nReply to some user's message or give me username or I'd to warn them."
 warn2 : "why would I warn myself?"
 warn3 : "Reply to a message to delete it and ban the user!"
 warn4 : "This user is admin in this chat, I can't warn them!"
 warn5 : "Warnings have been reset for {}"
-warn6 : "There are no warns to clear "
-warn7 : "Are you sure you want to remove all the warns of all the users in this chat?\nThis action cannot be undone."
+warn6 : "There are no warns to clear"
+warn7 : "Are you sure you want to remove all the warns of all the users in this chat?\nThis action is irreversible!!!"
 warn8 : "This user is admin in this chat, they don't have any warns!"
-warn9 : "This user has no warns!"
-warn10 : "I can't remove warns of nothing! Tell me user whose warn should be removed!"
+warn9 : "This user has no warnings!"
+warn10 : Bruh how am I supposed to remove warn for someone who doesn't even exists?? \nReply to some user's message or give me username or I'd to unwarn them."
 warn11 : "This user is admin in this chat, they don't have any warns!"
 warn12 : "This user has no warnings!"
 warn13 : "Warn Mode has been set to: {}"
 warn14 : "This chats current Warn Mode is: {}"
 warn15 : "Please choose a valid warn mode!\n\nValid options are: <code>ban</code>,<code>kick</code>,<code>mute</code>"
-warn16 : "Warn Limit can only be a number!"
+warn16 : "Warn Limit can be integers only!!"
 warn17 : "Warn Limit has been set to: {}"
-warn18 : "This chats current Warn Limit is: {}"
+warn18 : "Current warn limit for this chat is {}"
 
 #plugin - mute-v2.py
 mute1 : "I can't mute myself !"
-mute2 : "Cannot find user to mute !"
+mute2 : "Cannot find a user to mute !"
 mute3 : "This user is admin in this chat, I can't Mute them!"
 mute4 : "Read /help again!!"
 mute5 : "You haven't specified a time to mute this user for!"
@@ -335,16 +335,16 @@ tagg5 : "❌ **Tag alerts removed for you.**"
 tagg6 : "**Tag alerts already disabled for you.**"
 
 #plugin rules.py
-rules1 : "The Admins for this group have not setup rules!"
-rules2 : "Click on the below button to see this group rules!"
+rules1 : "Admins of this group haven't set rules yet. \nBut !! This doesn't means that this chat is lawless."
+rules2 : "Click on the below button to get rules of this chat."
 rules3 : "Provide some text to set as rules !!"
 rules4 : "Successfully set rules for this group."
 rules5 : "Please check help on how to use this this command."
 
 #plugin flod.py
 flood1 : "Usage: /flood [ENABLE|DISABLE]"
-flood2 : "I will Mute  if user sends more than 10 messages in a row (5 min only) "
-flood3 : "Disabled ! No mute  if user sends more than 10 messages in a row "
+flood2 : "I will Mute all the users sending more than 10 messages in a row for 5 minutes only"
+flood3 : "Ok disabled now I'll not mute users who sends 10 messages in a row."
 flood4 : "Unknown Suffix, Use /flood [ENABLE|DISABLE]"
 
 #plugin filters
@@ -354,12 +354,12 @@ filter3 : "Command Incomplete :( Use Help menu again"
 filter4 : "Only 100 filters and 50 aliases are allowed per chat!\nTo add more filters, remove the existing ones."
 filter5 : "Please read help section for how to save a filter!"
 filter6 : "Filter <code>{}</code> already exists!"
-filter7 : "Cannot save a filter which starts with '<' or '>'"
-filter8 : "There is no text in here!"
+filter7 : "Cannot save a filter which starts with \'<\' or \'>\'"
+filter8 : "There's no text in the message!!"
 filter9 : "Please provide keyword for this filter reply with!\nEnclose filter in <code>double quotes</code>"
 filter10 : "Please provide data for this filter reply with!"
 filter11 : "What should I stop replying to?"
 filter12 : "No filters in this chat"
 filter13 : "Okay, I'll stop replying to that filter"
-filter14 : "That's not a filter - Click: /filters to get currently active filters."
+filter14 : "That's not a filter - Click on: /filters to get list of currently active filters in this chat."
 
