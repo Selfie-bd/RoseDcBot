@@ -121,7 +121,7 @@ async def demote(_, message: Message):
     if not user_id:
         return await message.reply_text("I can't find that user.")
     if user_id == BOT_ID:
-        return await message.reply_text("I can't demote myself.") 
+        return await message.reply_text("I can't demote myself.")
     await message.chat.promote_member(
         user_id=user_id,
         can_change_info=False,
@@ -135,6 +135,7 @@ async def demote(_, message: Message):
     )
     umention = (await app.get_users(user_id)).mention
     await message.reply_text(f"Demoted! {umention}")
+
 
 
 
