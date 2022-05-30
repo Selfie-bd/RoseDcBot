@@ -51,16 +51,6 @@ async def start_bot():
         else:
             all_module += "•≫ Successfully imported:{:<15}.py".format(i)
         j += 1           
-    print(f"{all_module}")
-    print("""
- _____________________________________________   
-|                                             |  
-|          Deployed Successfully              |  
-|         (C) 2021-2022 by @szteambots        | 
-|          Greetings from supun  :)           |
-|_____________________________________________|  
-                                                                                               
-    """)
     restart_data = await clean_restart_stage()
     try:
         if restart_data:
@@ -74,7 +64,16 @@ async def start_bot():
             await app.send_message(LOG_GROUP_ID, "Bot started!")
     except Exception:
         pass
-
+    print(f"{all_module}")
+    print("""
+ _____________________________________________   
+|                                             |  
+|          Deployed Successfully              |  
+|         (C) 2021-2022 by @szteambots        | 
+|          Greetings from supun  :)           |
+|_____________________________________________|  
+                                                                                               
+    """)
     await idle()
 
     await aiohttpsession.close()
