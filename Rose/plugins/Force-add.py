@@ -1,6 +1,6 @@
 #Created By https://github.com/szsupunma
 #testing
-""" from Rose import app
+from Rose import app
 from Rose.plugins.nightmode import dbx
 from Rose.utils.custom_filters import *
 from Rose.utils.commands import *
@@ -57,4 +57,3 @@ async def customize_adder(_, message: Message):
             }
         )
         await rose.edit(f"**MemberBooster set Successfully in {message.chat.title} chat**\nThe value of Forced add was set to `{value}`")
-       """

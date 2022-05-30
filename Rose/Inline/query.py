@@ -6,7 +6,7 @@ from Rose.plugins.captcha import *
 from Rose.mongo.connectiondb import *
 from Rose.plugins.lang import *
 from Rose.mongo.approvedb import Approve
-from Rose.plugins.admin import *
+from Rose.plugins.lock import *
 from Rose.plugins.warn import *
 from EmojiCaptcha import Captcha as emoji_captcha
 import random
@@ -157,7 +157,7 @@ async def cb_handler(bot, query):
             "You're just an admin, not owner\nStay in your limits!",
         )
          return
-        Rules(query.message.chat.id).clear_rules()
+        Rule(query.message.chat.id).clear_rules()
         await query.message.edit_text("Successfully cleared rules for this group!")
         await query.answer("Successfully cleared rules for this group!") 
     if "clear_warns" in query.data: 
@@ -623,9 +623,10 @@ async def cb_handler(bot, query):
                                text=text,
         reply_markup=button,
         disable_web_page_preview=True,
-    )
-                lol = db.get_current_cleanwelcome_id()
-                xx = db.get_current_cleanwelcome_settings()
+    )           
+                greatdb = Greetings(chat_id)       
+                lol = greatdb.get_current_cleanwelcome_id()
+                xx = greatdb.get_current_cleanwelcome_settings()
 
                 if lol and xx:
                   try:
