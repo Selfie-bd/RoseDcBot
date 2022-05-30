@@ -7,7 +7,7 @@ from Rose.utils.lang import *
 from Rose.utils.filter_groups import *
 from typing import Union
 from Rose.plugins.protection import *
-from Rose.mongo.approvedb import Approve as approved_users
+from Rose.mongo.approvedb import Approve 
 from Rose.mongo.locksdb import *
 from Rose import *
 from Rose import BOT_ID, app as pbot, MONGO_URL as  MONGO_DB_URI
@@ -306,13 +306,11 @@ async def audiolock(client, message):
             return
     except:
         pass
-    chat_id = message.chat.id
-    sender = message.from_user.id
-    iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return         
+        if message.from_user.id == int(c):
+            return            
     try:
         await message.delete()
     except:
@@ -343,10 +341,11 @@ async def videolock(client, message):
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return        
+        if message.from_user.id == int(c):
+            return           
     try:
         await message.delete()
     except:
@@ -375,10 +374,11 @@ async def doclock(client, message):
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return         
+        if message.from_user.id == int(c):
+            return            
     try:
         await message.delete()
     except:
@@ -403,14 +403,14 @@ async def emaeil(client, message):
             return
     except:
         pass
-    approved_userss = approved_users.find({})
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return     
+        if message.from_user.id == int(c):
+            return        
     texct = message.text
  
     texct = str(texct)
@@ -458,10 +458,11 @@ async def fwd(client, message):
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return       
+        if message.from_user.id == int(c):
+            return          
     try:
         await message.delete()
     except:
@@ -491,10 +492,11 @@ async def slock(client, message):
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return         
+        if message.from_user.id == int(c):
+            return            
     try:
         await message.delete()
     except:
@@ -523,10 +525,11 @@ async def aalock(client, message):
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return        
+        if message.from_user.id == int(c):
+            return           
     try:
         await message.delete()
     except:
@@ -556,10 +559,11 @@ async def aggalock(client, message):
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return          
+        if message.from_user.id == int(c):
+            return             
     try:
         await message.delete()
     except:
@@ -590,10 +594,11 @@ async def alggsjalock(client, message):
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return         
+        if message.from_user.id == int(c):
+            return            
     try:
         await message.delete()
     except Exception as e:
@@ -623,10 +628,11 @@ async def alggalgossck(client, message):
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return          
+        if message.from_user.id == int(c):
+            return             
     try:
         await message.delete()
     except:
@@ -654,10 +660,11 @@ async def alggalock(client, message):
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return        
+        if message.from_user.id == int(c):
+            return           
     try:
         await message.delete()
     except:
@@ -686,10 +693,11 @@ async def alggalololck(client, message):
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return     
+        if message.from_user.id == int(c):
+            return        
     try:
         await message.delete()
     except:
@@ -717,10 +725,11 @@ async def alggalololck(client, message):
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return         
+        if message.from_user.id == int(c):
+            return            
     try:
         await message.delete()
     except:
@@ -748,10 +757,11 @@ async def alggalololck(client, message):
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return         
+        if message.from_user.id == int(c):
+            return            
     try:
         await message.delete()
     except:
@@ -781,10 +791,11 @@ async def reply(client, message):
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return       
+        if message.from_user.id == int(c):
+            return          
     try:
         await message.delete()
     except:
@@ -809,14 +820,14 @@ async def messages(client, message):
             return
     except:
         pass
-    approved_userss = approved_users.find({})
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return     
+        if message.from_user.id == int(c):
+            return        
     
     
     try:
@@ -845,14 +856,14 @@ async def cmt11(client, message):
             return
     except:
         pass
-    approved_userss = approved_users.find({})
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return 
+        if message.from_user.id == int(c):
+            return    
     try:
         await client.get_chat_member(message.chat.id, user_id)
     except UserNotParticipant:
@@ -884,10 +895,11 @@ async def edt(client, message):
         pass
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return      
+        if message.from_user.id == int(c):
+            return     
     try:
         try:
          await message.delete()
@@ -927,14 +939,14 @@ async def mnsn(client, message):
             return 
     except:
         pass
-    approved_userss = approved_users.find({})
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return 
+        if message.from_user.id == int(c):
+            return    
     
 
     try:
@@ -961,14 +973,14 @@ async def inln(client, message):
             return
     except:
         pass
-    approved_userss = approved_users.find({})
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return     
+        if message.from_user.id == int(c):
+            return        
     
     
     try:
@@ -995,14 +1007,14 @@ async def poll(client, message):
             return
     except:
         pass
-    approved_userss = approved_users.find({})
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return     
+        if message.from_user.id == int(c):
+            return        
     
     
     try:
@@ -1030,14 +1042,14 @@ async def diced(client, message):
             return
     except:
         pass
-    approved_userss = approved_users.find({})
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return       
+        if message.from_user.id == int(c):
+            return          
     
     
     try:
@@ -1065,14 +1077,14 @@ async def button(client, message):
             return
     except:
         pass
-    approved_userss = approved_users.find({})
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return       
+        if message.from_user.id == int(c):
+            return          
     
     
     try:
@@ -1099,14 +1111,14 @@ async def mediwa(client, message):
             return
     except:
         pass
-    approved_userss = approved_users.find({})
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return       
+        if message.from_user.id == int(c):
+            return          
     
     
     try:
@@ -1133,14 +1145,14 @@ async def mediwa(client, message):
             return
     except:
         pass
-    approved_userss = approved_users.find({})
     chat_id = message.chat.id
     sender = message.from_user.id
     iid = sender
-    chats = approved_users.find({})
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
     for c in chats:
-        if message.chat.id == c["id"] and iid == c["user"]:
-            return       
+        if message.from_user.id == int(c):
+            return          
     
     
     try:
