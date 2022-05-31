@@ -589,10 +589,6 @@ async def cb_handler(bot, query):
             await query.message.edit_reply_markup(reply_markup=InlineKeyboardMarkup(markup))
             if not LocalDB[query.from_user.id]["answer"]:
                 await query.answer("Verification successful ✅", show_alert=True)
-                del LocalDB[query.from_user.id]
-                await bot.unban_chat_member(chat_id=query.message.chat.id, user_id=query.from_user.id)
-                await query.message.delete(True)
-
                 #send welcome message
                 greatdb = Greetings(chat_id)
                 status = greatdb.get_welcome_status()
@@ -621,23 +617,12 @@ async def cb_handler(bot, query):
                    await app.send_message(
                          chat_id,
                                text=text,
-        reply_markup=button,
-        disable_web_page_preview=True,
-    )           
-                greatdb = Greetings(chat_id)       
-                lol = greatdb.get_current_cleanwelcome_id()
-                xx = greatdb.get_current_cleanwelcome_settings()
-
-                if lol and xx:
-                  try:
-                     await app.delete_messages(chat_id, int(lol))
-                  except Exception as e:
-                     return await app.send_message(LOG_GROUP_ID,text= f"{e}")
-                else:
-                    return       
-
-
-
+                               reply_markup=button,
+                               disable_web_page_preview=True,
+                     )           
+                del LocalDB[query.from_user.id]
+                await bot.unban_chat_member(chat_id=query.message.chat.id, user_id=query.from_user.id)
+                await query.message.delete(True)
             await query.answer()
     if cb_data.startswith("done_"):
         await query.answer("Dont click on same button again", show_alert=True)
