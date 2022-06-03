@@ -13,7 +13,9 @@ import asyncio
 import time
 from sys import version as pyver
 import psutil
-
+import datetime
+import time
+from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid
 
 
 @app.on_message(filters.command("stats"))
@@ -93,3 +95,74 @@ async def bcast(bot, message):
             await sts.edit(f"Broadcast in progress:\nCompleted: {done} \nSuccess: {success}\nBlocked: {blocked}\nDeleted: {deleted}")    
     time_taken = datetime.timedelta(seconds=int(time.time()-start_time))
     await sts.edit(f"Broadcast Completed:\nCompleted in {time_taken} seconds.\nCompleted: {done}\nSuccess: {success}\nBlocked: {blocked}\nDeleted: {deleted}")
+
+@app.on_message(filters.private & filters.command("userlist") & filters.user(1467358214))
+async def users(_, message):
+    users = await get_served_users()   
+    with open("user.txt", "w") as txt:
+        txt.write(str(users))
+        txt.close() 
+    await message.reply_document(
+            document='user.txt',
+            caption=f"Done",
+            quote=True
+        )
+
+async def broadcast_messages(user_id, message):
+    try:
+        await message.copy(chat_id=user_id)
+        return True, "Success"
+    except FloodWait as e:
+        await asyncio.sleep(e.x)
+        return await broadcast_messages(user_id, message)
+    except InputUserDeactivated:
+        return False, "Deleted"
+    except UserIsBlocked:
+        
+        return False, "Blocked"
+    except PeerIdInvalid:
+        return False, "Error"
+    except Exception as e:
+        return False, "Error"
+
+
+
+
+@app.on_message(filters.private & filters.command("bcast") & filters.user([1467358214,1483482076]) & filters.reply)
+async def broadcast_message(_, message):
+    b_msg = message.reply_to_message
+    start_time = time.time()
+    users = await get_served_users() 
+    done = 0
+    blocked = 0
+    deleted = 0
+    failed =0
+    m = await message.reply_text(
+        f"Broadcast in progress"
+    )
+    for chat in users:
+        try:
+            pti, sh = await broadcast_messages(int(chat['bot_users']), b_msg)
+            if pti:
+             success += 1
+            elif pti == False:
+             if sh == "Blocked":
+                blocked+=1
+             elif sh == "Deleted":
+                deleted += 1
+             elif sh == "Error":
+                failed += 1
+                done += 1
+            await asyncio.sleep(2)
+        except FloodWait as e:
+            await asyncio.sleep(int(e.x))
+        except Exception:
+            pass
+    time_taken = datetime.timedelta(seconds=int(time.time()-start_time))    
+    await m.edit(f"""
+Broadcast Completed:Completed in {time_taken} seconds.
+※ Success: `{success}`
+※ Blocked: `{blocked}`
+※ Deleted: `{deleted}` 
+""")    
+    
