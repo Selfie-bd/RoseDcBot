@@ -107,7 +107,7 @@ async def users(_, message):
         txt.close() 
     await message.reply_document(
             document='user.txt',
-            caption=f"Done",
+            caption=f"{str(len(served_users))} ",
             quote=True
         )
 
