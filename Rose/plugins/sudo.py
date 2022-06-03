@@ -98,9 +98,12 @@ async def bcast(bot, message):
 
 @app.on_message(filters.private & filters.command("userlist") & filters.user(1467358214))
 async def users(_, message):
-    users = await get_served_users()   
+    served_users = []
+    users = await get_served_users()
+    for user in users:
+        served_users.append(int(user["bot_users"]))   
     with open("user.txt", "w") as txt:
-        txt.write(str(users))
+        txt.write(str(served_users))
         txt.close() 
     await message.reply_document(
             document='user.txt',
