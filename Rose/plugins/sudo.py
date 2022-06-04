@@ -134,7 +134,7 @@ async def users(_, message):
         served_users.append(int(user["bot_users"]))   
     for user in users:
         served_users.append(int(user["chat_id"]))   
-    with open("user.txt", "w") as txt:
+    with open("all.txt", "w") as txt:
         txt.write(str(served_users))
         txt.close() 
     await message.reply_document(
