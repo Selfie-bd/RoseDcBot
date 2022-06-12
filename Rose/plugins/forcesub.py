@@ -13,6 +13,7 @@ from pyrogram.errors.exceptions.bad_request_400 import (
 from pyrogram.types import ChatPermissions, InlineKeyboardButton, InlineKeyboardMarkup
 from Rose.mongo.fsubdb import fsubdatabase
 from Rose.utils.filter_groups import fsub
+from Rose.utils.custom_filters import admin_filter
 
 #unmute button
 @app.on_callback_query(filters.regex("_unmuteme"))
@@ -63,17 +64,15 @@ async def unmuteme(_, query):
                 show_alert=True,
             )     
 
-@app.on_message(filters.text & ~filters.private & ~filters.edited, group=fsub)
+@app.on_message(filters.text & ~filters.private & ~filters.edited & ~admin_filter , group=fsub)
 def check_member(app, message):
     chat_id = message.chat.id
     user_id = message.from_user.id
     chat_db = fsubdatabase.current(chat_id)
-    if chat_db:
+    if not chat_db:
+        return
+    else:
         try:
-            if app.get_chat_member(chat_id, user_id).status not in (
-                "administrator",
-                "creator",
-            ):
                 channel = chat_db
                 try:
                     app.get_chat_member(channel, user_id)
