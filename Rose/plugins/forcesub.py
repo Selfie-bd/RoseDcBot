@@ -66,7 +66,7 @@ async def unmuteme(_, query):
 @app.on_message(filters.text & ~filters.private & ~filters.edited, group=fsub)
 def check_member(app, message):
     chat_id = message.chat.id
-    chat_db = fsubdatabase.current(chat_id)
+    chat_db = fsubdatabase.current({message.chat.id})
     if chat_db:
         try:
             user_id = message.from_user.id
