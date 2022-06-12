@@ -30,7 +30,7 @@ def get_readable_time(seconds: int) -> str:
     return ping_time
 
 @app.on_message(filters.command("afk"))
-async def add_afk(_, message):
+async def add_afk(message,_):
     if message.sender_chat:
         return
     user_id = message.from_user.id
