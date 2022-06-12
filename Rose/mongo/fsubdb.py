@@ -11,8 +11,8 @@ class fsubdatabase(MongoDB):
     def current(self,chat_id:int):
         with INSERTION_LOCK:
             fucked = self.find_one({chat_id:"channel"})
-            if fucked:
-                return fucked
+            if not fucked:
+                return 
             
     def disapprove(self, chat_id: int):
         with INSERTION_LOCK:
