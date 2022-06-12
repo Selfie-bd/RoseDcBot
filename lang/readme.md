@@ -6,6 +6,10 @@
 | Code | Language | Contributor |
 |-|-------|-------|
 | en | English | Thanks to [Theszrosebot](https://t.me/Theszrosebot)
+| te | telugu  | Thanks to [SANTHOSH PODILI](https://t.me/Santhoshpodili2)
+| si | Sinhala  | Thanks to [My Friends](https://t.me/szteambots)
+| it | italy  | Thanks to [Me](https://t.me/szteambots)
+| hi | hindi  | Thanks to [My Friend](https://t.me/szteambots)
 
 
 ### We need your help in translating Rose Bot. How to Contribute?
