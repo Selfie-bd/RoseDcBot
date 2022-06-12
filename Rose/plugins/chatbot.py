@@ -46,6 +46,11 @@ async def cbots(client, message: Message, _):
         return await sex.edit(_["chatb1"])
     await sex.edit(f"✅ **Successfully** `{'Enabled' if lower_args=='on' else 'Disabled'}` ** Chat bot**")
 
+
+
+
+
+
 @app.on_message(
     filters.text
     & filters.reply
@@ -57,6 +62,7 @@ async def cbots(client, message: Message, _):
     group=cbot)
 async def szcbot(_, message: Message):
     chat_id = message.chat.id
+    user_id = message.from_user.id
     if not message.reply_to_message:
         return
     if not message.reply_to_message.from_user:
@@ -71,12 +77,12 @@ async def szcbot(_, message: Message):
        lang = tr.translate(message.text).src
        trtoen = (message.text if lang=="en" else tr.translate(message.text, dest="en").text).replace(" ", "%20")
        text = trtoen.replace(" ", "%20") if len(message.text) < 2 else trtoen
-       affiliateplus = requests.get(f"https://api.affiliateplus.xyz/api/chatbot?message={text}&botname=Rose&ownername=@supunma&user=1")
+       affiliateplus = requests.get(f"https://api.affiliateplus.xyz/api/chatbot?message={text}&botname=Rose&ownername=supunma&user={user_id}")
        textmsg = (affiliateplus.json()["message"])
        if "Affiliate+" in textmsg:
-        textmsg = textmsg.replace("Affiliate+", "Rose bot created by @szteambots")
+        textmsg = textmsg.replace("Affiliate+", "Rose bot")
        if "Lebyy_Dev" in textmsg:
-        textmsg = textmsg.replace("Lebyy_Dev", "Supun Maduranga Owner of @szteambots")
+        textmsg = textmsg.replace("Lebyy_Dev", "Supun Maduranga ")
        if "God Brando" in textmsg:
         textmsg = textmsg.replace("God Brando", f"{message.from_user.first_name}")
        if "seeker" in textmsg:

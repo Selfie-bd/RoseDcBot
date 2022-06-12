@@ -15,11 +15,12 @@ restartdb = db.restart_stage
 chatb = db.chatbot
 kukib = db.kuki
 lunab = db.luna
-nightmod =db.nightmode2
+nightmod = db.nightmode2
 taggeddb = db.tagallert
 lockdb = db.lockdb1
-botlock =db.botlock
-
+botlock = db.botlock
+afkdb = db.afk
+fsubdb = db.fsub
 myapp = pymongo.MongoClient(MONGO_URL)
 dbx = myapp["AsyncIOMotorCursor"]
 
