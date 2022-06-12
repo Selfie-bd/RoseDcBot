@@ -31,8 +31,6 @@ def get_readable_time(seconds: int) -> str:
 
 @app.on_message(filters.command("afk"))
 async def add_afk(_, message: Message):
-    if _.sender_chat:
-        return
     user_id = message.from_user.id
     verifier, reasondb = await is_afk(user_id)
     if verifier:
