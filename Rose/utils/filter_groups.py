@@ -28,5 +28,3 @@ black = 27
 prontify = 28
 leftwelcome = 29
 adder = 30
-afk = 31
-fsub = 32
