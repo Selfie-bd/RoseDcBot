@@ -80,9 +80,3 @@ async def add_served_user(user_id: int):
     if is_served:
         return
     return await usersdb.insert_one({"bot_users": user_id})
-
-async def remove_served_user(user_id: int):
-    is_served = await is_served_user(user_id)
-    if not is_served:
-        return
-    return await usersdb.delete_one({"bot_users": user_id})

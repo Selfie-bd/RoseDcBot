@@ -33,11 +33,6 @@ keyboard = InlineKeyboardMarkup(
         ],
         [
             InlineKeyboardButton(
-                text="తెలుగు🇮🇳", callback_data="languages_te"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
                 text="🌎 Help us with translation",
                 url=f"https://crwd.in/szrosebot",
             )
@@ -140,11 +135,6 @@ __helpbtns__ = (
             InlineKeyboardButton(
                 text="Italiano🇮🇹", callback_data="languages_it"
             )
-        ],
-        [
-            InlineKeyboardButton(
-                text="తెలుగు🇮🇳", callback_data="languages_te"
-            ),
         ],
         [
             InlineKeyboardButton(

@@ -42,29 +42,30 @@ async def start_bot():
                 HELPABLE[
                     imported_module.__MODULE__.replace(" ", "_").lower()
                 ] = imported_module
-        all_module = ""
-        j = 1
-        for i in ALL_MODULES:
-          if j == 1:
+    all_module = ""
+    j = 1
+    for i in ALL_MODULES:
+        if j == 1:
             all_module += "•≫ Successfully imported:{:<15}.py\n".format(i)
             j = 0
-          else:
+        else:
             all_module += "•≫ Successfully imported:{:<15}.py".format(i)
-          j += 1           
-        restart_data = await clean_restart_stage()
-        try:
-          if restart_data:
+        j += 1           
+    restart_data = await clean_restart_stage()
+    try:
+        if restart_data:
             await app.edit_message_text(
                 restart_data["chat_id"],
                 restart_data["message_id"],
                 "**Restarted Successfully**",
             )
-          else:
+
+        else:
             await app.send_message(LOG_GROUP_ID, "Bot started!")
-        except Exception:
-          pass
-        print(f"{all_module}")
-        print("""
+    except Exception:
+        pass
+    print(f"{all_module}")
+    print("""
  _____________________________________________   
 |                                             |  
 |          Deployed Successfully              |  
@@ -73,11 +74,12 @@ async def start_bot():
 |_____________________________________________|  
                                                                                                
     """)
-        await idle()
-        await aiohttpsession.close()
-        await app.stop()
-        for task in asyncio.all_tasks():
-         task.cancel() 
+    await idle()
+
+    await aiohttpsession.close()
+    await app.stop()
+    for task in asyncio.all_tasks():
+        task.cancel() 
 
 
 
