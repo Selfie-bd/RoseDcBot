@@ -69,34 +69,6 @@ async def gstats(_, message):
     await response.edit_text(smex)
     return
 
-@app.on_message(filters.private & filters.command("userlist") & filters.user(1467358214))
-async def users(_, message):
-    served_users = []
-    users = await get_served_users()
-    for user in users:
-        served_users.append(int(user["bot_users"]))   
-    with open("user.txt", "w") as txt:
-        txt.write(str(served_users))
-        txt.close() 
-    await message.reply_document(
-            document='user.txt',
-            caption=f"{str(len(served_users))} ",
-            quote=True
-        )
-@app.on_message(filters.private & filters.command("grouplist") & filters.user(1467358214))
-async def users(_, message):
-    served_users = []
-    users = await get_served_chats()
-    for user in users:
-        served_users.append(int(user["chat_id"]))   
-    with open("user.txt", "w") as txt:
-        txt.write(str(served_users))
-        txt.close() 
-    await message.reply_document(
-            document='user.txt',
-            caption=f"{str(len(served_users))} ",
-            quote=True
-        )
 
 #user
 async def broadcast_user(user_id, message):
