@@ -33,7 +33,15 @@ keyboard = InlineKeyboardMarkup(
         ],
         [
             InlineKeyboardButton(
-                text="🌎 Help us with translation",
+                text="తెలుగు", callback_data="languages_ta"
+            ),
+            InlineKeyboardButton(
+                text="Indonesia", callback_data="languages_id"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="translation",
                 url=f"https://crwd.in/szrosebot",
             )
         ],
