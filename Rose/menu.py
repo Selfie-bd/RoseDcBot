@@ -37,38 +37,32 @@ keyboard =InlineKeyboardMarkup(
     [
         [
             InlineKeyboardButton(
-                text="English", callback_data="languages_en"
+                text="🇱🇷 English", callback_data="languages_en"
             ),
             InlineKeyboardButton(
-                text="සිංහල", callback_data="languages_si"
+                text="🇱🇰 සිංහල", callback_data="languages_si"
             )
         ],
         [
             InlineKeyboardButton(
-                text="हिन्दी", callback_data="languages_hi"
+                text="🇮🇳 हिन्दी", callback_data="languages_hi"
             ),
             InlineKeyboardButton(
-                text="Italiano", callback_data="languages_it"
+                text="🇮🇹 Italiano", callback_data="languages_it"
             )
         ],
         [
             InlineKeyboardButton(
-                text="తెలుగు", callback_data="languages_ta"
+                text="🇮🇳 తెలుగు", callback_data="languages_ta"
             ),
             InlineKeyboardButton(
-                text="Indonesia", callback_data="languages_id"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="عربي", callback_data="languages_ar"
+                text="🇮🇩 Indonesia", callback_data="languages_id"
             ),
         ],
         [
             InlineKeyboardButton(
-                text="translation",
-                url=f"https://crwd.in/szrosebot",
-            )
+                text="🇦🇪 عربي", callback_data="languages_ar"
+            ),
         ],
         [
             InlineKeyboardButton("« Back", callback_data='startcq')
@@ -82,7 +76,7 @@ async def commands_callbacc(client, CallbackQuery, _):
     user = CallbackQuery.message.from_user.mention
     await app.send_message(
         CallbackQuery.message.chat.id,
-        text= _["setting_1"].format(user),
+        text= "The list of available languages:",
         reply_markup=keyboard,
         disable_web_page_preview=True,
     )

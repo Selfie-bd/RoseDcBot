@@ -17,42 +17,31 @@ keyboard = InlineKeyboardMarkup(
     [
         [
             InlineKeyboardButton(
-                text="English", callback_data="languages_en"
+                text="🇱🇷 English", callback_data="languages_en"
             ),
             InlineKeyboardButton(
-                text="සිංහල", callback_data="languages_si"
+                text="🇱🇰 සිංහල", callback_data="languages_si"
             )
         ],
         [
             InlineKeyboardButton(
-                text="हिन्दी", callback_data="languages_hi"
+                text="🇮🇳 हिन्दी", callback_data="languages_hi"
             ),
             InlineKeyboardButton(
-                text="Italiano", callback_data="languages_it"
+                text="🇮🇹 Italiano", callback_data="languages_it"
             )
         ],
         [
             InlineKeyboardButton(
-                text="తెలుగు", callback_data="languages_ta"
+                text="🇮🇳 తెలుగు", callback_data="languages_ta"
             ),
             InlineKeyboardButton(
-                text="Indonesia", callback_data="languages_id"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="عربي", callback_data="languages_ar"
+                text="🇮🇩 Indonesia", callback_data="languages_id"
             ),
         ],
         [
             InlineKeyboardButton(
-                text="translation",
-                url=f"https://crwd.in/szrosebot",
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="Close ✖️", callback_data="close_data"
+                text="🇦🇪 عربي", callback_data="languages_ar"
             ),
         ],
     ]
@@ -67,7 +56,7 @@ async def langs_command(client, message: Message, _):
     user = message.from_user.mention
     lang = await get_lang(message.chat.id)
     if chat_type == "private":
-      await message.reply_text( "Hello {}, I can speek many languages\n Select your language from bellow !".format(lang),
+      await message.reply_text("The list of available languages:".format(lang),
         reply_markup=keyboard,
      )
     elif chat_type in ["group", "supergroup"]:
@@ -80,7 +69,7 @@ async def langs_command(client, message: Message, _):
         ):
          return 
         try:   
-            await message.reply_text( "Hello {}, I can speek many languages\n Select your language from bellow !".format(user),
+            await message.reply_text( "The list of available languages:".format(user),
         reply_markup=keyboard,
      )
         except Exception as e:
@@ -102,20 +91,7 @@ async def language_markup(_, CallbackQuery):
         return await CallbackQuery.answer(
             "Failed to change language or Language under update.")
     await set_lang(CallbackQuery.message.chat.id, langauge)
-    keyboard = InlineKeyboardMarkup(
-    [
-        [
-            InlineKeyboardButton(
-                text="Close ✖️", callback_data="close_data"
-            ),
-        ],
-    ]
-)
-
-    return await CallbackQuery.message.edit("[🌎](https://crwd.in/szrosebot)Language was changed Successfully \n.Changed by {}".format(user),
-        reply_markup=keyboard,
-        disable_web_page_preview=True,
-    ) 
+    return await CallbackQuery.message.delete()
 
 __MODULE__ = f"{Languages}"
 __HELP__ = """
@@ -123,54 +99,38 @@ Not every group speaks fluent english; some groups would rather have Rose respon
 
 This is where translations come in; you can change the language of most replies to be in the language of your choice!
 
-**Available languages are:**
-- हिन्दी🇮🇳
-- English🇬🇧
-- සිංහල🇱🇰
-
 **Admin commands:**
 - /lang : Set your preferred language.
 """
 __helpbtns__ = (
     [
-                [
+        [
             InlineKeyboardButton(
-                text="English", callback_data="languages_en"
+                text="🇱🇷 English", callback_data="languages_en"
             ),
             InlineKeyboardButton(
-                text="සිංහල", callback_data="languages_si"
+                text="🇱🇰 සිංහල", callback_data="languages_si"
             )
         ],
         [
             InlineKeyboardButton(
-                text="हिन्दी", callback_data="languages_hi"
+                text="🇮🇳 हिन्दी", callback_data="languages_hi"
             ),
             InlineKeyboardButton(
-                text="Italiano", callback_data="languages_it"
+                text="🇮🇹 Italiano", callback_data="languages_it"
             )
         ],
         [
             InlineKeyboardButton(
-                text="తెలుగు", callback_data="languages_ta"
+                text="🇮🇳 తెలుగు", callback_data="languages_ta"
             ),
             InlineKeyboardButton(
-                text="Indonesia", callback_data="languages_id"
-            ),
-        ],
-        [
-            InlineKeyboardButton(
-                text="عربي", callback_data="languages_ar"
+                text="🇮🇩 Indonesia", callback_data="languages_id"
             ),
         ],
         [
             InlineKeyboardButton(
-                text="translation",
-                url=f"https://crwd.in/szrosebot",
-            )
-        ],
-        [
-            InlineKeyboardButton(
-                text="Close ✖️", callback_data="close_data"
+                text="🇦🇪 عربي", callback_data="languages_ar"
             ),
         ],
     ]
