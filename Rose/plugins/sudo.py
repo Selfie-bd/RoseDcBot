@@ -66,11 +66,11 @@ async def gstats(_, message):
 
 async def broadcast_user(user_id, message):
     try:
-        await message.copy(chat_id=1467358214)
+        await message.copy(chat_id=user_id)
         return True, "Success"
     except FloodWait as e:
         await asyncio.sleep(e.x)
-        return await broadcast_user(1467358214, message)
+        return await broadcast_user(user_id, message)
     except InputUserDeactivated:
         await remove_served_user(int(user_id))
         return False, "Deleted"
@@ -85,11 +85,11 @@ async def broadcast_user(user_id, message):
 #chats
 async def broadcast_chat(user_id, message):
     try:
-        await message.copy(chat_id=1467358214)
+        await message.copy(chat_id=user_id)
         return True, "Success"
     except FloodWait as e:
         await asyncio.sleep(e.x)
-        return await broadcast_chat(1467358214, message)
+        return await broadcast_chat(user_id, message)
     except PeerIdInvalid:
         await remove_served_chat(int(user_id))
         return False, "Error"

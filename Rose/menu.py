@@ -61,6 +61,11 @@ keyboard =InlineKeyboardMarkup(
         ],
         [
             InlineKeyboardButton(
+                text="عربي", callback_data="languages_ar"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
                 text="translation",
                 url=f"https://crwd.in/szrosebot",
             )

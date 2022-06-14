@@ -17,18 +17,18 @@ keyboard = InlineKeyboardMarkup(
     [
         [
             InlineKeyboardButton(
-                text="English🇬🇧", callback_data="languages_en"
+                text="English", callback_data="languages_en"
             ),
             InlineKeyboardButton(
-                text="සිංහල🇱🇰", callback_data="languages_si"
+                text="සිංහල", callback_data="languages_si"
             )
         ],
         [
             InlineKeyboardButton(
-                text="हिन्दी🇮🇳", callback_data="languages_hi"
+                text="हिन्दी", callback_data="languages_hi"
             ),
             InlineKeyboardButton(
-                text="Italiano🇮🇹", callback_data="languages_it"
+                text="Italiano", callback_data="languages_it"
             )
         ],
         [
@@ -37,6 +37,11 @@ keyboard = InlineKeyboardMarkup(
             ),
             InlineKeyboardButton(
                 text="Indonesia", callback_data="languages_id"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="عربي", callback_data="languages_ar"
             ),
         ],
         [
@@ -128,25 +133,38 @@ This is where translations come in; you can change the language of most replies 
 """
 __helpbtns__ = (
     [
-        [
+                [
             InlineKeyboardButton(
-                text="English🇬🇧", callback_data="languages_en"
+                text="English", callback_data="languages_en"
             ),
             InlineKeyboardButton(
-                text="සිංහල🇱🇰", callback_data="languages_si"
+                text="සිංහල", callback_data="languages_si"
             )
         ],
         [
             InlineKeyboardButton(
-                text="हिन्दी🇮🇳", callback_data="languages_hi"
+                text="हिन्दी", callback_data="languages_hi"
             ),
             InlineKeyboardButton(
-                text="Italiano🇮🇹", callback_data="languages_it"
+                text="Italiano", callback_data="languages_it"
             )
         ],
         [
             InlineKeyboardButton(
-                text="🌎 Help us with translation",
+                text="తెలుగు", callback_data="languages_ta"
+            ),
+            InlineKeyboardButton(
+                text="Indonesia", callback_data="languages_id"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="عربي", callback_data="languages_ar"
+            ),
+        ],
+        [
+            InlineKeyboardButton(
+                text="translation",
                 url=f"https://crwd.in/szrosebot",
             )
         ],
