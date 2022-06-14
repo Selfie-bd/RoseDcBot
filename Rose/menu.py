@@ -8,27 +8,27 @@ fbuttons = InlineKeyboardMarkup(
         [
         [
             InlineKeyboardButton(
-                text="👥Support Group", url="https://t.me/szrosesupport"
+                text="👥sᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ", url="https://t.me/szrosesupport"
             ),
             InlineKeyboardButton(
-                text="👤News Channel", url="https://t.me/Theszrosebot"
+                text="👤ɴᴇᴡs ᴄʜᴀɴɴᴇʟ", url="https://t.me/Theszrosebot"
             )
         ], 
         [
             InlineKeyboardButton(
-                text="⚒ Source Code", url="https://github.com/szsupunma/sz-rosebot"
+                text="⚒ sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ", url="https://github.com/szsupunma/sz-rosebot"
             ),
             InlineKeyboardButton(
-                text="📓 Documentation", url="https://szsupunma.gitbook.io/rose-bot"
+                text="📁 ᴅᴏᴄᴜᴍᴇɴᴛᴀᴛɪᴏɴ", url="https://szsupunma.gitbook.io/rose-bot"
             )
         ], 
         [
             InlineKeyboardButton(
-                text="🖥 How To Deploy Me", url="https://szsupunma.gitbook.io/rose-bot"
+                text="🖥 ʜᴏᴡ ᴛᴏ ᴅᴇᴘʟᴏʏ ᴍᴇ", url="https://szsupunma.gitbook.io/rose-bot"
             )
         ], 
         [
-            InlineKeyboardButton("« Back", callback_data='startcq')
+            InlineKeyboardButton("◁ʙᴀᴄᴋ", callback_data='startcq')
         ]
         ]
 )
@@ -68,7 +68,7 @@ keyboard =InlineKeyboardMarkup(
             ), 
         ],
         [
-            InlineKeyboardButton("« Back", callback_data='startcq')
+            InlineKeyboardButton("◁ʙᴀᴄᴋ", callback_data='startcq')
         ]
     ]
 )
@@ -79,7 +79,7 @@ async def commands_callbacc(client, CallbackQuery, _):
     user = CallbackQuery.message.from_user.mention
     await app.send_message(
         CallbackQuery.message.chat.id,
-        text= "The list of available languages:",
+        text= "ᴛʜᴇ ʟɪsᴛ ᴏғ ᴀᴠᴀɪʟᴀʙʟᴇ ʟᴀɴɢᴜᴀɢᴇs:",
         reply_markup=keyboard,
         disable_web_page_preview=True,
     )
