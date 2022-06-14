@@ -142,11 +142,6 @@ __helpbtns__ = (
             ), 
             InlineKeyboardButton(
                 text="🇮🇳 മലയാളം", callback_data="languages_ml"
-            ), 
-        ], 
-        [
-            InlineKeyboardButton(
-                text="◁ʙᴀᴄᴋ", callback_data="startcq"
             ),
         ],
     ]
