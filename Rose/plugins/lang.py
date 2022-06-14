@@ -45,6 +45,7 @@ keyboard = InlineKeyboardMarkup(
             ), 
             InlineKeyboardButton(
                 text="🇮🇳 മലയാളം", callback_data="languages_ml"
+            ), 
         ], 
         [
             InlineKeyboardButton(
@@ -141,6 +142,7 @@ __helpbtns__ = (
             ), 
             InlineKeyboardButton(
                 text="🇮🇳 മലയാളം", callback_data="languages_ml"
+            ), 
         ], 
         [
             InlineKeyboardButton(
