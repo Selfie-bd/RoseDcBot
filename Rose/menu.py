@@ -37,7 +37,7 @@ keyboard =InlineKeyboardMarkup(
     [
         [
             InlineKeyboardButton(
-                text="🇱🇷 English", callback_data="languages_en"
+                text="🇱🇷 ᴇɴɢʟɪsʜ", callback_data="languages_en"
             ),
             InlineKeyboardButton(
                 text="🇱🇰 සිංහල", callback_data="languages_si"
@@ -48,7 +48,7 @@ keyboard =InlineKeyboardMarkup(
                 text="🇮🇳 हिन्दी", callback_data="languages_hi"
             ),
             InlineKeyboardButton(
-                text="🇮🇹 Italiano", callback_data="languages_it"
+                text="🇮🇹 ɪᴛᴀʟɪᴀɴᴏ", callback_data="languages_it"
             )
         ],
         [
@@ -56,13 +56,16 @@ keyboard =InlineKeyboardMarkup(
                 text="🇮🇳 తెలుగు", callback_data="languages_ta"
             ),
             InlineKeyboardButton(
-                text="🇮🇩 Indonesia", callback_data="languages_id"
+                text="🇮🇩 ɪɴᴅᴏɴᴇsɪᴀ", callback_data="languages_id"
             ),
         ],
         [
             InlineKeyboardButton(
                 text="🇦🇪 عربي", callback_data="languages_ar"
             ),
+            InlineKeyboardButton(
+                text="🇮🇳 മലയാളം", callback_data="languages_ml"
+            ), 
         ],
         [
             InlineKeyboardButton("« Back", callback_data='startcq')
