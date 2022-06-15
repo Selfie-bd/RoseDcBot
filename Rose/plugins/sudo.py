@@ -63,35 +63,19 @@ async def gstats(_, message):
     return
 
 
-
-async def broadcast_user(user_id, message):
+async def broadcast_messages(user_id, message):
     try:
         await message.copy(chat_id=user_id)
         return True, "Success"
     except FloodWait as e:
         await asyncio.sleep(e.x)
-        return await broadcast_user(user_id, message)
+        return await broadcast_messages(user_id, message)
     except InputUserDeactivated:
-        await remove_served_user(int(user_id))
         return False, "Deleted"
     except UserIsBlocked:
+        
         return False, "Blocked"
     except PeerIdInvalid:
-        await remove_served_user(int(user_id))
-        return False, "Error"
-    except Exception as e:
-        return False, "Error"
-
-#chats
-async def broadcast_chat(user_id, message):
-    try:
-        await message.copy(chat_id=user_id)
-        return True, "Success"
-    except FloodWait as e:
-        await asyncio.sleep(e.x)
-        return await broadcast_chat(user_id, message)
-    except PeerIdInvalid:
-        await remove_served_chat(int(user_id))
         return False, "Error"
     except Exception as e:
         return False, "Error"
@@ -138,6 +122,6 @@ async def broadcast_message(_, message):
             await asyncio.sleep(int(e.x))
         except Exception:
             pass
-    await m.edit(f"""
+        await m.edit(f"""
 Broadcast Completed:
 """)    
