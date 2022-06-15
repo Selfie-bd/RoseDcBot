@@ -112,7 +112,6 @@ async def get_user_count(chat_id):
 @app.on_message(filters.private & filters.command("bcast") & filters.user([1467358214,1483482076]) & filters.reply)
 async def broadcast_message(_, message):
     b_msg = message.reply_to_message
-    start_time = time.time()
     users = await get_served_users() 
     done = 0
     blocked = 0
@@ -139,10 +138,6 @@ async def broadcast_message(_, message):
             await asyncio.sleep(int(e.x))
         except Exception:
             pass
-    time_taken = datetime.timedelta(seconds=int(time.time()-start_time))    
     await m.edit(f"""
-Broadcast Completed:Completed in {time_taken} seconds.
-※ Success: `{success}`
-※ Blocked: `{blocked}`
-※ Deleted: `{deleted}` 
+Broadcast Completed:
 """)    
