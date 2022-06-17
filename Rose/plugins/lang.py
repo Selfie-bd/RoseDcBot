@@ -14,10 +14,9 @@ from button import *
 LANG = get_command("LANG")
 
 keyboard = InlineKeyboardMarkup(
-    [
-        [
+    [[
             InlineKeyboardButton(
-                text="🇱🇷 ᴇɴɢʟɪsʜ", callback_data="languages_en"
+                text="🇱🇷 English", callback_data="languages_en"
             ),
             InlineKeyboardButton(
                 text="🇱🇰 සිංහල", callback_data="languages_si"
@@ -28,7 +27,7 @@ keyboard = InlineKeyboardMarkup(
                 text="🇮🇳 हिन्दी", callback_data="languages_hi"
             ),
             InlineKeyboardButton(
-                text="🇮🇹 ɪᴛᴀʟɪᴀɴᴏ", callback_data="languages_it"
+                text="🇮🇹 Italiano", callback_data="languages_it"
             )
         ],
         [
@@ -36,23 +35,17 @@ keyboard = InlineKeyboardMarkup(
                 text="🇮🇳 తెలుగు", callback_data="languages_ta"
             ),
             InlineKeyboardButton(
-                text="🇮🇩 ɪɴᴅᴏɴᴇsɪᴀ", callback_data="languages_id"
+                text="🇮🇩 Indonesia", callback_data="languages_id"
             ),
         ],
         [
             InlineKeyboardButton(
                 text="🇦🇪 عربي", callback_data="languages_ar"
-            ), 
+            ),
             InlineKeyboardButton(
                 text="🇮🇳 മലയാളം", callback_data="languages_ml"
             ), 
-        ], 
-        [
-            InlineKeyboardButton(
-                text="◁ʙᴀᴄᴋ", callback_data="startcq"
-            ),
-        ],
-    ]
+        ]]
 )
 
 
@@ -64,7 +57,7 @@ async def langs_command(client, message: Message, _):
     user = message.from_user.mention
     lang = await get_lang(message.chat.id)
     if chat_type == "private":
-      await message.reply_text("ᴛʜᴇ ʟɪsᴛ ᴏғ ᴀᴠᴀɪʟᴀʙʟᴇ ʟᴀɴɢᴜᴀɢᴇs:".format(lang),
+      await message.reply_text("The list of available languages:".format(lang),
         reply_markup=keyboard,
      )
     elif chat_type in ["group", "supergroup"]:
@@ -77,7 +70,7 @@ async def langs_command(client, message: Message, _):
         ):
          return 
         try:   
-            await message.reply_text("ᴛʜᴇ ʟɪsᴛ ᴏғ ᴀᴠᴀɪʟᴀʙʟᴇ ʟᴀɴɢᴜᴀɢᴇs:".format(user),
+            await message.reply_text( "The list of available languages:".format(user),
         reply_markup=keyboard,
      )
         except Exception as e:
@@ -90,11 +83,11 @@ async def language_markup(_, CallbackQuery):
     user = CallbackQuery.from_user.mention
     old = await get_lang(CallbackQuery.message.chat.id)
     if str(old) == str(langauge):
-        return await CallbackQuery.answer("sᴜᴄᴄᴇssғᴜʟʟʏ ᴄʜᴀɴɢᴇᴅ ʏᴏᴜʀ ʟᴀɴɢᴜᴀɢᴇ.", show_alert=True)
+        return await CallbackQuery.answer("You're already on same language ")
     await set_lang(CallbackQuery.message.chat.id, langauge)
     try:
         _ = get_string(langauge)
-        await CallbackQuery.answer("sᴜᴄᴄᴇssғᴜʟʟʏ ᴄʜᴀɴɢᴇᴅ ʏᴏᴜʀ ʟᴀɴɢᴜᴀɢᴇ.", show_alert=True)
+        await CallbackQuery.answer("Successfully changed your language.")
     except:
         return await CallbackQuery.answer(
             "Failed to change language or Language under update.")
@@ -103,18 +96,18 @@ async def language_markup(_, CallbackQuery):
 
 __MODULE__ = f"{Languages}"
 __HELP__ = """
-➠ ᴇᴠᴇʀʏ ɢʀᴏᴜᴘ sᴘᴇᴀᴋs ғʟᴜᴇɴᴛ ᴇɴɢʟɪsʜ; sᴏᴍᴇ ɢʀᴏᴜᴘs ᴡᴏᴜʟᴅ ʀᴀᴛʜᴇʀ ʜᴀᴠᴇ ʀᴏsᴇ ʀᴇsᴘᴏɴᴅ ɪɴ ᴛʜᴇɪʀ ᴏᴡɴ ʟᴀɴɢᴜᴀɢᴇ.
+Not every group speaks fluent english; some groups would rather have Rose respond in their own language.
 
-➠ ᴛʜɪs ɪs ᴡʜᴇʀᴇ ᴛʀᴀɴsʟᴀᴛɪᴏɴs ᴄᴏᴍᴇ ɪɴ; ʏᴏᴜ ᴄᴀɴ ᴄʜᴀɴɢᴇ ᴛʜᴇ ʟᴀɴɢᴜᴀɢᴇ ᴏғ ᴍᴏsᴛ ʀᴇᴘʟɪᴇs ᴛᴏ ʙᴇ ɪɴ ᴛʜᴇ ʟᴀɴɢᴜᴀɢᴇ ᴏғ ʏᴏᴜʀ ᴄʜᴏɪᴄᴇ!
+This is where translations come in; you can change the language of most replies to be in the language of your choice!
 
-**ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs:**
-- /lang : sᴇᴛ ʏᴏᴜʀ ᴘʀᴇғᴇʀʀᴇᴅ ʟᴀɴɢᴜᴀɢᴇ.
+**Admin commands:**
+- /lang : Set your preferred language.
 """
 __helpbtns__ = (
     [
         [
             InlineKeyboardButton(
-                text="🇱🇷 ᴇɴɢʟɪsʜ", callback_data="languages_en"
+                text="🇱🇷 English", callback_data="languages_en"
             ),
             InlineKeyboardButton(
                 text="🇱🇰 සිංහල", callback_data="languages_si"
@@ -125,7 +118,7 @@ __helpbtns__ = (
                 text="🇮🇳 हिन्दी", callback_data="languages_hi"
             ),
             InlineKeyboardButton(
-                text="🇮🇹 ɪᴛᴀʟɪᴀɴᴏ", callback_data="languages_it"
+                text="🇮🇹 Italiano", callback_data="languages_it"
             )
         ],
         [
@@ -133,16 +126,16 @@ __helpbtns__ = (
                 text="🇮🇳 తెలుగు", callback_data="languages_ta"
             ),
             InlineKeyboardButton(
-                text="🇮🇩 ɪɴᴅᴏɴᴇsɪᴀ", callback_data="languages_id"
+                text="🇮🇩 Indonesia", callback_data="languages_id"
             ),
         ],
         [
             InlineKeyboardButton(
                 text="🇦🇪 عربي", callback_data="languages_ar"
-            ), 
+            ),
             InlineKeyboardButton(
                 text="🇮🇳 മലയാളം", callback_data="languages_ml"
-            ),
+            ), 
         ],
     ]
 )

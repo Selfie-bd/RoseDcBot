@@ -18,7 +18,8 @@ lunab = db.luna
 nightmod =db.nightmode2
 taggeddb = db.tagallert
 lockdb = db.lockdb1
-botlock =db.botlock
+botlock = db.botlock
+afkusers = db.afkusers
 
 myapp = pymongo.MongoClient(MONGO_URL)
 dbx = myapp["AsyncIOMotorCursor"]

@@ -8,27 +8,27 @@ fbuttons = InlineKeyboardMarkup(
         [
         [
             InlineKeyboardButton(
-                text="👥sᴜᴘᴘᴏʀᴛ ɢʀᴏᴜᴘ", url="https://t.me/szrosesupport"
+                text="👥Support Group", url="https://t.me/szrosesupport"
             ),
             InlineKeyboardButton(
-                text="👤ɴᴇᴡs ᴄʜᴀɴɴᴇʟ", url="https://t.me/Theszrosebot"
+                text="👤News Channel", url="https://t.me/Theszrosebot"
             )
         ], 
         [
             InlineKeyboardButton(
-                text="⚒ sᴏᴜʀᴄᴇ ᴄᴏᴅᴇ", url="https://github.com/szsupunma/sz-rosebot"
+                text="⚒ Source Code", url="https://github.com/szsupunma/sz-rosebot"
             ),
             InlineKeyboardButton(
-                text="📁 ᴅᴏᴄᴜᴍᴇɴᴛᴀᴛɪᴏɴ", url="https://szsupunma.gitbook.io/rose-bot"
+                text="📓 Documentation", url="https://szsupunma.gitbook.io/rose-bot"
             )
         ], 
         [
             InlineKeyboardButton(
-                text="🖥 ʜᴏᴡ ᴛᴏ ᴅᴇᴘʟᴏʏ ᴍᴇ", url="https://szsupunma.gitbook.io/rose-bot"
+                text="🖥 How To Deploy Me", url="https://szsupunma.gitbook.io/rose-bot"
             )
         ], 
         [
-            InlineKeyboardButton("◁ʙᴀᴄᴋ", callback_data='startcq')
+            InlineKeyboardButton("« Back", callback_data='startcq')
         ]
         ]
 )
@@ -37,7 +37,7 @@ keyboard =InlineKeyboardMarkup(
     [
         [
             InlineKeyboardButton(
-                text="🇱🇷 ᴇɴɢʟɪsʜ", callback_data="languages_en"
+                text="🇱🇷 English", callback_data="languages_en"
             ),
             InlineKeyboardButton(
                 text="🇱🇰 සිංහල", callback_data="languages_si"
@@ -48,7 +48,7 @@ keyboard =InlineKeyboardMarkup(
                 text="🇮🇳 हिन्दी", callback_data="languages_hi"
             ),
             InlineKeyboardButton(
-                text="🇮🇹 ɪᴛᴀʟɪᴀɴᴏ", callback_data="languages_it"
+                text="🇮🇹 Italiano", callback_data="languages_it"
             )
         ],
         [
@@ -56,7 +56,7 @@ keyboard =InlineKeyboardMarkup(
                 text="🇮🇳 తెలుగు", callback_data="languages_ta"
             ),
             InlineKeyboardButton(
-                text="🇮🇩 ɪɴᴅᴏɴᴇsɪᴀ", callback_data="languages_id"
+                text="🇮🇩 Indonesia", callback_data="languages_id"
             ),
         ],
         [
@@ -68,7 +68,7 @@ keyboard =InlineKeyboardMarkup(
             ), 
         ],
         [
-            InlineKeyboardButton("◁ʙᴀᴄᴋ", callback_data='startcq')
+            InlineKeyboardButton("« Back", callback_data='startcq')
         ]
     ]
 )
@@ -79,7 +79,7 @@ async def commands_callbacc(client, CallbackQuery, _):
     user = CallbackQuery.message.from_user.mention
     await app.send_message(
         CallbackQuery.message.chat.id,
-        text= "ᴛʜᴇ ʟɪsᴛ ᴏғ ᴀᴠᴀɪʟᴀʙʟᴇ ʟᴀɴɢᴜᴀɢᴇs:",
+        text= "The list of available languages:",
         reply_markup=keyboard,
         disable_web_page_preview=True,
     )
