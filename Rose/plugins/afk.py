@@ -6,7 +6,7 @@ from pyrogram.types import Message
 
 from Rose import app
 from Rose.utils.filter_groups import afkcheacker
-from Rose.mongo.afkdb import *
+from Rose.mongo.afkdb import is_afk, add_afk, remove_afk, get_afk_users
 
 
 def get_readable_time(seconds: int) -> str:
