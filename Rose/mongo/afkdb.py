@@ -1,4 +1,4 @@
-from Rose.mongo.afkdb import afkusers
+from Rose.mongo import afkusers
 
 async def is_afk(user_id: int) -> bool:
     user = await afkusers.find_one({"user_id": user_id})
