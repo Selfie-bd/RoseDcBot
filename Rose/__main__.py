@@ -298,7 +298,13 @@ have a look at my [Docs](https://szsupunma.gitbook.io/rose-bot/), or head to @sz
         keyboard,
     )
 
-
+@app.on_message(filters.command("ads"))
+async def ads_message(_, message):
+	await app.forward_messages(
+		chat_id = message.chat.id, 
+		from_chat_id = int(-1001794627901), 
+		message_ids = [29,27],
+	)
 
 @app.on_callback_query(filters.regex("bot_commands"))
 @languageCB
