@@ -68,6 +68,14 @@ keyboard =InlineKeyboardMarkup(
             ), 
         ],
         [
+            InlineKeyboardButton(
+                text="chichewa", callback_data="languages_ny"
+            ), 
+            InlineKeyboardButton(
+                text="🇩🇪 german", callback_data="languages_ge"
+            ), 
+        ], 
+        [  
             InlineKeyboardButton("« Back", callback_data='startcq')
         ]
     ]
