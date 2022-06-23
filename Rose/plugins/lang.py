@@ -45,14 +45,14 @@ keyboard = InlineKeyboardMarkup(
             InlineKeyboardButton(
                 text="🇮🇳 മലയാളം", callback_data="languages_ml"
             ), 
-        ], 
+        ],
         [
             InlineKeyboardButton(
-                text="chichewa", callback_data="languages_ny"
+                text="🇲🇼 chichewa", callback_data="languages_ny"
             ), 
             InlineKeyboardButton(
                 text="🇩🇪 german", callback_data="languages_ge"
-            ),
+            ), 
         ]]
 )
 
@@ -144,14 +144,14 @@ __helpbtns__ = (
             InlineKeyboardButton(
                 text="🇮🇳 മലയാളം", callback_data="languages_ml"
             ), 
-        ], 
+        ],
         [
             InlineKeyboardButton(
-                text="chichewa", callback_data="languages_ny"
+                text="🇲🇼 chichewa", callback_data="languages_ny"
             ), 
             InlineKeyboardButton(
                 text="🇩🇪 german", callback_data="languages_ge"
             ), 
-        ],
+        ], 
     ]
 )
