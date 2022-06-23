@@ -69,7 +69,7 @@ keyboard =InlineKeyboardMarkup(
         ],
         [
             InlineKeyboardButton(
-                text="chichewa", callback_data="languages_ny"
+                text="🇲🇼 chichewa", callback_data="languages_ny"
             ), 
             InlineKeyboardButton(
                 text="🇩🇪 german", callback_data="languages_ge"
