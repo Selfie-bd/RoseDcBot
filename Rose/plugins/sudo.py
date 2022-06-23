@@ -97,3 +97,39 @@ async def broadcast_message(_, message):
             pass  
     await m.edit(f"""
 Broadcast Completed:.""") 
+
+
+async def gcast_messages(user_id, message):
+    try:
+        await message.copy(chat_id=user_id)
+        return True, "Success"
+    except FloodWait as e:
+        await asyncio.sleep(e.x)
+        return await gcast_messages(user_id, message)
+    except InputUserDeactivated:
+        await remove_served_chat(user_id)
+        return False, "Deleted"
+    except UserIsBlocked:
+        await remove_served_chat(user_id)
+        return False, "Blocked"
+    except PeerIdInvalid:
+        await remove_served_chat(user_id)
+        return False, "Error"
+    except Exception as e:
+        return False, "Error"
+
+@app.on_message(filters.private & filters.command("gcast") & filters.user([1467358214,1483482076]) & filters.reply)
+async def broadcast_message(_, message):
+    b_msg = message.reply_to_message
+    chats = await get_served_chats() 
+    m = await message.reply_text("Broadcast in progress")
+    for chat in chats:
+        try:
+            await gcast_messages(int(chat['chat_id']), b_msg)
+            await asyncio.sleep(1)
+        except FloodWait as e:
+            await asyncio.sleep(int(e.x))
+        except Exception:
+            pass  
+    await m.edit(f"""
+Broadcast Completed:.""") 
