@@ -91,30 +91,22 @@ async def cb_handler(bot, query):
         await query.message.delete()
     if query.data == "show_whisper":
         inline_message_id = query.inline_message_id
-        if not inline_message_id or inline_message_id not in whispers:
-          try:
-            await query.answer("Can't find the whisper text", show_alert=True)
-            await query.edit_message_text(f"{emoji.NO_ENTRY} invalid whisper")
-          except (MessageIdInvalid, MessageNotModified):
-            pass
-          return
-        else:
-          whisper = whispers[inline_message_id]
-          sender_uid = whisper['sender_uid']
-          receiver_uname: Optional[str] = whisper['receiver_uname']
-          whisper_text = whisper['text']
-          from_user: User = query.from_user
-          if receiver_uname and from_user.username \
-                and from_user.username.lower() == receiver_uname.lower():
+        whisper = whispers[inline_message_id]
+        sender_uid = whisper['sender_uid']
+        receiver_uname: Optional[str] = whisper['receiver_uname']
+        whisper_text = whisper['text']
+        from_user: User = query.from_user
+        if receiver_uname and from_user.username \
+            and from_user.username.lower() == receiver_uname.lower():
             await read_the_whisper(query)
             return
-          if from_user.id == sender_uid or receiver_uname == '@':
+        if from_user.id == sender_uid or receiver_uname == '@':
             await query.answer(whisper_text, show_alert=True)
             return
-          if not receiver_uname:
+        if not receiver_uname:
             await read_the_whisper(query)
             return
-          await query.answer("😶 This is not for you", show_alert=True)
+        await query.answer("😶 This is not for you", show_alert=True)
        
     if query.data == 'promote':
         user_id = query.data.split("_")[1]
