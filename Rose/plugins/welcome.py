@@ -12,8 +12,6 @@ from Rose.utils.string import (
 )
 from pyrogram.types import (InlineKeyboardButton,
                             InlineKeyboardMarkup,Message)
-from pyrogram.types import (InlineKeyboardButton,
-                            InlineKeyboardMarkup, Message)
 from .captcha import send_captcha     
 from Rose.utils.lang import *
 from Rose.utils.filter_groups import *
