@@ -22,7 +22,21 @@ from Rose.utils.string import (
     build_keyboard,
     parse_button,
 )
-
+from typing import Optional
+from Rose import app
+from pyrogram import filters, emoji
+from pyrogram.errors.exceptions.bad_request_400 import (
+    MessageIdInvalid, MessageNotModified
+)
+from pyrogram.types import (
+    User,
+    InlineQuery,
+    InlineQueryResultArticle,
+    InputTextMessageContent, InlineKeyboardMarkup, InlineKeyboardButton,
+    CallbackQuery,
+    ChosenInlineResult
+)
+from Rose.plugins.wishper import *
 db = {}
 dbf = Filters()
 dbns = Notes()
@@ -63,12 +77,44 @@ def number_() -> dict:
         data = {"is_error": True, "error":t_e}
     return data
 
+async def read_the_whisper(cq: CallbackQuery):
+    inline_message_id = cq.inline_message_id
+    whisper = whispers[inline_message_id]
+    whispers.pop(inline_message_id, None)
+    whisper_text = whisper['text']
+    await cq.answer(whisper_text, show_alert=True)
 
 @app.on_callback_query()
 async def cb_handler(bot, query):
     cb_data = query.data
     if query.data == "close_data":
         await query.message.delete()
+    if query.data == "show_whisper":
+        inline_message_id = query.inline_message_id
+        if not inline_message_id or inline_message_id not in whispers:
+          try:
+            await query.answer("Can't find the whisper text", show_alert=True)
+            await query.edit_message_text(f"{emoji.NO_ENTRY} invalid whisper")
+          except (MessageIdInvalid, MessageNotModified):
+            pass
+          return
+        else:
+          whisper = whispers[inline_message_id]
+          sender_uid = whisper['sender_uid']
+          receiver_uname: Optional[str] = whisper['receiver_uname']
+          whisper_text = whisper['text']
+          from_user: User = query.from_user
+          if receiver_uname and from_user.username \
+                and from_user.username.lower() == receiver_uname.lower():
+            await read_the_whisper(query)
+            return
+          if from_user.id == sender_uid or receiver_uname == '@':
+            await query.answer(whisper_text, show_alert=True)
+            return
+          if not receiver_uname:
+            await read_the_whisper(query)
+            return
+          await query.answer("😶 This is not for you", show_alert=True)
        
     if query.data == 'promote':
         user_id = query.data.split("_")[1]
