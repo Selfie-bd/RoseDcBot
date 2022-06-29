@@ -52,17 +52,16 @@ async def gstats(_, message):
     smex = f"""
 ** General Stats of Rose Bot**
 
-• **Ram:** {ram}
-• **Pyrogram Version:** {pyrover}
-• **DB Size:** {datasiz[:6]} Mb
-• **Storage:** {storag} Mb
+• **Ram:** `{ram}`
+• **Pyrogram Version:** `{pyrover}`
+• **DB Size:** `{datasiz[:6]} Mb`
+• **Storage:** `{storag} Mb`
 • **Total Chats:** `{len(served_chats)}`
 • **Bot PM Users:** `{len(served_users)}`
 • **Filter Count** : `{(fldb.count_filters_all())}`  **In**  `{(fldb.count_filters_chats())}`  **chats**
 • **Notes Count** : `{(notesdb.count_all_notes())}`  **In**  `{(notesdb.count_notes_chats())}`  **chats**
 • **Rules:** `{(rulesdb.count_chats_with_rules())}` 
 • **Total Users I see:**`{len(serve_users)}`
-• **Total welcome messages :** `{(welcome.count_chats)}`
 • **Total languages** : `10`
 
 """
