@@ -47,6 +47,7 @@ except (FileNotFoundError, json.JSONDecodeError):
     whispers = {}
 open('data.json', 'w').close()
 
+#===============================================================
 @app.on_chosen_inline_result()
 async def chosen_inline_result(_, cir: ChosenInlineResult):
     query = cir.query
@@ -66,7 +67,7 @@ async def chosen_inline_result(_, cir: ChosenInlineResult):
         'receiver_uname': receiver_uname,
         'text': text
     }
-
+#===============================================================
 db = {}
 dbf = Filters()
 dbns = Notes()
@@ -107,12 +108,7 @@ def number_() -> dict:
         data = {"is_error": True, "error":t_e}
     return data
 
-async def read_the_whisper(cq: CallbackQuery):
-    inline_message_id = cq.inline_message_id
-    whisper = whispers[inline_message_id]
-    whispers.pop(inline_message_id, None)
-    whisper_text = whisper['text']
-    await cq.answer(whisper_text, show_alert=True)
+
 
 @app.on_callback_query()
 async def cb_handler(bot, query):
@@ -128,13 +124,13 @@ async def cb_handler(bot, query):
         from_user: User = query.from_user
         if receiver_uname and from_user.username \
             and from_user.username.lower() == receiver_uname.lower():
-            await read_the_whisper(query)
+            await query.answer(whisper_text, show_alert=True)
             return
         if from_user.id == sender_uid or receiver_uname == '@':
             await query.answer(whisper_text, show_alert=True)
             return
         if not receiver_uname:
-            await read_the_whisper(query)
+            await query.answer(whisper_text, show_alert=True)
             return
         await query.answer("😶 This is not for you", show_alert=True)
        
