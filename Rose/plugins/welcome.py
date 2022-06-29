@@ -4,7 +4,7 @@ from pyrogram.errors import ChatAdminRequired
 from pyrogram.types import  InlineKeyboardMarkup, Message
 from Rose import *
 from Rose.mongo.gban import GBan
-from Rose.mongo.welcomedb import adds_served_user
+from Rose.mongo.usersdb import adds_served_user
 from Rose.mongo.welcomedb import Greetings
 from Rose.utils.custom_filters import admin_filter, command
 from Rose.utils.string import (
