@@ -100,7 +100,6 @@ async def kickFunc(client, message: Message, _):
 @language
 async def banFunc(client, message: Message, _):
     user_id, reason = await extract_user_and_reason(message, sender_chat=True)
-
     if not user_id:
         return await message.reply_text(_["ban3"])
     if user_id == BOT_ID:

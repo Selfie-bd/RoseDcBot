@@ -8,6 +8,7 @@ from Rose.mongo.notesdb import Notes
 from Rose.mongo.rulesdb import Rules
 from Rose.mongo.usersdb import *
 from Rose.mongo.chatsdb import *
+from Rose.mongo.welcomedb import Greetings
 from pyrogram import __version__ as pyrover
 import asyncio
 import time
@@ -24,6 +25,7 @@ async def gstats(_, message):
     )
     notesdb = Notes()
     rulesdb = Rules
+    welcome = Greetings
     fldb = Filters()
     served_chats = len(await get_served_chats())
     served_chats = []
@@ -35,26 +37,35 @@ async def gstats(_, message):
     users = await get_served_users()
     for user in users:
         served_users.append(int(user["bot_users"]))   
+    #------------------------------------------
+    serve_users = len(await get_served_users())
+    serve_users = []
+    user = await get_served_users()
+    for use in user:
+        serve_users.append(int(use["bots_users"]))  
+    #---------------------------------------------- 
     ram = (str(round(psutil.virtual_memory().total / (1024.0 ** 3))) + " GB")
     supun = dbn.command("dbstats")
     datasiz = supun["dataSize"] / 1024
     datasiz = str(datasiz)
     storag = supun["storageSize"] / 1024
     smex = f"""
-<u> ** v2.0 Stats Here**</u>
+** General Stats of Rose Bot**
 
 • **Ram:** {ram}
-• **Python Version:** {pyver.split()[0]}
 • **Pyrogram Version:** {pyrover}
 • **DB Size:** {datasiz[:6]} Mb
 • **Storage:** {storag} Mb
-• **Served Chats:** `{len(served_chats)}`
-• **Served Users:** `{len(served_users)}`
+• **Total Chats:** `{len(served_chats)}`
+• **Bot PM Users:** `{len(served_users)}`
 • **Filter Count** : `{(fldb.count_filters_all())}`  **In**  `{(fldb.count_filters_chats())}`  **chats**
 • **Notes Count** : `{(notesdb.count_all_notes())}`  **In**  `{(notesdb.count_notes_chats())}`  **chats**
 • **Rules:** `{(rulesdb.count_chats_with_rules())}` 
+• **Total Users I see:**`{len(serve_users)}`
+• **Total welcome messages :** `{(welcome.count_chats)}`
+• **Total languages** : `10`
 
-    """
+"""
     await response.edit_text(smex)
     return
 

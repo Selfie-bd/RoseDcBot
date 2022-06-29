@@ -9,7 +9,6 @@ from button import *
 def get_info(id):
     return taggeddb.find_one({"id": id})
 
-
 @app.on_message(command(["tagalert"]))
 @language
 async def locks_dfunc(client, message: Message, _):
@@ -17,7 +16,6 @@ async def locks_dfunc(client, message: Message, _):
    if len(message.command) != 2:
       return await lol.edit(_["tagg1"])
    parameter = message.text.strip().split(None, 1)[1].lower()
-  
    if parameter == "on" or parameter=="ON":
      if not message.from_user:
        return
@@ -63,8 +61,9 @@ async def mentioned_alert(client, message):
             input_str = input_str.replace("@", "  |")
             Rose = input_str.split("|")[1]
             text = Rose.split()[0]
-        if not taggeddb.find_one({f"teg": text}):
-          return      
+        isittrue = taggeddb.find_one({f"teg": text})    
+        if isittrue == None:
+          return
         if text == message.chat:
           return 
         try:
@@ -73,16 +72,18 @@ async def mentioned_alert(client, message):
         except:
             return message.continue_propagation()
         user_ = message.from_user.mention or f"@{message.from_user.username}"
-        
         final_tagged_msg = f"""
-**📨 You Have Been Tagged**
-• **Group:-** {chat_name}
-• **By User:-** {user_}
-        """
-        button_s = InlineKeyboardMarkup([[InlineKeyboardButton("🔔 View Message", url=tagged_msg_link)]])
+**🗣 You Have Been Tagged**
+
+**Group:** {chat_name}
+**By User:** {user_}
+**Message:**
+{message.text} """
+        button_s = InlineKeyboardMarkup([[InlineKeyboardButton("📮 View Message", url=tagged_msg_link)]])
         try:
-            await client.send_message(chat_id=f"{text}", text=final_tagged_msg,reply_markup=button_s,disable_web_page_preview=True)
-            
+            sz = await client.send_message(chat_id=f"{text}", text=final_tagged_msg,reply_markup=button_s,disable_web_page_preview=True)
+            pin = await sz.pin(disable_notification=True, both_sides=True)
+            await pin.delete()
         except:
             return message.continue_propagation()
         message.continue_propagation()

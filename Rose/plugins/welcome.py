@@ -4,6 +4,7 @@ from pyrogram.errors import ChatAdminRequired
 from pyrogram.types import  InlineKeyboardMarkup, Message
 from Rose import *
 from Rose.mongo.gban import GBan
+from Rose.mongo.welcomedb import adds_served_user
 from Rose.mongo.welcomedb import Greetings
 from Rose.utils.custom_filters import admin_filter, command
 from Rose.utils.string import (
@@ -12,6 +13,8 @@ from Rose.utils.string import (
 )
 from pyrogram.types import (InlineKeyboardButton,
                             InlineKeyboardMarkup,Message)
+from pyrogram.types import (InlineKeyboardButton,
+                            InlineKeyboardMarkup, Message)
 from .captcha import send_captcha     
 from Rose.utils.lang import *
 from Rose.utils.filter_groups import *
@@ -156,6 +159,7 @@ async def cleannnnn(_, message):
 
 @app.on_message(filters.new_chat_members, group=welcomes)
 async def welcome(_, message: Message):
+    await adds_served_user(message.from_user.id) 
     group_id = message.chat.id
     group_name = message.chat.title
     db = Greetings(group_id)
