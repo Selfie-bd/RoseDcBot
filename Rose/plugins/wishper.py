@@ -13,16 +13,6 @@ from pyrogram.types import (
     ChosenInlineResult
 )
 
-import json
-
-try:
-    with open('data.json') as f:
-        whispers = json.load(f)
-except (FileNotFoundError, json.JSONDecodeError):
-    whispers = {}
-open('data.json', 'w').close()
-
-
 lengths = 200
 IMG = "https://telegra.ph/file/8bb5ad38249514dbf72e6.jpg"
 
@@ -78,24 +68,5 @@ async def wishper_ai(_, sz: InlineQuery):
     )
 
 
-@app.on_chosen_inline_result()
-async def chosen_inline_result(_, cir: ChosenInlineResult):
-    query = cir.query
-    split = query.split(' ', 1)
-    len_split = len(split)
-    if len_split == 0 or len(query) > lengths \
-            or (query.startswith('@') and len(split) == 1):
-        return
-    if len_split == 2 and query.startswith('@'):
-        receiver_uname, text = split[0][1:] or '@', split[1]
-    else:
-        receiver_uname, text = None, query
-    sender_uid = cir.from_user.id
-    inline_message_id = cir.inline_message_id
-    whispers[inline_message_id] = {
-        'sender_uid': sender_uid,
-        'receiver_uname': receiver_uname,
-        'text': text
-    }
 
 
