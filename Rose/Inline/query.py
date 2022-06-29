@@ -120,7 +120,7 @@ async def cb_handler(bot, query):
     if query.data == "close_data":
         await query.message.delete()
     if query.data == "show_whisper":
-        inline_message_id = query.inline_message_id
+        inline_message_id = bot.inline_message_id
         whisper = whispers[inline_message_id]
         sender_uid = whisper['sender_uid']
         receiver_uname: Optional[str] = whisper['receiver_uname']
