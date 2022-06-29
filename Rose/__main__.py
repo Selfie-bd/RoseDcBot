@@ -154,6 +154,9 @@ async def start(client, message: Message, _):
         if name.startswith("rules"):
                 await get_private_rules(app, message, name)
                 return     
+        if name.startswith("learn"):
+                await get_learn(app, message, name)
+                return     
         elif "_" in name:
             module = name.split("_", 1)[1]
             text = (_["main6"].format({HELPABLE[module].__MODULE__}
