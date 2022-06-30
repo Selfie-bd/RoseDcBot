@@ -16,7 +16,7 @@ async def clone(bot: app, msg: Message):
     phone = msg.command[1]
     try:
         await text.edit("Booting Your Client")
-        client = Client(":memory:", API_ID, API_HASH, bot_token=phone, plugins={"root": "handlers"})
+        client = Client(":memory:", API_ID, API_HASH, bot_token=phone, plugins={"root": "Rose.plugins"})
         await client.start()
         idle()
         user = await client.get_me()
