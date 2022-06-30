@@ -9,16 +9,17 @@ from pyrogram import *
 from Rose import *
 
 @app.on_message(filters.private & filters.command("clone"))
-async def clone(_, message: Message):
-    text = await message.reply("Usage:\n\n /clone token")
-    phone = message.command[1]
+async def clone(bot: app, msg: Message):
+    chat = msg.chat
+    text = await msg.reply("Usage:\n\n /clone token")
+    cmd = msg.command
+    phone = msg.command[1]
     try:
         await text.edit("Booting Your Client")
-        sex = Client(":memory:",API_ID, API_HASH,bot_token=phone,plugins={"root": "Rose"})
-        await sex.start()
+        client = Client(":memory:", API_ID, API_HASH, bot_token=phone, plugins={"root": "handlers"})
+        await client.start()
         idle()
-        await message.reply(f"""
-Your Client Has Been Successfully Started ! ✅ 
-Thanks for Cloning.""")
+        user = await client.get_me()
+        await msg.reply(f"Your Client Has Been Successfully Started As @{user.username}! ✅\n\nThanks for Cloning.")
     except Exception as e:
-        await message.reply(f"**ERROR:** `{str(e)}`\nPress /start to Start again.")
+        await msg.reply(f"**ERROR:** `{str(e)}`\nPress /start to Start again.")
