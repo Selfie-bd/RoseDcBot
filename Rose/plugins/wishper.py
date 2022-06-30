@@ -25,14 +25,6 @@ async def wishper_ai(_, sz: InlineQuery):
             "Learn more...",
             url="https://t.me/szrosebot?start=learn"
         )
-    if  query.reply_to_message:
-        title = f"🔒 A whisper message to {query.reply_to_message_id}, Only he/she can open it."
-        content = f"👥If you reply some one message don't need mention him"
-        description = f"{emoji.SHUSHING_FACE} {split[1]}"
-        button = InlineKeyboardButton(
-            f"{emoji.LOCKED_WITH_KEY} show message",
-            callback_data="show_whisper"
-        )
     elif not query.startswith('@'):
         title = f"{emoji.EYE} Whisper once to the first one who open it"
         content = (
