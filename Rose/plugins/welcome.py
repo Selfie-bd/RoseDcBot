@@ -166,7 +166,6 @@ async def welcome(_, message: Message):
     chat_title = html.escape(message.chat.title)
     fed_id = get_fed_from_chat(group_id)
     for member in message.new_chat_members:   
-        user_id = member.id
         chat_id = message.chat.id
         status = db.get_welcome_status()
         user_id = message.from_user.id
@@ -186,8 +185,8 @@ async def welcome(_, message: Message):
                     text
                 )
                 return 
-        if member.id == BOT_ID:
-                await message.reply_text(
+        if member.id == 1942455194:
+            await message.reply_text(
                     f"""
 Thanks for adding me to your {group_name}! Don't forget follow
 my news channel @Theszrosebot.
@@ -198,26 +197,26 @@ my news channel @Theszrosebot.
             [
                 InlineKeyboardButton("quick start guide", url="http://t.me/szrosebot?start=help"),
             ]))
-                await app.send_message(
-                chat_id=LOG_GROUP_ID,
+            await app.send_message(
+                chat_id=-1001589738293,
                 text=(
                     f"I've been added to `{chat_title}` with ID: `{chat_id}`\n"
-                    f"Added by: @{message.from_user.username} ( `{message.from_user.id}` )"
+                    f"Added by: @{message.from_user.mention}"
                 )
             )
-                return     
+            return     
         if member.id == OWNER_ID:
-               await app.send_message(
+            await app.send_message(
                 message.chat.id,
                 "Wow ! Owner has just joined your chat.",
             )
-               return
+            return
         if member.id == 1467358214:#for @supunma 
-               await app.send_message(
+            await app.send_message(
                 message.chat.id,
                 "Wow ! Developer has just joined your chat.",
             )
-               return       
+            return       
         if member.is_bot:
                adder = message.from_user.mention
                botname = member.username

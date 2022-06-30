@@ -42,7 +42,6 @@ async def member_permissions(chat_id: int, user_id: int):
 
 admins_in_chat = {}
 
-
 async def list_admins(chat_id: int):
     return [ member.user.id
         async for member in app.iter_chat_members(
@@ -169,7 +168,6 @@ async def locks_dfunc(_, message):
         if "can_restrict_members" not in permissions:
             await message.reply_text(f"{message.from_user.mention},You need to be an admin with **restrict members** permission.")
             return
-
 
         permissions = await current_chat_permissions(chat_id)
         
@@ -1238,6 +1236,9 @@ async def spoiler(client, message):
                await lol.delete()   
             except:
               message.continue_propagation() 
+#==========================================================================
+#==========================================================================
+#==========================================================================
 
 
 #url lock help

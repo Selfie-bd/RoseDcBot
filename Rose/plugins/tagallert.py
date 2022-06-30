@@ -23,12 +23,8 @@ async def locks_dfunc(client, message: Message, _):
        return await lol.edit(_["tagg2"])
      uname=str(message.from_user.username)
      uname = uname.lower()
-     isittrue = taggeddb.find_one({f"teg": uname})
-     if not isittrue:
-          taggeddb.insert_one({f"teg": uname})
-          return await lol.edit(_["tagg3"].format(uname))
-     else:
-          return await lol.edit(_["tagg4"])
+     taggeddb.insert_one({f"teg": uname})
+     return await lol.edit(_["tagg3"].format(uname))
    if parameter == "off" or parameter=="OFF":
      if not message.from_user:
        return
@@ -36,12 +32,7 @@ async def locks_dfunc(client, message: Message, _):
        return await lol.edit(_["tagg2"])
      uname = message.from_user.username
      uname = uname.lower()
-     isittrue = taggeddb.find_one({f"teg": uname})
-     if isittrue:
-          taggeddb.delete_one({f"teg": uname})
-          return await lol.edit(_["tagg5"])
-     else:
-          return await lol.edit(_["tagg6"])
+     return await lol.edit(_["tagg5"])
    else:
      await lol.edit(_["tagg1"])
        

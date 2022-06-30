@@ -1,16 +1,10 @@
 from typing import Optional
 from Rose import app
 from pyrogram import filters, emoji
-from pyrogram.errors.exceptions.bad_request_400 import (
-    MessageIdInvalid, MessageNotModified
-)
 from pyrogram.types import (
-    User,
     InlineQuery,
     InlineQueryResultArticle,
     InputTextMessageContent, InlineKeyboardMarkup, InlineKeyboardButton,
-    CallbackQuery,
-    ChosenInlineResult
 )
 
 lengths = 200
@@ -30,6 +24,14 @@ async def wishper_ai(_, sz: InlineQuery):
         button = InlineKeyboardButton(
             "Learn more...",
             url="https://t.me/szrosebot?start=learn"
+        )
+    if  query.reply_to_message:
+        title = f"🔒 A whisper message to {query.reply_to_message_id}, Only he/she can open it."
+        content = f"👥If you reply some one message don't need mention him"
+        description = f"{emoji.SHUSHING_FACE} {split[1]}"
+        button = InlineKeyboardButton(
+            f"{emoji.LOCKED_WITH_KEY} show message",
+            callback_data="show_whisper"
         )
     elif not query.startswith('@'):
         title = f"{emoji.EYE} Whisper once to the first one who open it"
