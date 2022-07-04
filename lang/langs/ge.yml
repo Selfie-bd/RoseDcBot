@@ -1,1 +1,160 @@
+Name: Deutsch
+
+#menu - menu.py
+menu : "Rose wurde am 10. August 2021 erstellt. \nWir entwickeln und warten derzeit Plugins von WilliamButcherBot und Alita_Robot, wobei wir nur die Pyrogram-Bibliothek verwenden.\n\n• Ersteller: [supun](https://t.me/ supunma)\n• Sprache: [python 3](https://www.python.org/)\n• Datenbank: [Mongo db](https://cloud.mongodb.com/)\n• Server: [ Heroku](https://heroku.com/)\n• Build-Version: 2.0\n\n@Theszrosebot"
+back : "zurück"
+
+#main - main.py
+main1 : "Hallo! Ich bin {} \n\nEin fortgeschrittener Telegramm-Gruppenverwaltungs-Bot, um deine Gruppen zu verwalten und deine Gruppen zu schützen & für all deine Bedürfnisse."
+main2 : "PN an mich, wenn du Fragen dazu hast, wie man mich benutzt!"
+main3 : "Hier klicken"
+main4 : "Klicken Sie auf die Schaltfläche unten, um Hilfe zu {} zu erhalten"
+main5 : "Willkommen im Hilfemenü\n\nIch bin ein Gruppenverwaltungs-Bot mit einigen nützlichen Funktionen.\nKlicken Sie auf die Schaltflächen unten, um das Hilfemenü zu diesem Modul zu öffnen. \nWenn Sie Fehler gefunden haben oder Fragen zur Verwendung von mir haben, \nSchauen Sie sich meine [Docs](https://szsupunma.gitbook.io/rose-bot/) an oder gehen Sie zu @szteambots.\n\nAlle Befehle können mit / " verwendet werden
+main6 : "Hier ist die Hilfe für {}"
+
+#plugin - admin.py
+admin1 : "Benutze /send mit Text oder indem du auf Nachricht antwortest."
+admin2 : "Ich kann mich nicht bewerben."
+admin3: "Ich habe nicht genügend Berechtigungen"
+admin4 : "Ich kann mich nicht degradieren."
+admin5 : "Geister finden..."
+admin6 : "Es gibt keine gelöschten Konten in diesem Chat"
+admin7 : "Verwendung:\n/setgrouptitle NEUER NAME"
+admin8 : "Antworte auf die Nachricht des Benutzers, um seinen Admin-Titel festzulegen"
+admin9: "Ich kann den Admin-Titel einer unbekannten Entität nicht ändern"
+admin10 : "Verwendung:\n/settitle NEUER ADMINISTRATORTITEL"
+admin11 : "Antworte auf ein Foto, um es als chat_photo festzulegen"
+admin12 : "Antworte auf ein Foto oder Dokument, um es als chat_photo festzulegen"
+admin13 : "Dateigröße zu groß."
+admin14 : "Gruppenfoto erfolgreich geändert"
+admin15 : "Dieser Befehl darf nur in Gruppen verwendet werden!"
+admin16 : "Kann den Admin-Cache nur alle 10 Minuten neu laden!"
+admin17 : "Admin-Liste neu geladen !"
+admin18 : "hochbefördert! {} hier ! "
+admin19 : "Ich kann diesen Benutzer nicht finden."
+admin20 : "Midpromoted! {} here !"
+admin21 : "Befördert ! {} hier"
+admin22 : "Herabgestuft ! {} hier"
+admin23 : "Gesperrte {} gelöschte Konten"
+admin24 : "Gruppentitel erfolgreich geändert von {} zu {}"
+admin25 : "Antworte auf die Nachricht des Benutzers, um seinen Admin-Titel festzulegen"
+admin26 : "Ich kann den Admin-Titel einer unbekannten Entität nicht ändern"
+admin27 : "Verwendung:\n/settitle NEUER ADMINISTRATORTITEL"
+admin28 : "Administratortitel von {} erfolgreich geändert in {}"
+admin29 : "Antworte auf ein Foto, um es als chat_photo festzulegen"
+admin30 : "Antworte auf ein Foto oder Dokument, um es als chat_photo festzulegen"
+admin31 : "Dateigröße zu groß."
+admin32 : "Gruppenfoto erfolgreich geändert"
+
+#plugin - antichannel.py
+antic1 : "Ich verstehe nur /antichannel on und /antichannel off"
+antic2 : "Anti-Channel-Modus aktiviert ✅.\n\n Ich werde alle Nachrichten löschen, wenn jemand Nachrichten mit Kanalnamen sendet."
+antic3 : "Anti-Channel-Modus in diesem Chat bereits aktiviert"
+antic4 : "Anti-Channel-Modus im Chat erfolgreich deaktiviert ❌"
+antic5 : "Anti Channel wurde in diesem Chat nicht aktiviert"
+antic6 : "Eine Anti-Kanal-Nachricht erkannt. Ich habe sie gelöscht..!\n\n• Kanal-ID = {} \n• Kanalname = {} "
+
+#plugin - antiservice.py
+serv1 : "Verwendung: /antiservice [aktivieren | deaktivieren]"
+serv2 : "Aktiviertes AntiService-System. Ich werde von nun an Servicemeldungen löschen."
+serv3 : "Deaktiviertes AntiService-System. Ich werde von nun an keine Service-Nachricht löschen."
+serv4 : "Unbekanntes Suffix, verwende /antiservice [aktivieren|deaktivieren]"
+
+#plugin - antispoiler.py
+verderben1 : "Ich verstehe nur /antispoiler an und /antispoiler aus"
+verderben2 : "Bearbeitung..."
+verderben3 : "Anti-Spoiler-Modus aktiviert ✅.\n\n Ich werde alle Nachrichten löschen, wenn jemand Nachrichten mit Spoilern sendet."
+verderben : "Anti-Spoiler-Modus bereits in diesem Chat aktiviert"
+verderben5 : "Anti-Spoiler-Modus im Chat erfolgreich deaktiviert ❌"
+verderben6 : "Anti-Spoiler wurde in diesem Chat nicht aktiviert"
+verderben7 : "Spoiler-Nachricht entdeckt. Ich habe sie gelöscht..! "
+
+#plugin - antilangs
+antil1 : "Dies sind die aktuellen Einstellungen"
+antil2 : "Bearbeitung..."
+antil3 : "Verwendung: /antiarabic [ein | aus]"
+antil4 : "Verwendung: /antichinesisch [ein | aus]"
+antil5 : "Verwendung: /antijapanisch [ein | aus]"
+antil6 : "Verwendung: /antirussisch [ein | aus]"
+antil7 : "Verwendung: /sinhala [ein | aus]"
+antil8 : "Verwendung: /antitamil [ein | aus]"
+
+#plugin - approve.py
+app1 : "Ich weiß nicht, von wem Sie sprechen, Sie müssen einen Benutzer angeben!"
+app2 : "Dieser Benutzer ist nicht in diesem Chat!"
+app3 : "Benutzer ist bereits Administrator, schwarze Listen und Sperren gelten bereits nicht für ihn."
+app4 : "Ich weiß nicht, von wem Sie sprechen, Sie müssen einen Benutzer angeben!"
+app5 : "{} ist bereits genehmigt in {}"
+app6 : "{} wurde in {} genehmigt! \nSie werden jetzt von Blacklists, Locks und Antiflood ignoriert!"
+app7 : "Dieser Benutzer ist ein Administrator, er kann nicht abgelehnt werden."
+app8 : "{} ist noch nicht genehmigt!"
+app9 : "{} ist in {} nicht mehr genehmigt."
+app10 : "In {} sind keine Benutzer zugelassen."
+app11 : "{} ist ein zugelassener Benutzer. Sperren, Antiflood und schwarze Listen gelten nicht für sie."
+app12 : "{} ist kein zugelassener Benutzer. Sie sind von normalen Befehlen betroffen."
+
+#plugin - lang.py
+setting_1 : "Hallo {}, ich spreche viele Sprachen\n Wählen Sie unten Ihre Sprache aus !"
+setting_2 : "[🌎](https://crwd.in/szrosebot)Sprache wurde erfolgreich geändert \n.Geändert von {}"
+
+#plugin - ban.py
+ban2 : "Benutzer zum Kicken kann nicht gefunden werden."
+ban3 : "Ich kann diesen Benutzer nicht finden."
+ban4 : "Ich kann mich nicht treten, ich kann gehen, wenn du willst."
+ban6 : "Willst du den Erhöhten treten?"
+ban7 : "Ich kann einen Admin nicht kicken, du kennst die Regeln"
+ban8 : "Ich kann mich nicht treten, ich kann gehen, wenn du willst."
+ban9 : "Ich kann diesen Benutzer nicht finden."
+ban10 : "Ich kann mich nicht selbst verbieten, ich kann gehen, wenn du willst."
+ban11 : "Willst du The Elevated One verbieten?, ÜBERLEGE ES WIEDER!"
+ban12 : "Ich kann einen Admin nicht bannen, du kennst die Regeln, ich auch"
+ban13 : "Ich kann mich nicht selbst verbieten, ich kann gehen, wenn du willst."
+ban14 : "Du kannst nicht mehr als 99 verwenden!"
+ban15 : "Geben Sie einen Benutzernamen an oder antworten Sie auf die Nachricht eines Benutzers, um die Sperre aufzuheben."
+ban16 : "Benutzer zum Kicken kann nicht gefunden werden"
+ban17 : "Nicht gesperrt! {}"
+
+#plugin - blacklist.py
+black1 : "Bitte geben Sie mir ein Wort, um es der schwarzen Liste hinzuzufügen!"
+black2 : "Keine Sperrlistenfilter aktiv"
+black3 : "Bitte geben Sie mir ein Wort, um es der schwarzen Liste hinzuzufügen!"
+black4 : "bereits in Blacklist hinzugefügt, übersprungen!"
+black5 : "Bitte überprüfen Sie die Hilfe zur Verwendung dieses Befehls."
+black7 : "Schwarze Listen nicht gefunden!"
+black8 : "Bitte überprüfen Sie die Hilfe zur Verwendung dieses Befehls."
+black9 : "Du bist nicht einmal ein Admin, probier diesen explosiven Scheiß nicht aus!"
+
+#plugin - captcha.py
+capt1 : "Captcha ist hier bereits aktiviert, mit /remove deaktivieren"
+capt2 : "Bitte wählen Sie den Captcha-Typ aus"
+capt3 : "Captcha in diesem Chat deaktiviert"
+
+#plugin - Chatbot.py
+chatb1 : "Ich verstehe nur /chatbot on und /chatbot off"
+chatb2 : "Bearbeitung..."
+chatb3 : "Chat-Bot wurde in diesem Chat nicht aktiviert"
+chatb4 : "Chat-Bot im Chat erfolgreich deaktiviert❌"
+chatb5 : "Ich verstehe nur /chatbot on und /chatbot off"
+chatb6 : "Rose Bot AI Sprach-Chatbot"
+chatb7 : "Rose Bot ist am besten ..."
+chatb8 : "Hergestellt von @szteambots ..."
+chatb9 : "Wiederholen..."
+chatb10 : "Chat-Bot aktiviert ✅."
+chatb11 : "Chat-Bot in diesem Chat bereits aktiviert"
+
+#plugin - connection.py
+connection1 : "Sie sind ein anonymer Administrator. Verwenden Sie /connect {} in PM"
+connection2 : "Im richtigen Format eingeben!\n\n/Gruppen-ID verbinden\n\nErhalten Sie Ihre Gruppen-ID, indem Sie diesen Bot zu Ihrer Gruppe hinzufügen und verwenden Sie < code>/id"
+connection3 : "Du solltest ein Admin in der gegebenen Gruppe sein!"
+connection4 : "Ungültige Gruppen-ID!\n\nFalls richtig, stellen Sie sicher, dass ich in Ihrer Gruppe präsent bin!!"
+connection5 : "Erfolgreich verbunden mit {}\nVerwalte jetzt deine Gruppe von meiner PN aus!"
+connection6 : "Du bist bereits mit diesem Chat verbunden!"
+connection7 : "Füge mich als Admin in der Gruppe hinzu"
+connection8 : "Ein Fehler ist aufgetreten! Versuchen Sie es später noch einmal."
+connection9 : "Sie sind ein anonymer Administrator. Verwenden Sie /disconnect {} in PM"
+connection10 : "Führen Sie /connections aus, um Gruppen anzuzeigen oder sich von ihnen zu trennen!"
+connection11 : "Die Verbindung zu diesem Chat wurde erfolgreich getrennt"
+connection12 : "Dieser Chat ist nicht mit mir verbunden!\nZum Verbinden /disconnect."
+connection13 : "Es gibt keine aktiven Verbindungen!! Verbinde dich zuerst mit einigen Gruppen."
+
 
