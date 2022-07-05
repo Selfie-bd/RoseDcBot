@@ -9,7 +9,7 @@ main1 : "Hallo! Ich bin {} \n\nEin fortgeschrittener Telegramm-Gruppenverwaltung
 main2 : "PN an mich, wenn du Fragen dazu hast, wie man mich benutzt!"
 main3 : "Hier klicken"
 main4 : "Klicken Sie auf die Schaltfläche unten, um Hilfe zu {} zu erhalten"
-main5 : "Willkommen im Hilfemenü\n\nIch bin ein Gruppenverwaltungs-Bot mit einigen nützlichen Funktionen.\nKlicken Sie auf die Schaltflächen unten, um das Hilfemenü zu diesem Modul zu öffnen. \nWenn Sie Fehler gefunden haben oder Fragen zur Verwendung von mir haben, \nSchauen Sie sich meine [Docs](https://szsupunma.gitbook.io/rose-bot/) an oder gehen Sie zu @szteambots.\n\nAlle Befehle können mit / " verwendet werden
+main5 : "Willkommen im Hilfemenü\n\nIch bin ein Gruppenverwaltungs-Bot mit einigen nützlichen Funktionen.\nKlicken Sie auf die Schaltflächen unten, um das Hilfemenü zu diesem Modul zu öffnen. \nWenn Sie Fehler gefunden haben oder Fragen zur Verwendung von mir haben, \nSchauen Sie sich meine [Docs](https://szsupunma.gitbook.io/rose-bot/) an oder gehen Sie zu @szteambots.\n\nAlle Befehle können mit / "
 main6 : "Hier ist die Hilfe für {}"
 
 #plugin - admin.py
