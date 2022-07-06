@@ -1330,7 +1330,7 @@ async def spam_locked(client, message):
     if not message.chat:
         return  
     try:
-        results = requests.get(f"https://api.safone.tech/spam?image={message}").json()
+        results = requests.get(f"https://api.safone.tech/spam?text={message}").json()
     except Exception:
         return 
 
