@@ -112,6 +112,7 @@ data = {
     "spoiler":"spoiler",
     "anonchannel":"anonchannel",
     "channel":"channel",
+    "porn":"porn",
 }
 incorrect_parameters = "Incorrect Parameters, Check Locks Section In Help."
 permdata = {
@@ -1188,7 +1189,58 @@ async def urls(client, message):
              message.continue_propagation()
     else:
             message.continue_propagation()
+#==========================================================================================
+@app.on_message(
+        filters.incoming 
+        | ~filters.linked_channel,
+        group=porn
+)
+async def porn_hub(client, message):  
+    if not message.chat:
+        return  
+    file_id = get_file_id(message)
+    if not file_id:
+        return 
+    file = await app.download_media(file_id)      
+    try:
+        results = requests.get(f"https://api.safone.tech/nsfw?image={file}")
+    except Exception:
+        return 
+    remove(file)
 
+    user_id = message.from_user.id if message.from_user else message.sender_chat.id
+
+
+    if results.is_nsfw=="true":
+
+        if not lockdb.find_one({"porn": message.chat.id}):
+           return
+        if user_id in await list_admins(message.chat.id):
+            return  
+        try:
+         await message.delete()
+         sender = message.from_user.mention()
+         lol = await pbot.send_message(
+                message.chat.id,
+                f"""
+{sender}, Your message was deleted as it contain porn(s). 
+
+==========================
+• **Porn:** `{results.porn} %`
+• **Hentai:** `{results.hentai} %`
+• **Sexy:** `{results.sexy} %`
+• **Drawings:** `{results.drawings} %`
+• **NSFW:** `{results.is_nsfw}`
+==========================
+
+❗️ porns are not allowed here""",
+            )
+         await asyncio.sleep(7)
+         await lol.delete()   
+        except:
+             message.continue_propagation()
+    else:
+            message.continue_propagation()
 
 @app.on_message(filters.incoming  & ~filters.linked_channel, group=channel)
 async def channel(client, message):
@@ -1268,6 +1320,52 @@ def get_url(message_1: Message) -> Union[str, None]:
 
     return text[offset : offset + length]
 
+#==========================================================================================
+@app.on_message(
+        filters.incoming 
+        | ~filters.linked_channel,
+        group=spam
+)
+async def spam_locked(client, message):  
+    if not message.chat:
+        return  
+    try:
+        results = requests.get(f"https://api.safone.tech/spam?image={message}")
+    except Exception:
+        return 
+
+    user_id = message.from_user.id if message.from_user else message.sender_chat.id
+
+
+    if results.is_spam=="true":
+
+        if not lockdb.find_one({"spam": message.chat.id}):
+           return
+        if user_id in await list_admins(message.chat.id):
+            return  
+        try:
+         await message.delete()
+         sender = message.from_user.mention()
+         lol = await pbot.send_message(
+                message.chat.id,
+                f"""
+{sender}, Your message was deleted as it contain spam(s). 
+
+==========================
+• **Is Spam:** `{results.is_spam}`
+• **Spam Probability:** `{results.spam_probability}` %
+• **Spam:** `{results.spam}`
+• **Ham:** `{results.ham}`
+==========================
+
+❗️ spam are not allowed here""",
+            )
+         await asyncio.sleep(7)
+         await lol.delete()   
+        except:
+             message.continue_propagation()
+    else:
+            message.continue_propagation()
 
 __MODULE__ = f"{Locks}"
 __HELP__ = """

@@ -1,4 +1,5 @@
 from pyrogram.types import Message
+import requests
 from Rose import *
 from Rose.utils.filter_groups import *
 from Rose.utils.filter_groups import *
@@ -29,7 +30,7 @@ async def nsfw_scan_command(_, message: Message):
         return await m.edit("Something went wrong.")
     file = await app.download_media(file_id)
     try:
-        results = await arq.nsfw_scan(file=file)
+        results = requests.get(f"https://api.safone.tech/nsfw?image={file}")
     except Exception as e:
         return await m.edit(str(e))
     remove(file)
@@ -39,16 +40,14 @@ async def nsfw_scan_command(_, message: Message):
     await m.edit(
         f"""
 **NSFW** scan Result Here ✅
+
 ==========================
-• **Neutral:** `{results.neutral} %`
 • **Porn:** `{results.porn} %`
 • **Hentai:** `{results.hentai} %`
 • **Sexy:** `{results.sexy} %`
 • **Drawings:** `{results.drawings} %`
 • **NSFW:** `{results.is_nsfw}`
-==========================
-"""
-    )
+========================== """)
 
 
 @app.on_message(command("spamscan"))
@@ -59,7 +58,7 @@ async def scanNLP(_, message: Message):
     text = r.text or r.caption
     if not text:
         return await message.reply("Can't scan that")
-    data = await arq.nlp(text)
+    data = requests.get(f"https://api.safone.tech/spam?text={text}")
     data = data.result[0]
     msg = f"""
 **SPAm** scan Result Here ✅
@@ -68,7 +67,6 @@ async def scanNLP(_, message: Message):
 • **Spam Probability:** `{data.spam_probability}` %
 • **Spam:** `{data.spam}`
 • **Ham:** `{data.ham}`
-• **Profanity:** `{data.profanity}`
 ==========================
 """
     await message.reply(msg, quote=True)

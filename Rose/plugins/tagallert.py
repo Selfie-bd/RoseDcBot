@@ -15,16 +15,20 @@ async def locks_dfunc(client, message: Message, _):
    lol = await message.reply(_["spoil2"])
    if len(message.command) != 2:
       return await lol.edit(_["tagg1"])
+
    parameter = message.text.strip().split(None, 1)[1].lower()
+
    if parameter == "on" or parameter=="ON":
      if not message.from_user:
        return
      if not message.from_user.username:
        return await lol.edit(_["tagg2"])
+
      uname=str(message.from_user.username)
      uname = uname.lower()
      taggeddb.insert_one({f"teg": uname})
      return await lol.edit(_["tagg3"].format(uname))
+
    if parameter == "off" or parameter=="OFF":
      if not message.from_user:
        return
@@ -32,6 +36,7 @@ async def locks_dfunc(client, message: Message, _):
        return await lol.edit(_["tagg2"])
      uname = message.from_user.username
      uname = uname.lower()
+     taggeddb.delete_one({f"teg": uname})
      return await lol.edit(_["tagg5"])
    else:
      await lol.edit(_["tagg1"])

@@ -61,7 +61,7 @@ async def gstats(_, message):
 • **Filter Count** : `{(fldb.count_filters_all())}`  **In**  `{(fldb.count_filters_chats())}`  **chats**
 • **Notes Count** : `{(notesdb.count_all_notes())}`  **In**  `{(notesdb.count_notes_chats())}`  **chats**
 • **Rules:** `{(rulesdb.count_chats_with_rules())}` 
-• **Total Users I see:** `{len(serve_users)}`
+• **Total Users I see:**`{len(serve_users)}`
 • **Total languages** : `10`
 
 """
