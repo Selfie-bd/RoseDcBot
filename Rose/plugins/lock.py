@@ -1203,7 +1203,13 @@ async def porn_hub(client, message):
         return 
     file = await app.download_media(file_id)      
     try:
-        results = requests.get(f"https://api.safone.tech/nsfw?image={file}").json()
+        data = requests.get(f"https://api.safone.tech/nsfw?image={file}").json()
+        is_nsfw = data['data']['is_nsfw']
+        neutral = data['data']['neutral']
+        hentai = data['data']['hentai']
+        drawings = data['data']['drawings']
+        porn = data['data']['porn']
+        sexy = data['data']['sexy']
     except Exception:
         return 
     remove(file)
@@ -1211,7 +1217,7 @@ async def porn_hub(client, message):
     user_id = message.from_user.id if message.from_user else message.sender_chat.id
 
 
-    if results['is_nsfw']=="true":
+    if is_nsfw == "true":
 
         if not lockdb.find_one({"porn": message.chat.id}):
            return
@@ -1226,11 +1232,12 @@ async def porn_hub(client, message):
 {sender}, Your message was deleted as it contain porn(s). 
 
 ==========================
-• **Porn:** `{results['porn']} %`
-• **Hentai:** `{results['hentai']} %`
-• **Sexy:** `{results['sexy']} %`
-• **Drawings:** `{results['drawings']} %`
-• **NSFW:** `{results['is_nsfw']}`
+• **Porn:** `{porn} %`
+• **Neutral:** `{neutral} %`
+• **Hentai:** `{hentai} %`
+• **Sexy:** `{sexy} %`
+• **Drawings:** `{drawings} %`
+• **NSFW:** `{is_nsfw}`
 ==========================
 
 ❗️ porns are not allowed here""",
@@ -1330,14 +1337,18 @@ async def spam_locked(client, message):
     if not message.chat:
         return  
     try:
-        results = requests.get(f"https://api.safone.tech/spam?text={message}").json()
+        data = requests.get(f"https://api.safone.tech/spam?text={message}").json()
+        is_spam = data['data']['is_spam']
+        spam_probability = data['data']['spam_probability']
+        spam = data['data']['spam']
+        ham = data['data']['ham']
     except Exception:
         return 
 
     user_id = message.from_user.id if message.from_user else message.sender_chat.id
+   
 
-
-    if results['is_spam']=="true":
+    if is_spam=="true":
 
         if not lockdb.find_one({"spam": message.chat.id}):
            return
@@ -1352,10 +1363,10 @@ async def spam_locked(client, message):
 {sender}, Your message was deleted as it contain spam(s). 
 
 ==========================
-• **Is Spam:** `{results['is_spam']}`
-• **Spam Probability:** `{results['spam_probability']}` %
-• **Spam:** `{results['spam']}`
-• **Ham:** `{results['ham']}`
+• **Is Spam:** `{is_spam}`
+• **Spam Probability:** `{spam_probability}` %
+• **Spam:** `{spam}`
+• **Ham:** `{ham}`
 ==========================
 
 ❗️ spam are not allowed here""",

@@ -30,7 +30,13 @@ async def nsfw_scan_command(_, message: Message):
         return await m.edit("Something went wrong.")
     file = await app.download_media(file_id)
     try:
-        results = requests.get(f"https://api.safone.tech/nsfw?image={file}").json()
+        data = requests.get(f"https://api.safone.tech/nsfw?image={file}").json()
+        is_nsfw = data['data']['is_nsfw']
+        neutral = data['data']['neutral']
+        hentai = data['data']['hentai']
+        drawings = data['data']['drawings']
+        porn = data['data']['porn']
+        sexy = data['data']['sexy']
     except Exception as e:
         return await m.edit(str(e))
     remove(file)
@@ -39,11 +45,12 @@ async def nsfw_scan_command(_, message: Message):
 **NSFW** scan Result Here ✅
 
 ==========================
-• **Porn:** `{results['porn']} %`
-• **Hentai:** `{results['hentai']} %`
-• **Sexy:** `{results['sexy']} %`
-• **Drawings:** `{results['drawings']} %`
-• **NSFW:** `{results['is_nsfw']}`
+• **Porn:** `{porn} %`
+• **Neutral:** `{neutral} %`
+• **Hentai:** `{hentai} %`
+• **Sexy:** `{sexy} %`
+• **Drawings:** `{drawings} %`
+• **NSFW:** `{is_nsfw}`
 ========================== """)
     
 
@@ -56,13 +63,17 @@ async def scanNLP(_, message: Message):
     if not text:
         return await message.reply("Can't scan that")
     data = requests.get(f"https://api.safone.tech/spam?text={text}").json()
+    is_spam = data['data']['is_spam']
+    spam_probability = data['data']['spam_probability']
+    spam = data['data']['spam']
+    ham = data['data']['ham']
     msg = f"""
 **SPAm** scan Result Here ✅
 ==========================    
-• **Is Spam:** `{data['is_spam']}`
-• **Spam Probability:** `{data['spam_probability']}` %
-• **Spam:** `{data['spam']}`
-• **Ham:** `{data['ham']}`
+• **Is Spam:** `{is_spam}`
+• **Spam Probability:** `{spam_probability}` %
+• **Spam:** `{spam}`
+• **Ham:** `{ham}`
 ==========================
 """
     await message.reply(msg, quote=True)
