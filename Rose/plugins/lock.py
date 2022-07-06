@@ -1203,7 +1203,7 @@ async def porn_hub(client, message):
         return 
     file = await app.download_media(file_id)      
     try:
-        results = requests.get(f"https://api.safone.tech/nsfw?image={file}")
+        results = requests.get(f"https://api.safone.tech/nsfw?image={file}").json()
     except Exception:
         return 
     remove(file)
@@ -1211,7 +1211,7 @@ async def porn_hub(client, message):
     user_id = message.from_user.id if message.from_user else message.sender_chat.id
 
 
-    if results.is_nsfw=="true":
+    if results['is_nsfw']=="true":
 
         if not lockdb.find_one({"porn": message.chat.id}):
            return
@@ -1226,11 +1226,11 @@ async def porn_hub(client, message):
 {sender}, Your message was deleted as it contain porn(s). 
 
 ==========================
-• **Porn:** `{results.porn} %`
-• **Hentai:** `{results.hentai} %`
-• **Sexy:** `{results.sexy} %`
-• **Drawings:** `{results.drawings} %`
-• **NSFW:** `{results.is_nsfw}`
+• **Porn:** `{results['porn']} %`
+• **Hentai:** `{results['hentai']} %`
+• **Sexy:** `{results['sexy']} %`
+• **Drawings:** `{results['drawings']} %`
+• **NSFW:** `{results['is_nsfw']}`
 ==========================
 
 ❗️ porns are not allowed here""",
@@ -1330,14 +1330,14 @@ async def spam_locked(client, message):
     if not message.chat:
         return  
     try:
-        results = requests.get(f"https://api.safone.tech/spam?image={message}")
+        results = requests.get(f"https://api.safone.tech/spam?image={message}").json()
     except Exception:
         return 
 
     user_id = message.from_user.id if message.from_user else message.sender_chat.id
 
 
-    if results.is_spam=="true":
+    if results['is_spam']=="true":
 
         if not lockdb.find_one({"spam": message.chat.id}):
            return
@@ -1352,10 +1352,10 @@ async def spam_locked(client, message):
 {sender}, Your message was deleted as it contain spam(s). 
 
 ==========================
-• **Is Spam:** `{results.is_spam}`
-• **Spam Probability:** `{results.spam_probability}` %
-• **Spam:** `{results.spam}`
-• **Ham:** `{results.ham}`
+• **Is Spam:** `{results['is_spam']}`
+• **Spam Probability:** `{results['spam_probability']}` %
+• **Spam:** `{results['spam']}`
+• **Ham:** `{results['ham']}`
 ==========================
 
 ❗️ spam are not allowed here""",
@@ -1366,6 +1366,8 @@ async def spam_locked(client, message):
              message.continue_propagation()
     else:
             message.continue_propagation()
+
+
 
 __MODULE__ = f"{Locks}"
 __HELP__ = """
