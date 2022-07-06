@@ -32,7 +32,6 @@ async def nsfw_scan_command(_, message: Message):
     try:
         data = requests.get(f"https://api.safone.tech/nsfw?image={file}").json()
         is_nsfw = data['data']['is_nsfw']
-        neutral = data['data']['neutral']
         hentai = data['data']['hentai']
         drawings = data['data']['drawings']
         porn = data['data']['porn']
@@ -46,7 +45,6 @@ async def nsfw_scan_command(_, message: Message):
 
 ==========================
 • **Porn:** `{porn} %`
-• **Neutral:** `{neutral} %`
 • **Hentai:** `{hentai} %`
 • **Sexy:** `{sexy} %`
 • **Drawings:** `{drawings} %`

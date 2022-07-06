@@ -113,6 +113,7 @@ data = {
     "anonchannel":"anonchannel",
     "channel":"channel",
     "porn":"porn",
+    "spam":"spam",
 }
 incorrect_parameters = "Incorrect Parameters, Check Locks Section In Help."
 permdata = {
