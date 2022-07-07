@@ -39,40 +39,45 @@ keyboard =InlineKeyboardMarkup(
             InlineKeyboardButton(
                 text="🇱🇷 English", callback_data="languages_en"
             ),
+        ],
+        [
             InlineKeyboardButton(
                 text="🇱🇰 සිංහල", callback_data="languages_si"
-            )
-        ],
-        [
+            ), 
             InlineKeyboardButton(
                 text="🇮🇳 हिन्दी", callback_data="languages_hi"
-            ),
+            )
+        ], 
+        [
             InlineKeyboardButton(
                 text="🇮🇹 Italiano", callback_data="languages_it"
-            )
-        ],
-        [
+            ), 
             InlineKeyboardButton(
                 text="🇮🇳 తెలుగు", callback_data="languages_ta"
-            ),
+            )
+        ], 
+        [
             InlineKeyboardButton(
                 text="🇮🇩 Indonesia", callback_data="languages_id"
-            ),
-        ],
-        [
+            ), 
             InlineKeyboardButton(
                 text="🇦🇪 عربي", callback_data="languages_ar"
             ),
+        ], 
+        [
             InlineKeyboardButton(
                 text="🇮🇳 മലയാളം", callback_data="languages_ml"
             ), 
-        ],
+            InlineKeyboardButton(
+                text="🇲🇼 Chichewa", callback_data="languages_ny"
+            ),
+        ], 
         [
             InlineKeyboardButton(
-                text="🇲🇼 chichewa", callback_data="languages_ny"
+                text="🇩🇪 German", callback_data="languages_ge"
             ), 
             InlineKeyboardButton(
-                text="🇩🇪 german", callback_data="languages_ge"
+                text="🇷🇺 Russian", callback_data="languages_ru"
             ), 
         ], 
         [  
@@ -87,7 +92,7 @@ async def commands_callbacc(client, CallbackQuery, _):
     user = CallbackQuery.message.from_user.mention
     await app.send_message(
         CallbackQuery.message.chat.id,
-        text= "The list of available languages:",
+        text= "Choose Your languages:\nඔබේ භාෂා තෝරන්න",
         reply_markup=keyboard,
         disable_web_page_preview=True,
     )
