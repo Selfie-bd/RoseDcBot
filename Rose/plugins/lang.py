@@ -18,40 +18,45 @@ keyboard = InlineKeyboardMarkup(
             InlineKeyboardButton(
                 text="🇱🇷 English", callback_data="languages_en"
             ),
+        ], 
+        [
             InlineKeyboardButton(
                 text="🇱🇰 සිංහල", callback_data="languages_si"
-            )
-        ],
-        [
+            ), 
             InlineKeyboardButton(
                 text="🇮🇳 हिन्दी", callback_data="languages_hi"
-            ),
+            )
+        ], 
+        [
             InlineKeyboardButton(
                 text="🇮🇹 Italiano", callback_data="languages_it"
-            )
-        ],
-        [
+            ), 
             InlineKeyboardButton(
                 text="🇮🇳 తెలుగు", callback_data="languages_ta"
-            ),
+            ), 
+        ], 
+        [
             InlineKeyboardButton(
                 text="🇮🇩 Indonesia", callback_data="languages_id"
-            ),
-        ],
-        [
+            ), 
             InlineKeyboardButton(
                 text="🇦🇪 عربي", callback_data="languages_ar"
             ),
+        ], 
+        [
             InlineKeyboardButton(
                 text="🇮🇳 മലയാളം", callback_data="languages_ml"
             ), 
-        ],
+            InlineKeyboardButton(
+                text="🇲🇼 Chichewa", callback_data="languages_ny"
+            ), 
+        ], 
         [
             InlineKeyboardButton(
-                text="🇲🇼 chichewa", callback_data="languages_ny"
+                text="🇩🇪 German", callback_data="languages_ge"
             ), 
             InlineKeyboardButton(
-                text="🇩🇪 german", callback_data="languages_ge"
+                text="🇷🇺 Russian", callback_data="languages_ru"
             ), 
         ]]
 )
@@ -65,7 +70,7 @@ async def langs_command(client, message: Message, _):
     user = message.from_user.mention
     lang = await get_lang(message.chat.id)
     if chat_type == "private":
-      await message.reply_text("The list of available languages:".format(lang),
+      await message.reply_text("Choose Your languages\nඔබේ භාෂා තෝරන්න".format(lang),
         reply_markup=keyboard,
      )
     elif chat_type in ["group", "supergroup"]:
@@ -78,7 +83,7 @@ async def langs_command(client, message: Message, _):
         ):
          return 
         try:   
-            await message.reply_text( "The list of available languages:".format(user),
+            await message.reply_text( "Choose Your languages\nඔබේ භාෂා තෝරන්න".format(user),
         reply_markup=keyboard,
      )
         except Exception as e:
@@ -91,14 +96,14 @@ async def language_markup(_, CallbackQuery):
     user = CallbackQuery.from_user.mention
     old = await get_lang(CallbackQuery.message.chat.id)
     if str(old) == str(langauge):
-        return await CallbackQuery.answer("You're already on same language ")
+        return await CallbackQuery.answer("You're already on same language", show_alert=True)
     await set_lang(CallbackQuery.message.chat.id, langauge)
     try:
         _ = get_string(langauge)
-        await CallbackQuery.answer("Successfully changed your language.")
+        await CallbackQuery.answer("Successfully changed your language.", show_alert=True)
     except:
         return await CallbackQuery.answer(
-            "Failed to change language or Language under update.")
+            "This language is Under Construction 👷", show_alert=True)
     await set_lang(CallbackQuery.message.chat.id, langauge)
     return await CallbackQuery.message.delete()
 
@@ -117,40 +122,45 @@ __helpbtns__ = (
             InlineKeyboardButton(
                 text="🇱🇷 English", callback_data="languages_en"
             ),
+       ], 
+       [
             InlineKeyboardButton(
                 text="🇱🇰 සිංහල", callback_data="languages_si"
-            )
-        ],
-        [
+            ), 
             InlineKeyboardButton(
                 text="🇮🇳 हिन्दी", callback_data="languages_hi"
-            ),
+            )
+       ], 
+       [
             InlineKeyboardButton(
                 text="🇮🇹 Italiano", callback_data="languages_it"
-            )
-        ],
-        [
+            ), 
             InlineKeyboardButton(
                 text="🇮🇳 తెలుగు", callback_data="languages_ta"
-            ),
+            )
+       ], 
+       [
             InlineKeyboardButton(
                 text="🇮🇩 Indonesia", callback_data="languages_id"
             ),
-        ],
-        [
             InlineKeyboardButton(
                 text="🇦🇪 عربي", callback_data="languages_ar"
             ),
+       ], 
+       [
             InlineKeyboardButton(
                 text="🇮🇳 മലയാളം", callback_data="languages_ml"
             ), 
-        ],
-        [
             InlineKeyboardButton(
-                text="🇲🇼 chichewa", callback_data="languages_ny"
+                text="🇲🇼 Chichewa", callback_data="languages_ny"
+            ), 
+       ], 
+       [
+            InlineKeyboardButton(
+                text="🇩🇪 German", callback_data="languages_ge"
             ), 
             InlineKeyboardButton(
-                text="🇩🇪 german", callback_data="languages_ge"
+                text="🇷🇺 Russian", callback_data="languages_ru"
             ), 
         ], 
     ]
