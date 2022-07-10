@@ -349,7 +349,7 @@ async def help_button(client, query, _):
             reply_markup=InlineKeyboardMarkup(button),
             disable_web_page_preview=True,
         )
-        await query.answer(f"Here is the help for {module}",show_alert=True)
+        await query.answer(f"Here is the help for {module}")
     elif home_match:
         await app.send_message(
             query.from_user.id,

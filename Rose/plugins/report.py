@@ -66,19 +66,7 @@ async def report_user(_, message):
     db = Reporting(message.chat.id)
     if not db.get_settings():
         return
-    if not message.reply_to_message:
-        return await message.reply_text(
-            "Reply to a message to report that user."
-        )
-
-    reply = message.reply_to_message
-    reply_id = reply.from_user.id if reply.from_user else reply.sender_chat.id
-    user_id = message.from_user.id if message.from_user else message.sender_chat.id
-    if reply_id == user_id:
-        return await message.reply_text("Why are you reporting yourself ?")
-
-    user_mention = reply.from_user.mention if reply.from_user else reply.sender_chat.title
-    text = f"Reported {user_mention} to admins!"
+    text = f"Reported to admins!"
     admin_data = await app.get_chat_members(
         chat_id=message.chat.id, filter="administrators"
     )  # will it giv floods ?
