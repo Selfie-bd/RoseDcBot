@@ -92,7 +92,7 @@ async def commands_callbacc(client, CallbackQuery, _):
     user = CallbackQuery.message.from_user.mention
     await app.send_message(
         CallbackQuery.message.chat.id,
-        text= "Choose Your languages:\nඔබේ භාෂා තෝරන්න:",
+        text= "Choose Your languages:",
         reply_markup=keyboard,
         disable_web_page_preview=True,
     )
