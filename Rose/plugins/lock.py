@@ -1204,7 +1204,7 @@ async def porn_hub(client, message):
         return 
     file = await app.download_media(file_id)      
     try:
-        data = requests.get(f"https://api.safone.tech/nsfw?image={file}").json()
+        data = requests.post(f"https://api.safone.tech/nsfw", files={'image': open(file, 'rb')}).json()
         is_nsfw = data['data']['is_nsfw']
         neutral = data['data']['neutral']
         hentai = data['data']['hentai']
@@ -1336,15 +1336,17 @@ def get_url(message_1: Message) -> Union[str, None]:
 )
 async def spam_locked(client, message):  
     if not message.chat:
-        return  
+        return
+    if not message.text:
+        return
     try:
-        data = requests.get(f"https://api.safone.tech/spam?text={message}").json()
+        data = requests.post(f"https://api.safone.tech/spam", json={'text': message.text}).json()
         is_spam = data['data']['is_spam']
         spam_probability = data['data']['spam_probability']
         spam = data['data']['spam']
         ham = data['data']['ham']
     except Exception:
-        return 
+        return
 
     user_id = message.from_user.id if message.from_user else message.sender_chat.id
    
