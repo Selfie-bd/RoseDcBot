@@ -30,7 +30,7 @@ async def nsfw_scan_command(_, message: Message):
         return await m.edit("Something went wrong.")
     file = await app.download_media(file_id)
     try:
-        data = requests.get(f"https://api.safone.tech/nsfw?image={file}").json()
+        data = requests.post(f"https://api.safone.tech/nsfw", files={'image': open(file, 'rb')}).json()
         is_nsfw = data['data']['is_nsfw']
         hentai = data['data']['hentai']
         drawings = data['data']['drawings']
@@ -60,7 +60,7 @@ async def scanNLP(_, message: Message):
     text = r.text or r.caption
     if not text:
         return await message.reply("Can't scan that")
-    data = requests.get(f"https://api.safone.tech/spam?text={text}").json()
+    data = requests.post(f"https://api.safone.tech/spam", json={'text': text}).json()
     is_spam = data['data']['is_spam']
     spam_probability = data['data']['spam_probability']
     spam = data['data']['spam']
