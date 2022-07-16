@@ -262,7 +262,7 @@ prote8 : "Chat Chachotsedwa Ku Database. Izi Zamkatimu za NSFW Sizidzachotsedwa"
 
 #plugin - purge.py
 purge1 : "Akale kuposa masiku awiri"
-purge2 : "Wamaliza{count_del_msg} Uthenga wachotsedwa"
+purge2 : "Wamaliza {} Uthenga wachotsedwa"
 purge3 : "Yankhani uthenga woti muyambe kuyeretsa !"
 purge4 : "Akale kuposa masiku 2"
 purge5 : "Yankhani uthenga kuti muyambe spurge !"

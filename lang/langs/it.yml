@@ -266,7 +266,7 @@ prote8 : "Chat to Database rimosso. I contenuti NSFW di questo gruppo non verran
 
 #plugin - purge.py
 purge1 : "Più vecchio di 2 giorni"
-purge2 : "Fine{count_del_msg} Il messaggio è stato eliminato"
+purge2 : "Fine {} Il messaggio è stato eliminato"
 purge3 : "Rispondi a un messaggio per avviare l'eliminazione!"
 purge4 : "Più vecchio di 2 giorni"
 purge5 : "Rispondi a un messaggio per avviare spurge!"

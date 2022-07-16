@@ -262,7 +262,7 @@ prote8 : "Menghapus Obrolan Ke Basis Data. Konten NSFW Grup Ini Tidak Akan Dihap
 
 #plugin - bersihkan.py
 purge1 : "Lebih dari 2 hari"
-purge2 : "Selesai{count_del_msg} Pesan telah dihapus"
+purge2 : "Selesai {} Pesan telah dihapus"
 purge3 : "Balas pesan untuk memulai pembersihan!"
 purge4 : "Lebih dari 2 hari"
 purge5 : "Balas pesan untuk memulai spurge !"

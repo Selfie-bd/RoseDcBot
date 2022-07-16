@@ -261,7 +261,7 @@ prote8 : "Removed Chat To Database. This Groups NSFW Contents won't Be Deleted"
 
 #plugin - purge.py
 purge1 : "Old than 2 days"
-purge2 : "Done{count_del_msg} Message was deleted"
+purge2 : "Done {} Message was deleted"
 purge3 : "Reply to a message to start purge !"
 purge4 : "Old than 2 days"
 purge5 : "Reply to a message to start spurge !"

@@ -1,6 +1,5 @@
 pymongo[srv]
 motor==3.0.0
-pymongo==4.1.1
 psutil==5.9.1
 TgCrypto==1.2.3
 pykeyboard==0.1.5
@@ -17,5 +16,7 @@ EmojiCaptcha==0.1.2
 captcha==0.4 
 googletrans==3.1.0a0
 telegraph==2.1.0
-pyrogram==1.4.16
+
+pyrogram
+
 pyyaml==5.4
