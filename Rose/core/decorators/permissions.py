@@ -31,6 +31,37 @@ async def member_permissions(chat_id: int, user_id: int):
         perms.append("can_manage_voice_chats")
     return perms
 
+admins_in_chat = {}
+
+async def list_admins(chat_id: int):
+    return [ member.user.id
+        async for member in app.iter_chat_members(
+            chat_id, filter="administrators"
+        )]
+
+async def current_chat_permissions(chat_id):
+    perms = []
+    perm = (await app.get_chat(chat_id)).permissions
+    if perm.can_send_messages:
+        perms.append("can_send_messages")
+    if perm.can_send_media_messages:
+        perms.append("can_send_media_messages")
+    if perm.can_send_other_messages:
+        perms.append("can_send_other_messages")
+    if perm.can_add_web_page_previews:
+        perms.append("can_add_web_page_previews")
+    if perm.can_send_polls:
+        perms.append("can_send_polls")
+    if perm.can_change_info:
+        perms.append("can_change_info")
+    if perm.can_invite_users:
+        perms.append("can_invite_users")
+    if perm.can_pin_messages:
+        perms.append("can_pin_messages")
+
+    return perms
+
+
 
 async def authorised(func, subFunc2, client, message, *args, **kwargs):
     chatID = message.chat.id

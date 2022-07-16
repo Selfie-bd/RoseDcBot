@@ -1,10 +1,11 @@
 from Rose import app
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from Rose.utils.commands import *
-from Rose.utils.lang import *
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton,Message
+from Rose.utils.commands import command
+from Rose.utils.lang import language
 from Rose.mongo import taggeddb
-from button import *
+from button import Tagalert
+from Rose.utils.filter_groups import tagallert
 
 def get_info(id):
     return taggeddb.find_one({"id": id})
@@ -41,7 +42,7 @@ async def locks_dfunc(client, message: Message, _):
    else:
      await lol.edit(_["tagg1"])
        
-@app.on_message(filters.incoming)
+@app.on_message(filters.incoming,group=tagallert)
 async def mentioned_alert(client, message):   
     try:
         if not message:
@@ -77,16 +78,18 @@ async def mentioned_alert(client, message):
 {message.text} """
         button_s = InlineKeyboardMarkup([[InlineKeyboardButton("📮 View Message", url=tagged_msg_link)]])
         try:
-            sz = await client.send_message(chat_id=f"{text}", text=final_tagged_msg,reply_markup=button_s,disable_web_page_preview=True)
-            pin = await sz.pin(disable_notification=True, both_sides=True)
-            await pin.delete()
+            await client.send_message(
+              chat_id=f"{text}", 
+              text=final_tagged_msg,
+              reply_markup=button_s,
+              disable_web_page_preview=True)
         except:
             return message.continue_propagation()
         message.continue_propagation()
     except:
         return message.continue_propagation()
     
-__MODULE__ = f"{Tagalert}"
+__MODULE__ = Tagalert
 __HELP__ = """
 Too many mentions.. Cant you manage them all alone..
 Here is the solution

@@ -2,24 +2,20 @@ from asyncio import sleep
 from pyrogram.errors import MessageDeleteForbidden
 from pyrogram.types import Message
 from Rose import app 
-from Rose.utils.custom_filters import admin_filter, command
-from Rose.utils.lang import *
-from Rose.utils.commands import *
-from button import *
+from Rose.utils.custom_filters import admin_filter
+from Rose.utils.lang import language
+from Rose.utils.commands import command
+from button import Purges
 
 @app.on_message(command("purge") & admin_filter)
 @language
 async def purge(client, m: Message, _):
     if m.reply_to_message:
         message_ids = list(range(m.reply_to_message.message_id, m.message_id))
-
         def divide_chunks(l: list, n: int = 100):
             for i in range(0, len(l), n):
                 yield l[i : i + n]
-
-        # Dielete messages in chunks of 100 messages
         m_list = list(divide_chunks(message_ids))
-
         try:
             for plist in m_list:
                 await app.delete_messages(
@@ -32,7 +28,7 @@ async def purge(client, m: Message, _):
             await m.reply_text(_["purge1"])
             return
         count_del_msg = len(message_ids)
-
+        print(count_del_msg)
         z = await m.reply_text(_[f"purge2"])
         await sleep(3)
         await z.delete()
@@ -46,14 +42,10 @@ async def purge(client, m: Message, _):
 async def spurge(client, m: Message, _):
     if m.reply_to_message:
         message_ids = list(range(m.reply_to_message.message_id, m.message_id))
-
         def divide_chunks(l: list, n: int = 100):
             for i in range(0, len(l), n):
                 yield l[i : i + n]
-
-        # Dielete messages in chunks of 100 messages
         m_list = list(divide_chunks(message_ids))
-
         try:
             for plist in m_list:
                 await app.delete_messages(
@@ -83,7 +75,7 @@ async def del_msg(client, m: Message, _):
         await m.reply_text(_["purge6"])
     return
 
-__MODULE__ = f"{Purges}"
+__MODULE__ = Purges
 __HELP__ = """
 Need to delete lots of messages? That's what purges are for!
 

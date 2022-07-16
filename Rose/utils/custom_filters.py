@@ -17,7 +17,6 @@ COMMAND = "/"
 SUDO_LEVEL = set(SUDO_USERS + DEV_USERS + OWNER_ID)
 DEV_LEVEL = set(DEV_USERS + OWNER_ID)
 
-
 def command(
     commands: Union[str, List[str]],
     case_sensitive: bool = False,
@@ -91,8 +90,7 @@ def command(
         commands=commands,
         case_sensitive=case_sensitive,
     )
-
-
+#=================================================================
 async def bot_admin_check_func(_, __, m: Message or CallbackQuery):
     if isinstance(m, CallbackQuery):
         m = m.message
@@ -115,6 +113,7 @@ async def bot_admin_check_func(_, __, m: Message or CallbackQuery):
         "I don't have enough permissions",
     )
     return False
+#=================================================================
 
 
 async def admin_check_func(_, __, m: Message or CallbackQuery):

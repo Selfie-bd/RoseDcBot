@@ -10,7 +10,12 @@ import asyncio
 from pyrogram import Client
 from config import *
 import pymongo
+import pytz
+from datetime import datetime
 
+IST = pytz.timezone('Asia/Colombo')
+time = datetime.now(IST)
+date = time.strftime("%a/%d/%b/%Y %H:%M:%S")#format can change any time if you want /:
 
 SUPPORT_GROUP = "https://t.me/slbotzone"
 SUDOERS = SUDO_USERS_ID

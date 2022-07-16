@@ -1,6 +1,8 @@
+#====================================================================================================
 # Copyright (c) 2021 Itz-fork
 # Part of: Nexa-Userbot
-# re-write for Rose by szsupunma
+# re-write for @szrosebot by szsupunma
+#====================================================================================================
 
 from pyrogram import filters
 from pyrogram.types import Message
@@ -8,24 +10,24 @@ from re import search
 from Rose import app as NEXAUB
 from Rose.utils.custom_filters import admin_filter
 from Rose import app
-from Rose.mongo.antilang import *
+from Rose.mongo.antilang import (
+    set_anti_func,
+    del_anti_func,
+    get_anti_func
+)
 from re import compile
 from pyrogram.types import  Message
-from Rose.utils.lang import *
+from Rose.utils.lang import language
 from lang import get_command
-from Rose.utils.commands import *
-from Rose.plugins.fsub import ForceSub
-from Rose.utils.custom_filters import *
-from button import *
-from Rose.utils.filter_groups import *
+from Rose.utils.commands import command
+from button import F_sub
+from Rose.utils.filter_groups import antifunc_group
 
 async def edit_or_reply(message, text, parse_mode="md"):
     if message.from_user.id:
         if message.reply_to_message:
-            kk = message.reply_to_message.message_id
-            return await message.reply_text(
-                text, reply_to_message_id=kk, parse_mode=parse_mode
-            )
+            kk = message.reply_to_message.id
+            return await message.reply_text(text, reply_to_message_id=kk, parse_mode=parse_mode)
         return await message.reply_text(text, parse_mode=parse_mode)
     return await message.edit(text, parse_mode=parse_mode)
 
@@ -45,10 +47,8 @@ def get_arg(message):
         return ""
     return " ".join(split[1:])
 
-
 ANTIF_WARNS_DB = {}
 ANTIF_TO_DEL = {}
-
 
 WARN_EVEN_TXT = """
 ❗️ **Warn Event for** {}
@@ -71,7 +71,6 @@ FORM_AND_REGEXES = {
     "ta": [REGEXES.tamil, "Tamil"],
 }
 
-
 ANTI_LANGS = get_command("ANTI_LANGS")
 ARABIC = get_command("ARABIC")
 CHINA = get_command("CHINA")
@@ -80,13 +79,9 @@ RUSIA = get_command("RUSIA")
 SINHALA = get_command("SINHALA")
 TAMIL = get_command("TAMIL")
 
- 
 @app.on_message(command(ARABIC) & admin_filter)
 @language
 async def on_off_antiarab(client, message: Message, _):
-    FSub = await ForceSub(bot, message)
-    if FSub == 400:
-        return
     sex = await edit_or_reply(message, _["antil2"])
     args = get_arg(message)
     if not args:
@@ -100,13 +95,9 @@ async def on_off_antiarab(client, message: Message, _):
         return await sex.edit(_["antil3"])
     await sex.edit(f"✅ **Successfully** `{'Enabled' if lower_args=='on' else 'Disabled'}` **Arabic Detection Guard**")
 
-
 @app.on_message(command(CHINA) & admin_filter)
 @language
 async def on_off_antiarab(client, message: Message, _):
-    FSub = await ForceSub(bot, message)
-    if FSub == 400:
-        return
     lel = await edit_or_reply(message, _["antil2"])
     args = get_arg(message)
     if not args:
@@ -120,13 +111,9 @@ async def on_off_antiarab(client, message: Message, _):
         return await lel.edit(_["antil4"])
     await lel.edit(f"✅ **Successfully** `{'Enabled' if lower_args=='on' else 'Disabled'}` **Chinese Detection Guard**")
 
-
 @app.on_message(command(JAPAN) & admin_filter)
 @language
 async def on_off_antiarab(client, message: Message, _):
-    FSub = await ForceSub(bot, message)
-    if FSub == 400:
-        return
     sum = await edit_or_reply(message, _["antil2"])
     args = get_arg(message)
     if not args:
@@ -143,9 +130,6 @@ async def on_off_antiarab(client, message: Message, _):
 @app.on_message(command(RUSIA) & admin_filter)
 @language
 async def on_off_antiarab(client, message: Message, _):
-    FSub = await ForceSub(bot, message)
-    if FSub == 400:
-        return
     sax = await edit_or_reply(message, _["antil2"])
     args = get_arg(message)
     if not args:
@@ -162,9 +146,6 @@ async def on_off_antiarab(client, message: Message, _):
 @app.on_message(command(SINHALA) & admin_filter)
 @language
 async def on_off_antiarab(client, message: Message, _):
-    FSub = await ForceSub(bot, message)
-    if FSub == 400:
-        return
     sax = await edit_or_reply(message, _["antil2"])
     args = get_arg(message)
     if not args:
@@ -178,13 +159,9 @@ async def on_off_antiarab(client, message: Message, _):
         return await sax.edit(_["antil7"])
     await sax.edit(f"✅ **Successfully** `{'Enabled' if lower_args=='on' else 'Disabled'}` **Sinhala Detection Guard**")
 
-
 @app.on_message(command(TAMIL) & admin_filter)
 @language
 async def on_off_antiarab(client, message: Message, _):
-    FSub = await ForceSub(bot, message)
-    if FSub == 400:
-        return
     sax = await edit_or_reply(message, _["antil2"])
     args = get_arg(message)
     if not args:
@@ -198,7 +175,6 @@ async def on_off_antiarab(client, message: Message, _):
         return await sax.edit(_["antil8"])
     await sax.edit(f"✅ **Successfully** `{'Enabled' if lower_args=='on' else 'Disabled'}` **Tamil Detection Guard**")
 
-
 async def anti_func_handler(_, __, msg):
     chats = await get_anti_func(msg.chat.id)
     if chats:
@@ -206,10 +182,9 @@ async def anti_func_handler(_, __, msg):
     else:
         False
 
-# Function to check if the user is an admin
 async def check_admin(msg, user_id):
     if msg.chat.type in ["group", "supergroup", "channel"]:
-        how_usr = await msg.chat.get_member(user_id)
+        how_usr = await app.get_chat_members(msg.chat.id,user_id)
         if how_usr.status in ["creator", "administrator"]:
             return True
         else:
@@ -217,7 +192,6 @@ async def check_admin(msg, user_id):
     else:
         return True
 
-# Function to save user's warns in a dict
 async def check_afdb(user_id):
     if user_id in ANTIF_WARNS_DB:
         ANTIF_WARNS_DB[user_id] += 1
@@ -228,12 +202,9 @@ async def check_afdb(user_id):
         ANTIF_WARNS_DB[user_id] = 1
         return False
 
-# Function to warn or ban users
 async def warn_or_ban(message, mode):
-    # Users list
     users = message.new_chat_members
     chat_id = message.chat.id
-    # Obtaining user who sent the message
     tuser = message.from_user
     try:
         mdnrgx = FORM_AND_REGEXES[mode]
@@ -246,9 +217,7 @@ async def warn_or_ban(message, mode):
             if not tuser:
                 return
             if search(mdnrgx[0], message.text):
-                # Admins have the foking power
                 if not await check_admin(message, tuser.id):
-                    # Ban the user if the warns are exceeded
                     if await check_afdb(tuser.id):
                         await NEXAUB.ban_chat_member(chat_id, tuser.id)
                         await message.reply(BAN_EVENT_TXT.format(tuser.mention, mdnrgx[1]))
@@ -263,17 +232,15 @@ async def warn_or_ban(message, mode):
 @app.on_message((filters.new_chat_members | filters.text),group=antifunc_group )
 async def check_anti_funcs(_, message: Message):
     anti_func_det = await get_anti_func(message.chat.id)
-    # Checks if the functions are enabled for the chat
     if not anti_func_det:
         return
     if anti_func_det[0] != "on":
         return
-    # Warns or ban the user from the chat
     await warn_or_ban(message, anti_func_det[1])
 
 
 
-__MODULE__ = f"{F_sub}"
+__MODULE__ = F_sub
 __HELP__ = """
 
 **ForceSubscribe | Channel manager:**

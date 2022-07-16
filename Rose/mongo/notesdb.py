@@ -10,7 +10,6 @@ INSERTION_LOCK = RLock()
 
 class Notes(MongoDB):
     db_name = "notes"
-
     def __init__(self) -> None:
         super().__init__(self.db_name)
 

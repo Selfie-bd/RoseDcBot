@@ -1,8 +1,8 @@
 from time import time
 from pyrogram import filters
 from pyrogram.types import (
-    ChatPermissions,
-    Message,
+                        ChatPermissions,
+                        Message,
 )
 from Rose.core.keyboard import ikb
 from Rose import app, BOT_ID
@@ -11,8 +11,8 @@ from Rose.utils.caching import ADMIN_CACHE, admin_cache_reload
 from Rose.utils.custom_filters import admin_filter, command, restrict_filter
 from Rose.utils.extract_user import extract_user
 from Rose.utils.parser import mention_html
-from Rose.utils.lang import *
-from button import *
+from Rose.utils.lang import language
+from button import Warnin
 
 @app.on_message(command(["warn", "swarn", "dwarn"]) & restrict_filter)
 @language
@@ -92,11 +92,9 @@ async def warn(client, message: Message, _):
 **Warns:** {num}/{warn_settings['warn_limit']}
 
     """
-    keyboard = ikb({"Remove Warn": f"_unwarn_{user_id}"})
     await message.reply_text(
         txt,
         reply_to_message_id=r_id,
-        reply_markup=keyboard
     )
     await message.stop_propagation()
 
@@ -240,7 +238,7 @@ async def warnlimit(client, message: Message, _):
     await message.reply_text(_["warn18"].format(warnlimit_var))
     return
 
-__MODULE__ = f"{Warning}"
+__MODULE__ = Warnin
 __HELP__ = """
 Keep your members in check with warnings; stop them getting out of control!
 If you're looking for automated warnings, go read about the blocklist module.

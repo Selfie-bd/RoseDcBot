@@ -43,13 +43,12 @@ Rose will delete user's message if locked content is sent
 
 @app.on_callback_query(filters.regex("_ucd"))
 async def commands_callbacc(_, CallbackQuery):
-    await app.send_message(
-        CallbackQuery.message.chat.id,
+    await CallbackQuery.message.edit(
         text=supunma,
         reply_markup=asuttons,
         disable_web_page_preview=True,
     )
-    await CallbackQuery.message.delete()
+
 
 asuttons = InlineKeyboardMarkup(
         [[
@@ -92,13 +91,12 @@ all_permissions
 """
 @app.on_callback_query(filters.regex("_kcd"))
 async def commands_callbacc(_, CallbackQuery):
-    await app.send_message(
-        CallbackQuery.message.chat.id,
+    await CallbackQuery.message.edit(
         text=supunm,
         reply_markup=asuttons,
         disable_web_page_preview=True,
     )
-    await CallbackQuery.message.delete()
+
 
 supunmas = """
 **Examples:**
@@ -112,10 +110,8 @@ supunmas = """
 
 @app.on_callback_query(filters.regex("_lcd"))
 async def commands_callbacc(_, CallbackQuery):
-    await app.send_message(
-        CallbackQuery.message.chat.id,
+    await CallbackQuery.message.edit(
         text=supunmas,
         reply_markup=asuttons,
         disable_web_page_preview=True,
     )
-    await CallbackQuery.message.delete()

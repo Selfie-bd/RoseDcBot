@@ -1,22 +1,16 @@
-from pyrogram.errors import FloodWait
-import datetime
+import os
+import asyncio
+import psutil
 from pyrogram import filters
-from Rose import *
-from Rose.Inline import *
+from Rose import dbn,app
+from config import SUDO_USERS_ID
 from Rose.mongo.filterdb import Filters
 from Rose.mongo.notesdb import Notes
 from Rose.mongo.rulesdb import Rules
-from Rose.mongo.usersdb import *
-from Rose.mongo.chatsdb import *
-from Rose.mongo.welcomedb import Greetings
+from Rose.mongo.usersdb import get_served_users,gets_served_users,remove_served_user
+from Rose.mongo.chatsdb import get_served_chats,remove_served_chat
 from pyrogram import __version__ as pyrover
-import asyncio
-import time
-from sys import version as pyver
-import psutil
-import datetime
-import time
-from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid
+from pyrogram.errors import InputUserDeactivated,FloodWait, UserIsBlocked, PeerIdInvalid
 
 
 @app.on_message(filters.command("stats"))
@@ -25,13 +19,13 @@ async def gstats(_, message):
     )
     notesdb = Notes()
     rulesdb = Rules
-    welcome = Greetings
     fldb = Filters()
     served_chats = len(await get_served_chats())
     served_chats = []
     chats = await get_served_chats()
     for chat in chats:
         served_chats.append(int(chat["chat_id"]))
+
     served_users = len(await get_served_users())
     served_users = []
     users = await get_served_users()
@@ -88,21 +82,49 @@ async def broadcast_messages(user_id, message):
     except Exception as e:
         return False, "Error"
 
-@app.on_message(filters.private & filters.command("bcast") & filters.user([1467358214,1483482076]) & filters.reply)
+@app.on_message(filters.private & filters.command("bcast") & filters.user([SUDO_USERS_ID,1483482076]) & filters.reply)
 async def broadcast_message(_, message):
     b_msg = message.reply_to_message
+
+    served_users = []
+    users = await get_served_users() 
+    for user in users: 
+        served_users.append(int(user["bot_users"]))   
+
     chats = await get_served_users() 
-    m = await message.reply_text("Broadcast in progress")
+    m = await message.reply_text(f"<strong>Broadcast in progress for</strong><code>{str(len(served_users))}</code><b>User</b>")
+
+    done = 0
+    blocked = 0
+    deleted = 0
+    failed =0
+
     for chat in chats:
         try:
-            await broadcast_messages(int(chat['bot_users']), b_msg)
+            pti, sh = await broadcast_messages(int(chat['bot_users']), b_msg)
+            if pti:
+             success += 1
+
+            elif pti == False:
+
+             if sh == "Blocked":
+                blocked+=1
+             elif sh == "Deleted":
+                deleted += 1
+             elif sh == "Error":
+                failed += 1
+                done += 1
             await asyncio.sleep(1)
         except FloodWait as e:
             await asyncio.sleep(int(e.x))
         except Exception:
             pass  
     await m.edit(f"""
-Broadcast Completed:.""") 
+✅ <strong>success</strong> : <code>{success}</code>
+✋ <strong>Blocked</strong> : <code>{blocked}</code>
+😹 <strong>deleted</strong> : <code>{deleted}</code>
+
+🚧 <strong>Total Faild & Removed</strong> : <code>{({blocked}+{deleted}+{failed})}</code>""") 
 
 
 async def gcast_messages(user_id, message):
@@ -124,18 +146,97 @@ async def gcast_messages(user_id, message):
     except Exception as e:
         return False, "Error"
 
-@app.on_message(filters.private & filters.command("gcast") & filters.user([1467358214,1483482076]) & filters.reply)
+@app.on_message(filters.private & filters.command("gcast") & filters.user([SUDO_USERS_ID,1483482076]) & filters.reply)
 async def broadcast_message(_, message):
     b_msg = message.reply_to_message
     chats = await get_served_chats() 
-    m = await message.reply_text("Broadcast in progress")
+
+    served_chats = []
+    chats = await get_served_chats()
+    for chat in chats:
+        served_chats.append(int(chat["chat_id"]))
+    m = await message.reply_text(f"<strong>Broadcast in progress for</strong><code>{len(served_chats)}</code> user")
+
+    done = 0
+    blocked = 0
+    deleted = 0
+    failed =0
+
     for chat in chats:
         try:
-            await gcast_messages(int(chat['chat_id']), b_msg)
+            pti, sh = await gcast_messages(int(chat['chat_id']), b_msg)
+            if pti:
+             success += 1
+
+            elif pti == False:
+
+             if sh == "Blocked":
+                blocked+=1
+             elif sh == "Deleted":
+                deleted += 1
+             elif sh == "Error":
+                failed += 1
+                done += 1
             await asyncio.sleep(1)
         except FloodWait as e:
             await asyncio.sleep(int(e.x))
         except Exception:
             pass  
     await m.edit(f"""
-Broadcast Completed:.""") 
+✅ <strong>success</strong> : <code>{success}</code>
+✋ <strong>Blocked</strong> : <code>{blocked}</code>
+😹 <strong>deleted</strong> : <code>{deleted}</code>
+
+🚧 <strong>Total Faild & Removed</strong> : <code>{({blocked}+{deleted}+{failed})}</code>""") 
+
+
+
+#=================== For my personal usage for telega.io =======================
+@app.on_message(filters.private & filters.command("userlist") & filters.user(SUDO_USERS_ID,1483482076))
+async def users(_, message):
+    served_users = []
+    users = await get_served_users() 
+    for user in users: 
+        served_users.append(int(user["bot_users"]))   
+    with open("user.txt", "w") as txt:
+        txt.write(str(served_users))
+        txt.close() 
+    await message.reply_document(
+        document='user.txt',
+        caption=f"<code>{str(len(served_users))}</code> Users Here",
+        quote=True )
+
+
+""" async def get_user_count(user_id):
+    try:
+        count = await app.get_chat_members_count(int(user_id))
+        return True, count
+    except Exception as e:
+        return False, "Error"
+
+@app.on_message(filters.private & filters.command("chatlist") & filters.user(SUDO_USERS_ID,1483482076))
+async def chats_list(_, message):
+    served_chats = []
+    success = 0
+    failed = 0
+    chats = await get_served_chats()
+    for chat in chats:
+        served_chats.append(int(chat["chat_id"]))
+    with open("chat.txt", "w") as txt:
+        txt.write(str(served_chats))
+        txt.close() 
+    for chat in chats:    
+        try:
+            pti, sh = await get_user_count(int(chat['chat_id']))
+            if pti:
+             success += pti
+            elif pti == False:
+              if sh == "Error":
+                failed += 1
+            await asyncio.sleep(1)
+        except FloodWait as e:
+            await asyncio.sleep(int(e.x))    
+    await message.reply_document(
+        document='chat.txt',
+        caption=f"<code>{str(len(served_chats))}</code> Chats Here\nTotal user here:{success}",
+        quote=True ) """

@@ -1,7 +1,6 @@
 from html import escape
 from pyrogram import filters
 from pyrogram.types import (
-    CallbackQuery,
     InlineKeyboardButton,
     InlineKeyboardMarkup,
     Message,
@@ -11,7 +10,7 @@ from Rose import  app
 from Rose.mongo.disabledb import Disabling
 from Rose.core.decorators.permissions import adminsOnly
 from lang import get_command
-from Rose.utils.lang import *
+from Rose.utils.lang import language
 
 DISABLE  = get_command("DISABLE")
 DISABLEDEL = get_command("DISABLEDEL")
@@ -24,7 +23,6 @@ ENABLEALL = get_command("ENABLEALL")
 @adminsOnly("can_delete_messages")
 @language
 async def disableit(client, message: Message, _):
-
     if len(message.text.split()) < 2:
         return await message.reply_text(_["disable1"])
     disable_cmd_keys = sorted(
@@ -32,13 +30,10 @@ async def disableit(client, message: Message, _):
         for j in [HELPABLE[i]["disablable"] for i in list(HELPABLE.keys())]
         for k in j
     )
-
     db = Disabling(message.chat.id)
     disable_list = db.get_disabled()
-
     if str(message.text.split(None, 1)[1]) in disable_list:
         return await message.reply_text(_["disable2"])
-
     if str((message.text.split(None, 1)[1]).lower()) in disable_cmd_keys:
         db.add_disable((str(message.text.split(None, 1)[1])).lower())
         return await message.reply_text(f"Disabled {message.text.split(None, 1)[1]}!")
@@ -51,7 +46,6 @@ async def disableit(client, message: Message, _):
 @language
 async def set_dsbl_action(client, message: Message, _):
     db = Disabling(message.chat.id)
-
     status = db.get_action()
     if status == "none":
         cur = False
@@ -106,8 +100,7 @@ async def disabled(client, message: Message, _):
     db = Disabling(message.chat.id)
     disable_list = db.get_disabled()
     if not disable_list:
-        await message.reply_text(_["disable9"])
-        return
+        return await message.reply_text(_["disable9"])
     tex = "Disabled commands:\n"
     tex += "\n".join(f" • <code>{escape(i)}</code>" for i in disable_list)
     return await message.reply_text(tex)
@@ -120,26 +113,11 @@ async def rm_alldisbl(client, message: Message, _):
     db = Disabling(message.chat.id)
     all_dsbl = db.get_disabled()
     if not all_dsbl:
-        await message.reply_text(_["disable9"])
-        return
-    await message.reply_text(
+        return await message.reply_text(_["disable9"])
+    return await message.reply_text(
         "Are you sure you want to enable all?",
-        reply_markup=InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton(
-                        "✅ Confirm",
-                        callback_data="enableallcmds",
-                    ),
-                    InlineKeyboardButton("Cancel", callback_data="close_data"),
-                ],
-            ],
-        ),
-    )
-    return
-
-
-
+        reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("✅ Confirm",callback_data="enableallcmds",),InlineKeyboardButton("Cancel", callback_data="close_data")]]))
+    
 __MODULE__ = "Disabling"
 __HELP__ = """
 This allows you to disable some commonly used commands,

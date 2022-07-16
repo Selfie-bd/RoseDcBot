@@ -1,73 +1,51 @@
-from pyrogram import filters
-from Rose import *
+
 import os
-from asyncio import gather
-from traceback import format_exc
+import math
 import imghdr
+from asyncio import gather
+from PIL import Image
+from traceback import format_exc
+from typing import List
 from pyrogram import filters
+from Rose import app,BOT_USERNAME
 from pyrogram.errors import (
-    PeerIdInvalid,
-    ShortnameOccupyFailed,
-    StickerEmojiInvalid,
-    StickerPngDimensions,
-    StickerPngNopng,
-    UserIsBlocked,
+                        PeerIdInvalid,
+                        ShortnameOccupyFailed,
+                        StickerEmojiInvalid,
+                        StickerPngDimensions,
+                        StickerPngNopng,
+                        UserIsBlocked,
 )
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from typing import List
 from pyrogram import Client, errors, raw
-import math
-import os
-from asyncio import gather
-from base64 import b64decode
-from io import BytesIO
-from PIL import Image
-from pyrogram import Client, raw
 from pyrogram.file_id import FileId
-from Rose import aiohttpsession as session
-from button import *
 
-MAX_STICKERS = (
-    120  # would be better if we could fetch this limit directly from telegram
-)
+from button import Sticker
+
+MAX_STICKERS = 120
 SUPPORTED_TYPES = ["jpeg", "png", "webp"]
 STICKER_DIMENSIONS = (512, 512)
 
-#sticker_id
+
 @app.on_message(filters.command("stickerid") & ~filters.edited)
 async def sticker_id(_, message: Message):
     reply = message.reply_to_message
-
     if not reply:
         return await message.reply("Reply to a sticker.")
-
     if not reply.sticker:
         return await message.reply("Reply to a sticker.")
-
     await message.reply_text(f"`{reply.sticker.file_id}`")
-
-#get sticker 
 
 @app.on_message(filters.command("getsticker") & ~filters.edited)
 async def sticker_image(_, message: Message):
-    r = message.reply_to_message
-
-    if not r:
+    reply = message.reply_to_message
+    if not reply:
         return await message.reply("Reply to a sticker.")
-
-    if not r.sticker:
+    if not reply.sticker:
         return await message.reply("Reply to a sticker.")
-
     m = await message.reply("`Sending..`")
-    f = await r.download(f"{r.sticker.file_unique_id}.png")
-
-    await gather(
-        *[
-            message.reply_photo(f),
-            message.reply_document(f),
-        ]
-    )
-
+    f = await reply.download(f"{reply.sticker.file_unique_id}.png")
+    await gather(*[message.reply_photo(f),message.reply_document(f)])
     await m.delete()
     os.remove(f)
 
@@ -75,19 +53,9 @@ async def get_sticker_set_by_name(
         client: Client, name: str
 ) -> raw.base.messages.StickerSet:
     try:
-        return await client.send(
-            raw.functions.messages.GetStickerSet(
-                stickerset=raw.types.InputStickerSetShortName(short_name=name),
-                hash=0,
-            )
-        )
+        return await client.send(raw.functions.messages.GetStickerSet(stickerset=raw.types.InputStickerSetShortName(short_name=name),hash=0))
     except errors.exceptions.not_acceptable_406.StickersetInvalid:
         return None
-
-# Known errors: (I don't see a reason to catch them as we, for sure, won't face them right now):
-# errors.exceptions.bad_request_400.PackShortNameInvalid -> pack name needs to end with _by_botname
-# errors.exceptions.bad_request_400.ShortnameOccupyFailed -> pack's name is already in use
-
 
 async def create_sticker_set(
         client: Client,
@@ -96,15 +64,7 @@ async def create_sticker_set(
         short_name: str,
         stickers: List[raw.base.InputStickerSetItem],
 ) -> raw.base.messages.StickerSet:
-    return await client.send(
-        raw.functions.stickers.CreateStickerSet(
-            user_id=await client.resolve_peer(owner),
-            title=title,
-            short_name=short_name,
-            stickers=stickers,
-        )
-    )
-
+    return await client.send(raw.functions.stickers.CreateStickerSet(user_id=await client.resolve_peer(owner),title=title,short_name=short_name,stickers=stickers))
 
 async def add_sticker_to_set(
         client: Client,
@@ -112,14 +72,7 @@ async def add_sticker_to_set(
         sticker: raw.base.InputStickerSetItem,
 ) -> raw.base.messages.StickerSet:
     return await client.send(
-        raw.functions.stickers.AddStickerToSet(
-            stickerset=raw.types.InputStickerSetShortName(
-                short_name=stickerset.set.short_name
-            ),
-            sticker=sticker,
-        )
-    )
-
+        raw.functions.stickers.AddStickerToSet(stickerset=raw.types.InputStickerSetShortName(short_name=stickerset.set.short_name),sticker=sticker))
 
 async def create_sticker(
         sticker: raw.base.InputDocument, emoji: str
@@ -152,7 +105,6 @@ async def resize_file_to_sticker_size(file_path: str) -> str:
     finally:
         im.save(file_path)
 
-
 async def upload_document(
         client: Client, file_path: str, chat_id: int
 ) -> raw.base.InputDocument:
@@ -163,87 +115,52 @@ async def upload_document(
                 mime_type=client.guess_mime_type(file_path)
                           or "application/zip",
                 file=await client.save_file(file_path),
-                attributes=[
-                    raw.types.DocumentAttributeFilename(
-                        file_name=os.path.basename(file_path)
-                    )
-                ],
-            ),
-        )
-    )
+                attributes=[raw.types.DocumentAttributeFilename(file_name=os.path.basename(file_path))])))
     return raw.types.InputDocument(
         id=media.document.id,
         access_hash=media.document.access_hash,
         file_reference=media.document.file_reference,
     )
 
-
 async def get_document_from_file_id(
         file_id: str,
 ) -> raw.base.InputDocument:
     decoded = FileId.decode(file_id)
-    return raw.types.InputDocument(
-        id=decoded.media_id,
-        access_hash=decoded.access_hash,
-        file_reference=decoded.file_reference,
-    )
+    return raw.types.InputDocument(id=decoded.media_id,access_hash=decoded.access_hash,file_reference=decoded.file_reference)
 
-
-
-
-
-#kang_pack
 @app.on_message(filters.command("kang") & ~filters.edited)
 async def kang(client, message: Message):
     if not message.reply_to_message:
         return await message.reply_text("Reply to a sticker/image to kang it.")
     if not message.from_user:
-        return await message.reply_text(
-            "You are anon admin, kang stickers in my pm."
-        )
+        return await message.reply_text("Kang stickers in my pm.\nNeed User Acconut you are group /:")
     msg = await message.reply_text("`Kanging Sticker..`")
 
-    # Find the proper emoji
     args = message.text.split()
     if len(args) > 1:
         sticker_emoji = str(args[1])
-    elif (
-            message.reply_to_message.sticker
-            and message.reply_to_message.sticker.emoji
+    elif (message.reply_to_message.sticker and message.reply_to_message.sticker.emoji
     ):
         sticker_emoji = message.reply_to_message.sticker.emoji
     else:
         sticker_emoji = "🥰"
-
-    # Get the corresponding fileid, resize the file if necessary
     doc = message.reply_to_message.photo or message.reply_to_message.document
     try:
         if message.reply_to_message.sticker:
             sticker = await create_sticker(
-                await get_document_from_file_id(
-                    message.reply_to_message.sticker.file_id
-                ),
-                sticker_emoji,
-            )
+                await get_document_from_file_id(message.reply_to_message.sticker.file_id),sticker_emoji)
         elif doc:
             if doc.file_size > 10000000:
                 return await msg.edit("File size too large.")
-
             temp_file_path = await app.download_media(doc)
             image_type = imghdr.what(temp_file_path)
             if image_type not in SUPPORTED_TYPES:
-                return await msg.edit(
-                    "Format not supported! {}".format(image_type)
-                )
+                return await msg.edit("{} Format not supported!".format(image_type))
             try:
-                temp_file_path = await resize_file_to_sticker_size(
-                    temp_file_path
-                )
+                temp_file_path = await resize_file_to_sticker_size(temp_file_path)
             except OSError as e:
                 await msg.edit_text("Something wrong happened.")
-                raise Exception(
-                    f"Something went wrong while resizing the sticker (at {temp_file_path}); {e}"
-                )
+                raise Exception(f"Something went wrong while resizing the sticker (at {temp_file_path}); {e}")
             sticker = await create_sticker(
                 await upload_document(client, temp_file_path, message.chat.id),
                 sticker_emoji,
@@ -253,34 +170,22 @@ async def kang(client, message: Message):
         else:
             return await msg.edit("Nope, can't kang that.")
     except ShortnameOccupyFailed:
-        await message.reply_text("Change Your Name Or Username")
-        return
-
+        return await message.reply_text("Change Your Name Or Username")
     except Exception as e:
         await message.reply_text(str(e))
         e = format_exc()
         return print(e)
-
-    # Find an available pack & add the sticker to the pack; create a new pack if needed
-    # Would be a good idea to cache the number instead of searching it every single time...
     packnum = 0
     packname = "f" + str(message.from_user.id) + "_by_" + BOT_USERNAME
     limit = 0
     try:
         while True:
-            # Prevent infinite rules
             if limit >= 50:
                 return await msg.delete()
-
             stickerset = await get_sticker_set_by_name(client, packname)
             if not stickerset:
                 stickerset = await create_sticker_set(
-                    client,
-                    message.from_user.id,
-                    f"{message.from_user.first_name[:32]}'s pack",
-                    packname,
-                    [sticker],
-                )
+                    client,message.from_user.id,f"{message.from_user.first_name[:32]}'s pack",packname,[sticker])
             elif stickerset.set.count >= MAX_STICKERS:
                 packnum += 1
                 packname = (
@@ -300,7 +205,6 @@ async def kang(client, message: Message):
                     return await msg.edit("[ERROR]: INVALID_EMOJI_IN_ARGUMENT")
             limit += 1
             break
-
         await msg.edit(
             "Sticker Kanged To [Pack](t.me/addstickers/{})\nEmoji: {}".format(
                 packname, sticker_emoji
@@ -310,56 +214,17 @@ async def kang(client, message: Message):
         keyboard = InlineKeyboardMarkup(
             [[InlineKeyboardButton(text="Start", url=f"t.me/{BOT_USERNAME}")]]
         )
-        await msg.edit(
-            "You Need To Start A Private Chat With Me.",
-            reply_markup=keyboard,
-        )
+        await msg.edit("You Need To Start A Private Chat With Me.",reply_markup=keyboard)
     except StickerPngNopng:
-        await message.reply_text(
-            "Stickers must be png files but the provided image was not a png"
-        )
+        await message.reply_text("Stickers must be png files but the provided image was not a png")
     except StickerPngDimensions:
         await message.reply_text("The sticker png dimensions are invalid.")
 
 
-#added web_ss also
-async def post(url: str, *args, **kwargs):
-    async with session.post(url, *args, **kwargs) as resp:
-        try:
-            data = await resp.json()
-        except Exception:
-            data = await resp.text()
-    return data
-
-async def take_screenshot(url: str, full: bool = False):
-    url = "https://" + url if not url.startswith("http") else url
-    payload = {
-        "url": url,
-        "width": 1920,
-        "height": 1080,
-        "scale": 1,
-        "format": "jpeg",
-    }
-    if full:
-        payload["full"] = True
-    data = await post(
-        "https://webscreenshot.vercel.app/api",
-        data=payload,
-    )
-    if "image" not in data:
-        return None
-    b = data["image"].replace("data:image/jpeg;base64,", "")
-    file = BytesIO(b64decode(b))
-    file.name = "webss.jpg"
-    return file
-
-
-
-@app.on_message(filters.command("webss") & ~filters.edited)
+""" @app.on_message(filters.command("webss") & ~filters.edited)
 async def take_ss(_, message: Message):
     if len(message.command) < 2:
         return await eor(message, text="Give A Url To Fetch Screenshot.")
-
     if len(message.command) == 2:
         url = message.text.split(None, 1)[1]
         full = False
@@ -373,19 +238,13 @@ async def take_ss(_, message: Message):
         ]
     else:
         return await eor(message, text="Invalid Command.")
-
     m = await eor(message, text="Capturing screenshot...")
-
     try:
         photo = await take_screenshot(url, full)
         if not photo:
             return await m.edit("Failed To Take Screenshot")
-
         m = await m.edit("Uploading...")
-
         if not full:
-            # Full size images have problem with reply_photo, that's why
-            # we need to only use reply_photo if we're not using full size
             await gather(
                 *[message.reply_document(photo), message.reply_photo(photo)]
             )
@@ -394,8 +253,9 @@ async def take_ss(_, message: Message):
         await m.delete()
     except Exception as e:
         await m.edit(str(e))
+ """
 
-__MODULE__ = f"{Sticker}"
+__MODULE__ = Sticker
 __HELP__ = f"""
  - /stickerid: Get id of a sticker.
  - /getsticker: To get sticker as a photo and document.

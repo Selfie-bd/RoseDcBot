@@ -32,14 +32,12 @@ fbuttonss = InlineKeyboardMarkup(
 
 @app.on_callback_query(filters.regex("_mdowns"))
 async def commands_callbacc(_, CallbackQuery):
-    await app.send_message(
-        CallbackQuery.message.chat.id,
+    await CallbackQuery.message.edit(
         text=texts,
         reply_markup=fbuttonss,
         disable_web_page_preview=True,
         parse_mode="html"
     )
-    await CallbackQuery.message.delete()
 
 tetz = """
 Rose which will ask new Group Members to verify them by solving an emoji | number captcha.
@@ -51,13 +49,12 @@ for more help ask in my support group
 """
 @app.on_callback_query(filters.regex("_filling"))
 async def commands_callbacc(_, CallbackQuery):
-    await app.send_message(
-        CallbackQuery.message.chat.id,
+    await CallbackQuery.message.edit(
         text=tetz,
         reply_markup=close,
         disable_web_page_preview=True,
     )
-    await CallbackQuery.message.delete()
+
 
 close = InlineKeyboardMarkup(
         [[

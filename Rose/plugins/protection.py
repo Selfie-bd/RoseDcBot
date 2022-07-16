@@ -1,12 +1,9 @@
-from pyrogram.types import Message
-import requests
-from Rose import *
-from Rose.utils.filter_groups import *
-from Rose.utils.filter_groups import *
-from os import remove         
-from Rose.utils.commands import *
-from Rose.utils.lang import *
 
+import requests
+from Rose import app
+from os import remove         
+from Rose.utils.commands import command
+from pyrogram.types import Message
 
 @app.on_message(command("nsfwscan"))
 async def nsfw_scan_command(_, message: Message):
@@ -60,23 +57,21 @@ async def scanNLP(_, message: Message):
     text = r.text or r.caption
     if not text:
         return await message.reply("Can't scan that")
-    data = requests.post(f"https://api.safone.tech/spam", json={'text': text}).json()
+    data = requests.post(f"https://api.safone.tech/spam", json={'text': message.text}).json()
     is_spam = data['data']['is_spam']
     spam_probability = data['data']['spam_probability']
     spam = data['data']['spam']
     ham = data['data']['ham']
     msg = f"""
-**SPAm** scan Result Here ✅
+**SPAM** scan Result Here ✅
 ==========================    
 • **Is Spam:** `{is_spam}`
 • **Spam Probability:** `{spam_probability}` %
 • **Spam:** `{spam}`
 • **Ham:** `{ham}`
-==========================
-"""
+=========================="""
     await message.reply(msg, quote=True)
 
-#helpers
 def get_file_id(message):
     if message.document:
         if int(message.document.file_size) > 3145728:
@@ -109,9 +104,7 @@ def get_file_id(message):
 
 async def admins(chat_id: int):
     return [ member.user.id
-        async for member in app.iter_chat_members(
-            chat_id, filter="administrators"
-        )]
+        async for member in app.iter_chat_members(chat_id, filter="administrators")]
 
 def get_file_unique_id(message):
     m = message

@@ -14,6 +14,7 @@ from Rose.utils.lang import *
 from Rose.utils.commands import *
 from Rose.mongo.rulesdb import *
 from Rose.utils.start import *
+from Rose.utils.kbhelpers import *
 from Rose.mongo.usersdb import *
 from Rose.mongo.restart import *
 from Rose.mongo.chatsdb import *
@@ -71,9 +72,7 @@ async def start_bot():
 |          Deployed Successfully              |  
 |         (C) 2021-2022 by @szteambots        | 
 |          Greetings from supun  :)           |
-|_____________________________________________|  
-                                                                                               
-    """)
+|_____________________________________________|""")
     await idle()
 
     await aiohttpsession.close()
@@ -110,7 +109,7 @@ home_keyboard_pm = InlineKeyboardMarkup(
                 url=f"https://szrosebot.ml",
             ),
             InlineKeyboardButton(
-                text="🔰News Channel",
+                text="🔰 News Channel",
                 url=f"https://t.me/szroseupdates",
             )
         ],
@@ -128,13 +127,6 @@ keyboard = InlineKeyboardMarkup(
     ]
 )
 
-IMG = ["https://telegra.ph/file/c8f5c1dd990ca9a3d8516.jpg",
-       "https://telegra.ph/file/77cc3154b752ce822fd52.jpg",
-       "https://telegra.ph/file/e72fb0b6a7fba177cf4c7.jpg",
-       "https://telegra.ph/file/8738a478904238e367939.jpg",
-       "https://telegra.ph/file/68d7830ba72820f44bda0.jpg"
-]
-
 @app.on_message(filters.command(START_COMMAND))
 @language
 async def start(client, message: Message, _):
@@ -147,54 +139,47 @@ async def start(client, message: Message, _):
     if message.chat.type != "private":
         await message.reply(
             _["main2"], reply_markup=keyboard)
-        await adds_served_user(message.from_user.id)     
-        return await add_served_chat(message.chat.id) 
+        await adds_served_user(chat_id)     
+        return await add_served_chat(chat_id) 
+    #len of start commands
+
     if len(message.text.split()) > 1:
         name = (message.text.split(None, 1)[1]).lower()
         if name.startswith("rules"):
                 await get_private_rules(app, message, name)
                 return     
+
         if name.startswith("learn"):
                 await get_learn(app, message, name)
                 return     
-        elif "_" in name:
+
+        if "_" in name:
             module = name.split("_", 1)[1]
             text = (_["main6"].format({HELPABLE[module].__MODULE__}
                 + HELPABLE[module].__HELP__)
             )
             await message.reply(text, disable_web_page_preview=True)
-        elif name == "help":
+
+        if name == "help":
             text, keyb = await help_parser(message.from_user.first_name)
             await message.reply(
                 _["main5"],
                 reply_markup=keyb,
                 disable_web_page_preview=True,
             )
-        elif name == "connections":
+
+        if name == "connections":
             await message.reply("Run /connections to view or disconnect from groups!")
+
+    #private bot start commands
     else:
-        served_chats = len(await get_served_chats())
-        served_chats = []
-        chats = await get_served_chats()
-        for chat in chats:
-           served_chats.append(int(chat["chat_id"]))
-        served_users = len(await get_served_users())
-        served_users = []
-        users = await get_served_users()
-        for user in users:
-          served_users.append(int(user["bot_users"]))
         await message.reply(f"""
-[👋]({random.choice(IMG)}) Hey there {message.from_user.mention}, 
-
-   My name is Rose, an  advanced telegram Group management Bot For helpYou Protect Your Groups & Suit For All Your Needs. 
-I currently manage about `{len(served_chats)}` groups.I have over `{len(served_users)}` users
-
-⚒ Send Me /help For Get Commands. 
-👨‍💻Dᴇᴠᴇʟᴏᴘᴇʀ : @supunma
+Hey there {message.from_user.mention}, My name is Rose
+An  advanced telegram Group management Bot For helpYou Protect Your Groups & Suit For All Your Needs.feel free to add me to your groups!
 """,
             reply_markup=home_keyboard_pm,
         )
-        return await add_served_user(message.from_user.id) 
+        return await add_served_user(chat_id) 
 
 
 @app.on_message(filters.command(HELP_COMMAND))
@@ -275,14 +260,8 @@ async def startcq(client,CallbackQuery, _):
         served_users.append(int(user["bot_users"]))
     await CallbackQuery.message.edit(
             text=f"""
-👋 Hey there {CallbackQuery.from_user.mention}, 
-
-   My name is Rose ,an  advanced telegram Group management Bot For help 
-You Protect Your Groups & Suit For All Your Needs. 
-I currently manage about `{len(served_chats)}` groups.I have over `{len(served_users)}` users
-
- ⚒ Send Me /help For Get Commands. 
-👨‍💻Dᴇᴠᴇʟᴏᴘᴇʀ : @supunma
+Hey there {CallbackQuery.from_user.mention}, My name is Rose
+An  advanced telegram Group management Bot For helpYou Protect Your Groups & Suit For All Your Needs.feel free to add me to your groups!
 """,
             disable_web_page_preview=True,
             reply_markup=home_keyboard_pm)
@@ -292,12 +271,13 @@ async def help_parser(name, keyboard=None):
     if not keyboard:
         keyboard = InlineKeyboardMarkup(paginate_modules(0, HELPABLE, "help"))
     return (
-"""
-**Welcome to help menu**
+"""**Welcome to help menu**
+
 I'm a group management bot with some useful features.
 You can choose an option below, by clicking a button.
 If you have any bugs or questions on how to use me, 
 have a look at my [Docs](https://szsupunma.gitbook.io/rose-bot/), or head to @szteambots.
+
 **All commands can be used with the following: / **""",
         keyboard,
     )

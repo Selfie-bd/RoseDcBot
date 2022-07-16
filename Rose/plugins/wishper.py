@@ -1,6 +1,7 @@
-from typing import Optional
+
+
 from Rose import app
-from pyrogram import filters, emoji
+from pyrogram import emoji
 from pyrogram.types import (
     InlineQuery,
     InlineQueryResultArticle,
@@ -8,8 +9,8 @@ from pyrogram.types import (
 )
 
 lengths = 200
-IMG = "https://telegra.ph/file/8bb5ad38249514dbf72e6.jpg"
 
+IMG = "https://telegra.ph/file/8bb5ad38249514dbf72e6.jpg"
 
 @app.on_inline_query()
 async def wishper_ai(_, sz: InlineQuery):
@@ -19,12 +20,13 @@ async def wishper_ai(_, sz: InlineQuery):
             or (query.startswith('@') and len(split) == 1):
         title = f"🔐 Write a whisper message"
         content = ("**Send whisper messages through inline mode**\n\n"
-                   "Usage: `@szrosebot [@username|@] text`")
-        description = "Usage: @szrosebot [@username|@] text"
+                   "Usage: `@szrosebot [@username] text`")
+        description = "Usage: @szrosebot [@username] text"
         button = InlineKeyboardButton(
-            "Learn more...",
+            "More-Help",
             url="https://t.me/szrosebot?start=learn"
         )
+
     elif not query.startswith('@'):
         title = f"{emoji.EYE} Whisper once to the first one who open it"
         content = (
@@ -35,8 +37,8 @@ async def wishper_ai(_, sz: InlineQuery):
             f"🎯 show message",
             callback_data="show_whisper"
         )
+
     else:
-        # Python 3.8+
         u_target = 'anyone' if (x := split[0]) == '@' else x
         title = f"🔒 A whisper message to {u_target}, Only he/she can open it."
         content = f"🔒 A whisper message to {u_target}, Only he/she can open it."
@@ -45,8 +47,10 @@ async def wishper_ai(_, sz: InlineQuery):
             f"{emoji.LOCKED_WITH_KEY} show message",
             callback_data="show_whisper"
         )
+
     switch_pm_text = f"{emoji.INFORMATION} Learn how to send whispers"
     switch_pm_parameter = "learn"
+    
     await sz.answer(
         results=[
             InlineQueryResultArticle(

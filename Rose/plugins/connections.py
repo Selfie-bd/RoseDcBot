@@ -1,12 +1,16 @@
 from pyrogram import filters
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
-from Rose.mongo.connectiondb import add_connection, all_connections, if_active, delete_connection
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup,Message
+from Rose.mongo.connectiondb import (
+    add_connection,
+    all_connections, 
+    if_active, 
+    delete_connection)
 import logging
-from Rose import *
+from Rose import app,BOT_USERNAME
 from lang import get_command
-from Rose.utils.commands import *
-from Rose.utils.lang import *
-from button import *
+from Rose.utils.commands import command
+from Rose.utils.lang import language
+from button import Connections
 
 
 CONNECT = get_command("CONNECT")
@@ -30,62 +34,35 @@ async def addconnection(client, message: Message, _):
         try:
             cmd, group_id = message.text.split(" ", 1)
         except:
-            await message.reply_text(_["connection2"])
-            return
-
+            return await message.reply_text(_["connection2"])
     elif chat_type in ["group", "supergroup"]:
         group_id = message.chat.id
-
     try:
         st = await app.get_chat_member(group_id, userid)
-        if (
-                st.status != "administrator"
-                and st.status != "creator"
-        ):
-            await message.reply_text(_["connection3"])
-            return
+        if (st.status != "administrator" and st.status != "creator"):
+            return await message.reply_text(_["connection3"])
     except Exception as e:
         logger.exception(e)
-        await message.reply_text(_["connection4"])
-
-        return
+        return await message.reply_text(_["connection4"])
     try:
-        connection = InlineKeyboardMarkup(
-    [
-        [
-            InlineKeyboardButton(
-                text="Connect me pm",
-                url=f"t.me/{BOT_USERNAME}?start=connections",
-            )
-        ]
-    ]
-)
+        connection = InlineKeyboardMarkup([[
+            InlineKeyboardButton(text="Connect me pm",url=f"t.me/{BOT_USERNAME}?start=connections")]])
         st = await app.get_chat_member(group_id, "me")
         if st.status == "administrator":
             ttl = await app.get_chat(group_id)
             title = ttl.title
-
             addcon = await add_connection(str(group_id), str(userid))
             if addcon:
-                await message.reply_text(_["connection5"].format(title),
-                    reply_markup= connection,
-                    quote=True,
-                    parse_mode="md"
-                )
+                await message.reply_text(_["connection5"].format(title),reply_markup= connection,quote=True,parse_mode="md")
                 if chat_type in ["group", "supergroup"]:
-                    await app.send_message(
-                        userid,
-                        f"Connected to **{title}** !",
-                        parse_mode="md"
-                    )
+                    await app.send_message(userid,f"Connected to **{title}** !",parse_mode="md")
             else:
                 await message.reply_text(_["connection6"])
         else:
             await message.reply_text(_["connection7"])
     except Exception as e:
         logger.exception(e)
-        await message.reply_text(_["connection8"])
-        return
+        return await message.reply_text(_["connection8"])
 
 
 @app.on_message((filters.private | filters.group) & filters.command(DISCONNECT))
@@ -96,20 +73,13 @@ async def deleteconnection(client, message: Message, _):
     if not userid:
         return await message.reply(_["connection9"].format(chat_id))
     chat_type = message.chat.type
-
     if chat_type == "private":
         await message.reply_text(_["connection10"])
-
     elif chat_type in ["group", "supergroup"]:
         group_id = message.chat.id
-
         st = await app.get_chat_member(group_id, userid)
-        if (
-                st.status != "administrator"
-                and st.status != "creator"
-        ):
+        if (st.status != "administrator"and st.status != "creator"):
             return
-
         delcon = await delete_connection(str(userid), str(group_id))
         if delcon:
             await message.reply_text(_["connection11"])
@@ -121,11 +91,9 @@ async def deleteconnection(client, message: Message, _):
 @language
 async def connections(client, message: Message, _):
     userid = message.from_user.id
-
     groupids = await all_connections(str(userid))
     if groupids is None:
-        await message.reply_text(_["connection13"])
-        return
+        return await message.reply_text(_["connection13"])
     buttons = []
     for groupid in groupids:
         try:
@@ -133,33 +101,22 @@ async def connections(client, message: Message, _):
             title = ttl.title
             active = await if_active(str(userid), str(groupid))
             act = ":✅" if active else ":⛔️"
-            buttons.append(
-                [
-                    InlineKeyboardButton(
-                        text=f"{title}{act}", callback_data=f"groupcb:{groupid}:{act}"
-                    )
-                ]
-            )
+            buttons.append([InlineKeyboardButton(text=f"{title}{act}", callback_data=f"groupcb:{groupid}:{act}")])
         except:
             pass
     if buttons:
-        await message.reply_text(
-"""
+        await message.reply_text("""
 **Current connected chats:**
 
 Connected = ✅
 Disconnect = ⛔️
 
-__Select a chat to connect:__
-""",
-            reply_markup=InlineKeyboardMarkup(buttons),
-            quote=True
-        )
+__Select a chat to connect:__""",reply_markup=InlineKeyboardMarkup(buttons),quote=True)
     else:
         await message.reply_text(_["connection13"])
 
 
-__MODULE__ = f"{Connections}"
+__MODULE__ = Connections
 __HELP__ = """
 
 Sometimes, you just want to add some notes and filters to a group chat, but you don't want everyone to see; This is where connections come in...

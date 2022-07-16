@@ -1,53 +1,33 @@
 from pyrogram import filters
 from pyrogram.types import Message
-from Rose import *
+from Rose import app,BOT_USERNAME
 from Rose.mongo.rulesdb import Rules
 from Rose.utils.custom_filters import admin_filter, command
 from Rose.utils.kbhelpers import rkb as ikb
-from Rose.utils.lang import *
-from button import *
+from Rose.utils.lang import language
+from button import Rule
 
 @app.on_message(command("rules") & filters.group)
 @language
 async def get_rules(client, message: Message, _):
     db = Rules(message.chat.id)
     msg_id = message.reply_to_message.message_id if message.reply_to_message else message.message_id
-
     rules = db.get_rules()
-    if message and not message.from_user:
-        return
-
     if not rules:
-        await message.reply_text(_["rules1"])
-        return
-
+        return await message.reply_text(_["rules1"])
     priv_rules_status = db.get_privrules()
-
-
     if priv_rules_status:
-        pm_kb = ikb(
-            [
-                [
-                    (
-                        "Rules",
-                        f"https://t.me/{BOT_USERNAME}?start=rules_{message.chat.id}",
-                        "url",
-                    ),
-                ],
-            ],
-        )
-        await message.reply_text(_["rules2"],
+        pm_kb = ikb([[("Rules",f"https://t.me/{BOT_USERNAME}?start=rules_{message.chat.id}","url")]])
+        return await message.reply_text(_["rules2"],
             quote=True,
             reply_markup=pm_kb,
             reply_to_message_id=msg_id,
         )
-        return
-
-    await message.reply_text(f"The rules for <b>{message.chat.title} are:</b>\n {rules}",
+    return await message.reply_text(f"The rules for <b>{message.chat.title} are:</b>\n {rules}",
         disable_web_page_preview=True,
         reply_to_message_id=msg_id,
     )
-    return
+    
 
 
 @app.on_message(command("setrules") & admin_filter)
@@ -61,8 +41,8 @@ async def set_rules(client, message: Message, _):
     else:
         return await message.reply_text(_["rules3"])
     db.set_rules(rules)
-    await message.reply_text(_["rules4"])
-    return
+    return await message.reply_text(_["rules4"])
+    
 
 
 @app.on_message(command(["pmrules", "privaterules"]) & admin_filter)
@@ -85,9 +65,7 @@ async def priv_rules(client, message: Message, _):
         msg = f"Current Preference for Private rules in this chat is: <b>{curr_pref}</b>"
         await message.reply_text(msg)
     else:
-        await message.replt_text(_["rules5"])
-
-    return
+        return await message.replt_text(_["rules5"])
 
 
 @app.on_message(command("clearrules") & admin_filter)
@@ -96,18 +74,13 @@ async def clear_rules(client, message: Message, _):
     db = Rules(message.chat.id)
     rules = db.get_rules()
     if not rules:
-        await message.reply_text(_["rules1"])
-        return
-
-    await message.reply_text("Are you sure you want to clear rules?",
-        reply_markup=ikb(
-            [[("⚠️ Confirm", "clear_rules"), ("❌ Cancel", "close_data")]],
-        ),
-    )
-    return
+        return await message.reply_text(_["rules1"])
+    return await message.reply_text("Are you sure you want to clear rules?",
+        reply_markup=ikb([[("⚠️ Confirm", "clear_rules"), ("❌ Cancel", "close_data")]]))
+    
 
 
-__MODULE__ = f"{Rule}"
+__MODULE__ = Rule
 __HELP__ = """
 Every chat works with different rules; this module will help make those rules clearer!
 

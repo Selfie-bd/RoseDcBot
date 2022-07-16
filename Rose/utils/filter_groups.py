@@ -30,3 +30,4 @@ leftwelcome = 29
 adder = 30
 afkcheacker = 31
 spam = 32
+tagallert = 33

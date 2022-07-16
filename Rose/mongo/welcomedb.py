@@ -6,7 +6,7 @@ INSERTION_LOCK = RLock()
 
 class Greetings(MongoDB):
     db_name = "welcome_chats"
-
+    
     def __init__(self, chat_id: int) -> None:
         super().__init__(self.db_name)
         self.chat_id = chat_id
@@ -47,7 +47,6 @@ class Greetings(MongoDB):
         with INSERTION_LOCK:
             return self.chat_info["cleangoodbye_id"]
 
-
     def set_current_welcome_settings(self, status: bool):
         with INSERTION_LOCK:
             return self.update({"_id": self.chat_id}, {"welcome": status})
@@ -56,20 +55,17 @@ class Greetings(MongoDB):
         with INSERTION_LOCK:
             return self.update({"_id": self.chat_id}, {"goodbye": status})
 
-    def set_welcome_text(self, welcome_text: str):
+    def set_welcome_text(self, welcome_text: str,fileid=""):
         with INSERTION_LOCK:
             return self.update(
                 {"_id": self.chat_id},
-                {"welcome_text": welcome_text},
-            )
-
+                {"welcome_text": welcome_text})
     def set_goodbye_text(self, goodbye_text: str):
         with INSERTION_LOCK:
             return self.update(
                 {"_id": self.chat_id},
                 {"goodbye_text": goodbye_text},
             )
-
     def set_current_cleanservice_settings(self, status: bool):
         with INSERTION_LOCK:
             return self.update(

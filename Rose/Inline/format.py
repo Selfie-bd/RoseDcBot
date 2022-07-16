@@ -24,13 +24,11 @@ fbuttons = InlineKeyboardMarkup(
 
 @app.on_callback_query(filters.regex("_mdownsl"))
 async def commands_callbacc(_, CallbackQuery):
-    await app.send_message(
-        CallbackQuery.message.chat.id,
+    await CallbackQuery.message.edit(
         text=text,
         reply_markup=fbuttons,
         disable_web_page_preview=True,
     )
-    await CallbackQuery.message.delete()
 
 close = InlineKeyboardMarkup(
         [[
@@ -70,14 +68,12 @@ the user will be redirected to Rose's PM to see the note.
 
 @app.on_callback_query(filters.regex("_mdown"))
 async def commands_callbacc(_, CallbackQuery):
-    await app.send_message(
-        CallbackQuery.message.chat.id,
+    await CallbackQuery.message.edit(
         text=tex,
         reply_markup=close,
         disable_web_page_preview=True,
         parse_mode="html"
     )
-    await CallbackQuery.message.delete()
 
 tet = """
 **Fillings**
@@ -104,13 +100,12 @@ You can also customise the contents of your message with contextual data. For ex
 """
 @app.on_callback_query(filters.regex("_fillings"))
 async def commands_callbacc(_, CallbackQuery):
-    await app.send_message(
-        CallbackQuery.message.chat.id,
+    await CallbackQuery.message.edit(
         text=tet,
         reply_markup=close,
         disable_web_page_preview=True,
     )
-    await CallbackQuery.message.delete()
+
 
 
 tetx="""
@@ -140,10 +135,9 @@ Welcome to the group, {first}!
 """
 @app.on_callback_query(filters.regex("_random"))
 async def commands_callbacc(_, CallbackQuery):
-    await app.send_message(
-        CallbackQuery.message.chat.id,
+    await CallbackQuery.message.edit(
         text=tetx,
         reply_markup=close,
         disable_web_page_preview=True,
     )
-    await CallbackQuery.message.delete()
+

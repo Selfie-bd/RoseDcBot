@@ -1,6 +1,6 @@
 #no need Multi-lang for this plugin !!!!
 from pyrogram import filters
-from Rose import *
+from Rose import app,eor,arq
 from gpytranslate import Translator
 from pyrogram.errors import PeerIdInvalid
 from pyrogram.types import Message, User
@@ -13,8 +13,7 @@ import aiofiles
 from telegraph import upload_file
 from io import BytesIO
 from traceback import format_exc
-from Rose.utils.custom_filters import admin_filter
-from button import *
+
 
 @app.on_message(filters.command("id"))
 async def getid(client, message):
@@ -22,13 +21,10 @@ async def getid(client, message):
     your_id = message.from_user.id
     message_id = message.message_id
     reply = message.reply_to_message
-
     text = f"**Message ID:** `{message_id}`\n"
     text += f"**Your ID:** `{your_id}`\n"
-    
     if not message.command:
         message.command = message.text.split()
-
     if len(message.command) == 2:
         try:
             split = message.text.split(None, 1)[1].strip()
@@ -36,21 +32,13 @@ async def getid(client, message):
             text += f"**User ID:** `{user_id}`\n"
         except Exception:
             return await eor(message, text="This user doesn't exist.")
-
-    text += f"**Chat ID:** `{chat.id}`\n\n"
+    text += f"**Chat ID:** `{chat.id}`\n"
+    text += f"**Forwarded From:** `{message.forward_from_chat.id}`\n\n"
     if not getattr(reply, "empty", True):
         id_ = reply.from_user.id if reply.from_user else reply.sender_chat.id
-        text += (
-            f"**Replied Message ID:** `{reply.message_id}`\n"
-        )
+        text += f"**Replied Message ID:** `{reply.message_id}`\n"
         text += f"**Replied User ID:** `{id_}`"
-
-    await eor(
-        message,
-        text=text,
-        disable_web_page_preview=True,
-        parse_mode="md",
-    )
+    await eor(message,text=text,disable_web_page_preview=True,parse_mode="md")
 
 @app.on_message(filters.command("tr"))
 async def tr(_, message):
@@ -66,31 +54,22 @@ async def tr(_, message):
             text = message.reply_to_message.caption
     else:
         if len(message.text.split()) <= 2:
-            await message.reply_text(
-                "Provide lang code.\n[Available options](https://telegra.ph/Lang-Codes-02-22).\n<b>Usage:</b> <code>/tr en</code>",
-            )
-            return
+            return await message.reply_text("Provide lang code.\n[Available options](https://telegra.ph/Lang-Codes-02-22).\n<b>Usage:</b> <code>/tr en</code>",disable_web_page_preview=True)
         target_lang = message.text.split(None, 2)[1]
         text = message.text.split(None, 2)[2]
     detectlang = await trl.detect(text)
     try:
         tekstr = await trl(text, targetlang=target_lang)
     except ValueError as err:
-        await message.reply_text(f"Error: <code>{str(err)}</code>")
-        return
-    return await message.reply_text(
-        f"<b>Translated:</b> from {detectlang} to {target_lang} \n<code>``{tekstr.text}``</code>",
-    )
+        return await message.reply_text(f"Error: <code>{str(err)}</code>")
+    return await message.reply_text(f"<b>Translated:</b> from {detectlang} to {target_lang} \n<code>``{tekstr.text}``</code>")
 
 def ReplyCheck(message: Message):
     reply_id = None
-
     if message.reply_to_message:
         reply_id = message.reply_to_message.message_id
-
     elif not message.from_user.is_self:
         reply_id = message.message_id
-
     return reply_id
 
 infotext = (
@@ -117,9 +96,7 @@ def LastOnline(user: User):
     elif user.status == "online":
         return "Currently Online"
     elif user.status == "offline":
-        return datetime.fromtimestamp(user.status.date).strftime(
-            "%a, %d %b %Y, %H:%M:%S"
-        )
+        return datetime.fromtimestamp(user.status.date).strftime( "%a, %d %b %Y, %H:%M:%S")
 
 def FullName(user: User):
     return user.first_name + " " + user.last_name if user.last_name else user.first_name
@@ -140,23 +117,10 @@ async def whois(client, message):
     try:
         user = await client.get_users(get_user)
     except PeerIdInvalid:
-        await message.reply("I don't know that User.")
-        return
+        return await message.reply("I don't know that User.")
     desc = await client.get_chat(get_user)
     desc = desc.description
-    await message.reply_text(
-        infotext.format(
-            full_name=FullName(user),
-            user_id=user.id,
-            user_dc=user.dc_id,
-            first_name=user.first_name,
-            last_name=user.last_name if user.last_name else "",
-            username=user.username if user.username else "",
-            last_online=LastOnline(user),
-            bio=desc if desc else desc,
-        ),
-        disable_web_page_preview=True,
-    )
+    await message.reply_text(infotext.format(full_name=FullName(user),user_id=user.id,user_dc=user.dc_id,first_name=user.first_name,last_name=user.last_name if user.last_name else "",username=user.username if user.username else "",last_online=LastOnline(user),bio=desc if desc else desc,),disable_web_page_preview=True)
 
 session = ClientSession()
 pattern = re.compile(r"^text/|json$|yaml$|xml$|toml$|x-sh$|x-shellscript$")
@@ -181,47 +145,28 @@ async def paste(content: str):
 async def paste_func(_, message: Message):
     if not message.reply_to_message:
         return await message.reply_text("Reply To A Message With `/paste`")
-   
     r = message.reply_to_message
-
     if not r.text and not r.document:
         return await message.reply_text("Only text and documents are supported")
-
     m = await message.reply_text("Pasting...")
-
     if r.text:
         content = str(r.text)
     elif r.document:
         if r.document.file_size > 40000:
             return await m.edit("You can only paste files smaller than 40KB.")
-
         if not pattern.search(r.document.mime_type):
             return await m.edit("Only text files can be pasted.")
-
         doc = await message.reply_to_message.download()
-
         async with aiofiles.open(doc, mode="r") as f:
             content = await f.read()
-
         os.remove(doc)
-
     link = await paste(content)
     kb = [[InlineKeyboardButton(text="Paste Link ", url=link)]]
     try:
         if m.from_user.is_bot:
-            await message.reply_photo(
-                photo=link,
-                quote=False,
-                caption="Pasted",
-                reply_markup=InlineKeyboardMarkup(kb),
-            )
+            await message.reply_photo(photo=link,quote=False,caption="Pasted",reply_markup=InlineKeyboardMarkup(kb),)
         else:
-            await message.reply_photo(
-                photo=link,
-                quote=False,
-                caption="Pasted",
-                reply_markup=InlineKeyboardMarkup(kb),
-            )
+            await message.reply_photo(photo=link,quote=False,caption="Pasted",reply_markup=InlineKeyboardMarkup(kb),)
         await m.delete()
     except Exception:
         await m.edit("Here's your paste", reply_markup=InlineKeyboardMarkup(kb))
@@ -231,41 +176,21 @@ async def paste_func(_, message: Message):
 async def telegraph(client, message):
     replied = message.reply_to_message
     if not replied:
-        await message.reply("Reply to a supported media file")
-        return
+        return await message.reply("Reply to a supported media file")
     if not (
         (replied.photo and replied.photo.file_size <= 5242880)
         or (replied.animation and replied.animation.file_size <= 5242880)
-        or (
-            replied.video
-            and replied.video.file_name.endswith(".mp4")
-            and replied.video.file_size <= 5242880
-        )
-        or (
-            replied.document
-            and replied.document.file_name.endswith(
-                (".jpg", ".jpeg", ".png", ".gif", ".mp4"),
-            )
-            and replied.document.file_size <= 5242880
-        )
-    ):
-        await message.reply("Not supported!")
-        return
-    download_location = await client.download_media(
-        message=message.reply_to_message,
-        file_name="root/downloads/",
-    )
+        or (replied.video and replied.video.file_name.endswith(".mp4") and replied.video.file_size <= 5242880)
+        or (replied.document and replied.document.file_name.endswith((".jpg", ".jpeg", ".png", ".gif", ".mp4")) and replied.document.file_size <= 5242880)):
+        return await message.reply("Not supported!")
+    download_location = await client.download_media(message=message.reply_to_message,file_name="root/downloads/")
     try:
         response = upload_file(download_location)
     except Exception as document:
         await message.reply(message, text=document)
     else:
         button_s = InlineKeyboardMarkup([[InlineKeyboardButton("Goto Link🔗", url=f"https://telegra.ph{response[0]}")]])
-        await message.reply(
-            f"**Link »**\n`https://telegra.ph{response[0]}`",
-            disable_web_page_preview=True,
-            reply_markup=button_s
-        )
+        await message.reply(f"**Link »**\n`https://telegra.ph{response[0]}`",disable_web_page_preview=True,reply_markup=button_s)
     finally:
         os.remove(download_location)
 
@@ -278,11 +203,9 @@ async def quotify(messages: list):
     sticker.name = "sticker.webp"
     return [True, sticker]
 
-
 def getArg(message: Message) -> str:
     arg = message.text.strip().split(None, 1)[1].strip()
     return arg
-
 
 def isArgInt(message: Message) -> list:
     count = getArg(message)
@@ -292,63 +215,34 @@ def isArgInt(message: Message) -> list:
     except ValueError:
         return [False, 0]
 
-
-
 @app.on_message(filters.command(["quote", "q"]))
 async def quote(client, message: Message):
     await message.delete()
     if not message.reply_to_message:
         return await message.reply_text("Reply to a message to quote it.")
     if not message.reply_to_message.text:
-        return await message.reply_text(
-            "Replied message has no text, can't quote it."
-        )
+        return await message.reply_text("Replied message has no text, can't quote it.")
     m = await message.reply_text("`Quoting Message..`")
     if len(message.command) < 2:
         messages = [message.reply_to_message]
-
     elif len(message.command) == 2:
         arg = isArgInt(message)
         if arg[0]:
             if arg[1] < 2 or arg[1] > 10:
                 return await m.edit("Argument must be between 2-10.")
-
             count = arg[1]
-
-            # Fetching 5 extra messages so tha twe can ignore media
-            # messages and still end up with correct offset
-            messages = [
-                i
-                for i in await client.get_messages(
-                    message.chat.id,
-                    range(
-                        message.reply_to_message.message_id,
-                        message.reply_to_message.message_id + (count + 5),
-                    ),
-                    replies=0,
-                )
-                if not i.empty and not i.media
-            ]
+            messages = [i for i in await client.get_messages(message.chat.id,range(message.reply_to_message.message_id,message.reply_to_message.message_id + (count + 5)),replies=0)if not i.empty and not i.media]
             messages = messages[:count]
         else:
             if getArg(message) != "r":
-                return await m.edit(
-                    "Incorrect Argument, Pass **'r'** or **'INT'**, **EX:** __/q 2__"
-                )
-            reply_message = await client.get_messages(
-                message.chat.id,
-                message.reply_to_message.message_id,
-                replies=1,
-            )
+                return await m.edit("Incorrect Argument, Pass **'r'** or **'INT'**, **EX:** __/q 2__")
+            reply_message = await client.get_messages(message.chat.id,message.reply_to_message.message_id,replies=1,)
             messages = [reply_message]
     else:
-        return await m.edit(
-            "Incorrect argument, check quotly module in help section."
-        )
+        return await m.edit("Incorrect argument, check quotly module in help section.")
     try:
         if not message:
             return await m.edit("Something went wrong.")
-
         sticker = await quotify(messages)
         if not sticker[0]:
             await message.reply_text(sticker[1])
@@ -358,28 +252,18 @@ async def quote(client, message: Message):
         await m.delete()
         sticker.close()
     except Exception as e:
-        await m.edit(
-            "Something went wrong while quoting messages,"
-            + " This error usually happens when there's a "
-            + " message containing something other than text,"
-            + " or one of the messages in-between are deleted."
-        )
+        await m.edit("Something went wrong while quoting messages,"+ " This error usually happens when there's a "+ " message containing something other than text,"+ " or one of the messages in-between are deleted.")
         e = format_exc()
         print(e)
 
 
 
-@app.on_message(
-    filters.command("invitelink") & ~filters.edited & ~filters.bot & ~filters.private & admin_filter
-)
+@app.on_message(filters.command("invitelink") & ~filters.edited & ~filters.bot & ~filters.private)
 async def invitelink(client, message):
     chid = message.chat.id
     try:
         invitelink = await client.export_chat_invite_link(chid)
     except:
-        await message.reply_text(
-            "Add me as admin of yor group first",
-        )
-        return
+        return await message.reply_text("Add me as admin of yor group first")
     await message.reply_text(f"**Invite link generated successfully** \n {invitelink}")
 
