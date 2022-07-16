@@ -469,67 +469,6 @@ async def messages(client, message):
     except:
         message.continue_propagation()        
     
-@pbot.on_message(filters.incoming & ~filters.private &  ~filters.linked_channel & ~filters.bot)
-async def cmt11(client, message):
-    if not message.chat:
-      return       
-    if lockdb.find_one({"cmt": message.chat.id}):
-        pass
-    else:
-        message.continue_propagation()
-    try:
-        if len(await member_permissions(message.chat.id, message.from_user.id)) > 1:
-            return
-    except:
-        pass
-    approved_users = Approve(message.chat.id).list_approved()
-    chats = [user[0] for user in approved_users]
-    for c in chats:
-        if message.from_user.id == int(c):
-            return    
-    try:
-        await client.get_chat_member(message.chat.id, message.from_user.id)
-    except UserNotParticipant:
-        try:
-            await app.send_message(chat_id=message.chat.id,text=f"{message.from_user.mention} your message was deleted you aren't memeber of {message.chat.title}.")
-            await asyncio.sleep(5)
-            await message.delete()
-        except:
-            message.continue_propagation()
-    except ChatAdminRequired:
-        message.continue_propagation()
-
-#=========delete if user not in sz channel ==========        
-@pbot.on_message(filters.incoming & ~filters.private &  ~filters.linked_channel & ~filters.bot)
-async def szfsub(client, message):
-    if not message.chat:
-      return       
-    if lockdb.find_one({"sz": message.chat.id}):
-        pass
-    else:
-        message.continue_propagation()
-    try:
-        if len(await member_permissions(message.chat.id, message.from_user.id)) > 1:
-            return
-    except:
-        pass
-    approved_users = Approve(message.chat.id).list_approved()
-    chats = [user[0] for user in approved_users]
-    for c in chats:
-        if message.from_user.id == int(c):
-            return    
-    try:
-        await client.get_chat_member(F_SUB_CHANNEL, message.from_user.id)
-    except UserNotParticipant:
-        try:
-            await app.send_message(chat_id=message.chat.id,text=f"{message.from_user.mention} your message was deleted you aren't memeber of @szteambots channel(Join it now)\nunlock this <code>/unlock sz </code>.")
-            await asyncio.sleep(5)
-            await message.delete()
-        except:
-            message.continue_propagation()
-    except ChatAdminRequired:
-        message.continue_propagation()
-
 @pbot.on_message(filters.edited & ~filters.private  & ~filters.linked_channel & ~filters.bot)
 async def edt(client, message):
     if not message.chat:
