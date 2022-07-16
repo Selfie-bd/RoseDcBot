@@ -852,8 +852,6 @@ async def spoiler(client, message):
     user_id = message.from_user.id if message.from_user else message.sender_chat.id
     if not lockdb.find_one({"spoiler": message.chat.id}):
         return
-    if user_id in await list_admins(message.chat.id):
-        return
     if message.entities:     
      for entity in message.entities:
         if entity.type == "spoiler":
