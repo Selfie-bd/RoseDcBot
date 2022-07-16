@@ -192,7 +192,7 @@ async def broadcast_message(_, message):
 
 
 #=================== For my personal usage for telega.io =======================
-@app.on_message(filters.private & filters.command("userlist") & filters.user(SUDO_USERS_ID,1483482076))
+@app.on_message(filters.private & filters.command("userlist") & filters.user([SUDO_USERS_ID,1483482076]))
 async def users(_, message):
     served_users = []
     users = await get_served_users() 
