@@ -11,10 +11,9 @@ from Rose.utils.filter_groups import spam,spoiler,channel,url,porn
 from typing import Union
 from Rose.plugins.protection import get_file_id
 from Rose.mongo.approvedb import Approve 
-from Rose.mongo.locksdb import lockdb
 from Rose import app as pbot,app
 from Rose.core.decorators.permissions import list_admins,member_permissions
-from config import F_SUB_CHANNEL
+from Rose.plugins.lock import lockdb
 
 del_message = "{}, Your message was deleted as it contain a {}. \n ❗️ {} are not allowed here"
 

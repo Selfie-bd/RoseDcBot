@@ -1,20 +1,23 @@
+import asyncio
+import pymongo
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton
 from pyrogram.errors.exceptions.bad_request_400 import ChatNotModified
 from pyrogram.types import ChatPermissions
-from Rose.utils.lang import *
-from Rose.utils.filter_groups import *
-from Rose.plugins.protection import *
-from Rose.mongo.locksdb import *
-from Rose import *
-from Rose import BOT_ID, app as pbot, MONGO_URL as  MONGO_DB_URI
-from Rose.utils.custom_filters import *
-from button import *
+from Rose.mongo.locksdb import (
+    b_on,
+    b_off,
+    is_b_on,
+    remove_chat,
+)
+from Rose import app, app as pbot, MONGO_URL as  MONGO_DB_URI,LOG_GROUP_ID
+from Rose.utils.custom_filters import admin_filter
+from button import Locks
 from Rose.core.decorators.permissions import current_chat_permissions,member_permissions
 
 
 #====== Mongo database =========
-client = MongoClient(MONGO_DB_URI)
+client = pymongo.MongoClient(MONGO_DB_URI)
 dbd = client["szrosebot"]
 db = dbd
 lockdb = db.lockdb1
@@ -201,7 +204,7 @@ async def wew(_, message):
 
 
 
-__MODULE__ = f"{Locks}"
+__MODULE__ = Locks
 __HELP__ = """
 **Locks**
 Do stickers annoy you? or want to avoid people sharing links? or pictures? You're in the right place!
@@ -220,20 +223,6 @@ The locks module allows you to lock away some common items in the telegram world
 • `/lock sticker photo gif video`
 """
 __helpbtns__ = (
-        [[
-            InlineKeyboardButton
-                (
-                    " Lock Types", callback_data="_ucd"
-                ),            
-            InlineKeyboardButton
-                (
-                    "Permissions Locks", callback_data="_kcd"
-                ) 
-        ],
-        [
-            InlineKeyboardButton
-                (
-                    "Examples", callback_data="_lcd"
-                )
-        ]]
-)
+        [[InlineKeyboardButton("Lock Types", callback_data="_ucd"),            
+          InlineKeyboardButton("Permissions Locks", callback_data="_kcd")],
+        [InlineKeyboardButton("Examples", callback_data="_lcd")]])
