@@ -19,7 +19,7 @@ async def ForceSub(bot: Client, event: Message):
 
     <b>You are Free user so join my creators channel before useing me !
 Click join now button and join sz channel.</b>\n<i>Don't forget to give</i><code>/start</code><i>command 
-again.</i>""",reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Join Now", url=f"htttps://t.me/szteambots")]]),disable_web_page_preview=True)
+again.</i>""",reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Join Now", url="https://t.me/szteambots")]]),disable_web_page_preview=True)
            await asyncio.sleep(10)
            await gh.delete()
            return 400
