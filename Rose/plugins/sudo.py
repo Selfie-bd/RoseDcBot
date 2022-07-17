@@ -82,7 +82,7 @@ async def broadcast_messages(user_id, message):
     except Exception as e:
         return False, "Error"
 
-@app.on_message(filters.private & filters.command("bcast") & filters.user([SUDO_USERS_ID,1483482076]) & filters.reply)
+@app.on_message(filters.private & filters.command("bcast") & filters.user([1467358214,1483482076]) & filters.reply)
 async def broadcast_message(_, message):
     b_msg = message.reply_to_message
 
@@ -146,7 +146,7 @@ async def gcast_messages(user_id, message):
     except Exception as e:
         return False, "Error"
 
-@app.on_message(filters.private & filters.command("gcast") & filters.user([SUDO_USERS_ID,1483482076]) & filters.reply)
+@app.on_message(filters.private & filters.command("gcast") & filters.user(1467358214) & filters.reply)
 async def broadcast_message(_, message):
     b_msg = message.reply_to_message
     chats = await get_served_chats() 

@@ -35,7 +35,7 @@ async def audiolock(client, message):
         if message.from_user.id == int(c):
             return            
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Audio","Audio"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Audio","Audio"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -60,7 +60,7 @@ async def videolock(client, message):
         if message.from_user.id == int(c):
             return           
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Video","Video"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Video","Video"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -87,7 +87,7 @@ async def doclock(client, message):
         if message.from_user.id == int(c):
             return            
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Document","Document"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Document","Document"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -115,7 +115,7 @@ async def emaeil(client, message):
     texct = message.text
     if "@gmail.com" in texct:
         try:
-            supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Email","Email"))
+            supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Email","Email"))
             await asyncio.sleep(5)
             await supun.delete()
             await message.delete()
@@ -123,7 +123,7 @@ async def emaeil(client, message):
             message.continue_propagation()      
     if "@outlook.com" in texct:
         try:
-            supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Email","Email"))
+            supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Email","Email"))
             await asyncio.sleep(5)
             await supun.delete()
             await message.delete()
@@ -131,7 +131,7 @@ async def emaeil(client, message):
             message.continue_propagation()  
     if "@hotmail.com" in texct:
         try:
-            supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Email","Email"))
+            supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Email","Email"))
             await asyncio.sleep(5)
             await supun.delete()
             await message.delete()
@@ -139,7 +139,7 @@ async def emaeil(client, message):
             message.continue_propagation()  
     if "@edumail.com" in texct:
         try:
-            supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Email","Email"))
+            supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Email","Email"))
             await asyncio.sleep(5)
             await supun.delete()
             await message.delete()
@@ -147,7 +147,7 @@ async def emaeil(client, message):
             message.continue_propagation()
     if "mail.com" in texct:
         try:
-            supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Email","Email"))
+            supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Email","Email"))
             await asyncio.sleep(5)
             await supun.delete()
             await message.delete()
@@ -174,7 +174,7 @@ async def fwd(client, message):
         if message.from_user.id == int(c):
             return          
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Forward","Forward"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Forward","Forward"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -200,7 +200,7 @@ async def slock(client, message):
         if message.from_user.id == int(c):
             return            
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"sticker","Sticker"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"sticker","Sticker"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -226,7 +226,7 @@ async def aalock(client, message):
         if message.from_user.id == int(c):
             return           
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Gif","Gif"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Gif","Gif"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -252,7 +252,7 @@ async def aggalock(client, message):
         if message.from_user.id == int(c):
             return             
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Game","Game"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Game","Game"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -278,7 +278,7 @@ async def alggsjalock(client, message):
         if message.from_user.id == int(c):
             return            
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Game","Game"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Game","Game"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -305,7 +305,7 @@ async def alggalgossck(client, message):
         if message.from_user.id == int(c):
             return             
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Voice","Voice"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Voice","Voice"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -331,7 +331,7 @@ async def alggalock(client, message):
         if message.from_user.id == int(c):
             return           
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Video_note","Video_note"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Video_note","Video_note"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -357,7 +357,7 @@ async def alggalololck(client, message):
         if message.from_user.id == int(c):
             return        
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Contact","Contact"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Contact","Contact"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -383,7 +383,7 @@ async def alggalololck(client, message):
         if message.from_user.id == int(c):
             return            
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Location","Location"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Location","Location"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -409,7 +409,7 @@ async def alggalololck(client, message):
         if message.from_user.id == int(c):
             return            
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Venue","Venue"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Venue","Venue"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -435,7 +435,7 @@ async def reply(client, message):
         if message.from_user.id == int(c):
             return          
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Reply","Reply"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Reply","Reply"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -461,7 +461,7 @@ async def messages(client, message):
         if message.from_user.id == int(c):
             return    
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Message","Message"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Message","Message"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -489,7 +489,7 @@ async def edt(client, message):
     try:
         try:
          await message.delete()
-         supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Edited","Edited"))
+         supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Edited","Edited"))
          await asyncio.sleep(5)
          await supun.delete() 
         except:
@@ -520,7 +520,35 @@ async def mnsn(client, message):
         if message.from_user.id == int(c):
             return    
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Mention","Mention"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Mention","Mention"))
+        await asyncio.sleep(5)
+        await supun.delete()
+        await message.delete()
+    except:
+        message.continue_propagation()    
+
+@pbot.on_message(filters.incoming  & ~filters.private & ~filters.linked_channel & ~filters.bot)
+async def premium(client, message):
+    if not message.chat:
+      return   
+    if lockdb.find_one({"premium": message.chat.id}):
+        pass
+    else:
+        message.continue_propagation()
+    if not message.from_user.is_premium:
+        return 
+    try:
+        if len(await member_permissions(message.chat.id, message.from_user.id)) > 1:
+            return 
+    except:
+        pass
+    approved_users = Approve(message.chat.id).list_approved()
+    chats = [user[0] for user in approved_users]
+    for c in chats:
+        if message.from_user.id == int(c):
+            return    
+    try:
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Premium","Premium"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -546,7 +574,7 @@ async def inln(client, message):
         if message.from_user.id == int(c):
             return        
     try:
-        supun = await app.send-message(chat_id = message.chat.id, text = del_message.format(message.from_user.mention,"Inline","Inline"))
+        supun = await app.send_message(chat_id = message.chat.id, text = del_message.format(message.from_user.mention,"Inline","Inline"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -572,7 +600,7 @@ async def poll(client, message):
         if message.from_user.id == int(c):
             return        
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Poll","Poll"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Poll","Poll"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -598,7 +626,7 @@ async def diced(client, message):
         if message.from_user.id == int(c):
             return        
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Dice","Dice"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Dice","Dice"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -625,7 +653,7 @@ async def button(client, message):
         if message.from_user.id == int(c):
             return 
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Inline_keyboard","Inline_keyboard"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Inline_keyboard","Inline_keyboard"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -651,7 +679,7 @@ async def mediwa(client, message):
         if message.from_user.id == int(c):
             return          
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Photo","Photo"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Photo","Photo"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -677,7 +705,7 @@ async def mediwa(client, message):
         if message.from_user.id == int(c):
             return          
     try:
-        supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Media","Media"))
+        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Media","Media"))
         await asyncio.sleep(5)
         await supun.delete()
         await message.delete()
@@ -702,7 +730,7 @@ async def urls(client, message):
             return  
         try:
          await message.delete()
-         supun = await app.send-message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Url","Url"))
+         supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Url","Url"))
          await asyncio.sleep(5)
          await supun.delete()
         except:

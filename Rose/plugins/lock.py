@@ -55,7 +55,7 @@ data = {
     "channel":"channel",
     "porn":"porn",
     "spam":"spam",
-    "sz":"sz",
+    "premium":"premium",
 }
 
 incorrect_parameters = "<b>Incorrect lock types send </b><code>/locktypes</code><b> to see all.</b>"
@@ -74,8 +74,8 @@ permdata = {
     "pin_messages": "can_pin_messages",
 }
 
-array1= ["sz","channel","spam","porn","anonchannel","spoiler","url","vid", "aud","doc", "fwd","pic", "stc", "gif", "game","albm", "voice", "vnote","contact","gps", "address", "reply","message","cmt","edit","mention","inline", "poll", "dice", "button", "media", "emal",]
-array2= ["sz","channel","spam","porn","anonchannel","spoiler","url","video", "audio","document", "forward","photo", "sticker", "gif", "games","album", "voice", "video_note","contact","location", "address", "reply","message","comment","edit","mention","inline", "polls", "dice", "buttons", "media", "email",]
+array1= ["premium","channel","spam","porn","anonchannel","spoiler","url","vid", "aud","doc", "fwd","pic", "stc", "gif", "game","albm", "voice", "vnote","contact","gps", "address", "reply","message","cmt","edit","mention","inline", "poll", "dice", "button", "media", "emal",]
+array2= ["premium","channel","spam","porn","anonchannel","spoiler","url","video", "audio","document", "forward","photo", "sticker", "gif", "games","album", "voice", "video_note","contact","location", "address", "reply","message","comment","edit","mention","inline", "polls", "dice", "buttons", "media", "email",]
 
 array3 =["send_messages","send_stickers","send_gifs","send_media","send_games","send_inline","url_prev","send_polls","change_info","invite_user", "pin_messages","all_permissions"]
 array4=["can_send_messages","can_send_stickers","can_send_animations","can_send_media_messages","can_send_games","can_use_inline_bots","can_add_web_page_previews","can_send_polls","can_invite_users","can_change_info","can_pin_messages"]
