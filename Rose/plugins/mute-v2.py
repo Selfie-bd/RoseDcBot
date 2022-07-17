@@ -5,8 +5,10 @@ from pyrogram.errors import (
 )
 from pyrogram.types import (
     ChatPermissions,
-    Message
-)
+    InlineKeyboardButton, 
+    InlineKeyboardMarkup,
+    Message)
+    
 from Rose import app, BOT_ID
 from Rose.utils.caching import ADMIN_CACHE, admin_cache_reload
 from Rose.utils.custom_filters import restrict_filter
@@ -51,15 +53,14 @@ async def tmute_usr(client, message: Message, _):
     if not mutetime:
         return
     try:
+        keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(text="❗️ Un Mute",callback_data=f"_unmute_{user_id}")]])
         await message.chat.restrict_member(user_id,ChatPermissions(),mutetime)
-        admin=await mention_html(message.from_user.first_name, message.from_user.id)
-        muted=await mention_html(user_first_name, user_id)
-        txt = (f"{muted} **was muted By** {message.from_user.first_name}")    
+        txt = (f"{user_first_name}[{user_id}] **was muted By** {message.from_user.first_name}")    
         if reason:
             txt += f"\n<b>Reason</b>: {reason}"
         if mutetime:    
             txt += f"\n<b>Mute Time</b>: {mutetime}"
-        await app.send_message(message.chat.id, txt)
+        await message.reply_text(txt,reply_markup=keyboard)
     except ChatAdminRequired:
         await message.reply_text("You need to be an admin to do this.")
     except RightForbidden:
@@ -106,9 +107,7 @@ async def dtmute_usr(client, message: Message, _):
     try:
         await message.chat.restrict_member(user_id,ChatPermissions(),mutetime,)
         await message.reply_to_message.delete()
-        admin=(await mention_html(message.from_user.first_name, message.from_user.id)),
-        muted=(await mention_html(user_first_name, user_id)),
-        txt = f"{muted} **was muted By** {message.from_user.first_name}"
+        txt = f"{user_first_name}[{user_id}] **was muted By** {message.from_user.first_name}"
         if reason:
             txt += f"\n<b>Reason</b>: {reason}"
         await app.send_message(message.chat.id, txt)
@@ -196,13 +195,12 @@ async def mute_usrs(client, message: Message, _):
     if user_id in admins_group:
         return await message.reply_text("This user is admin in this chat, I can't Mute them!")
     try:
+        keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(text="❗️ Un Mute",callback_data=f"_unmute_{user_id}")]])
         await message.chat.restrict_member(user_id,ChatPermissions())
-        admin=(await mention_html(message.from_user.first_name, message.from_user.id)),
-        muted=(await mention_html(user_first_name, user_id)),
-        txt = f"{muted} **was muted By** {message.from_user.first_name}"
+        txt = f"{user_first_name}[{user_id}] **was muted By** {message.from_user.first_name}"
         if reason:
             txt += f"\n<b>Reason</b>: {reason}"
-        await app.send_message(message.chat.id, txt)
+        await message.reply_text(txt,reply_markup=keyboard)
     except ChatAdminRequired:
         await message.reply_text("You need to be an admin to do this.")
     except RightForbidden:

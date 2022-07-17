@@ -134,32 +134,25 @@ async def start(client, message: Message, _):
     if FSub == 400:
         return
     chat_id = message.chat.id
-    if message.sender_chat:
-        return
     if message.chat.type != "private":
         await message.reply(
             _["main2"], reply_markup=keyboard)
         await adds_served_user(chat_id)     
         return await add_served_chat(chat_id) 
-    #len of start commands
-
     if len(message.text.split()) > 1:
         name = (message.text.split(None, 1)[1]).lower()
         if name.startswith("rules"):
                 await get_private_rules(app, message, name)
                 return     
-
         if name.startswith("learn"):
                 await get_learn(app, message, name)
                 return     
-
         if "_" in name:
             module = name.split("_", 1)[1]
             text = (_["main6"].format({HELPABLE[module].__MODULE__}
                 + HELPABLE[module].__HELP__)
             )
             await message.reply(text, disable_web_page_preview=True)
-
         if name == "help":
             text, keyb = await help_parser(message.from_user.first_name)
             await message.reply(
@@ -167,18 +160,13 @@ async def start(client, message: Message, _):
                 reply_markup=keyb,
                 disable_web_page_preview=True,
             )
-
         if name == "connections":
             await message.reply("Run /connections to view or disconnect from groups!")
-
-    #private bot start commands
     else:
         await message.reply(f"""
-Hey there {message.from_user.mention}, My name is Rose
-An  advanced telegram Group management Bot For helpYou Protect Your Groups & Suit For All Your Needs.feel free to add me to your groups!
-""",
-            reply_markup=home_keyboard_pm,
-        )
+Hey there {message.from_user.mention}, 
+My name is {BOT_NAME} an  advanced telegram Group management Bot For helpYou Protect Your Groups & Suit For All Your Needs.feel free to add me to your groups!
+""",reply_markup=home_keyboard_pm)
         return await add_served_user(chat_id) 
 
 
@@ -260,11 +248,9 @@ async def startcq(client,CallbackQuery, _):
         served_users.append(int(user["bot_users"]))
     await CallbackQuery.message.edit(
             text=f"""
-Hey there {CallbackQuery.from_user.mention}, My name is Rose
-An  advanced telegram Group management Bot For helpYou Protect Your Groups & Suit For All Your Needs.feel free to add me to your groups!
-""",
-            disable_web_page_preview=True,
-            reply_markup=home_keyboard_pm)
+Hey there {CallbackQuery.from_user.mention}, 
+My name is Rose an  advanced telegram Group management Bot For helpYou Protect Your Groups & Suit For All Your Needs.feel free to add me to your groups!
+""",disable_web_page_preview=True,reply_markup=home_keyboard_pm)
 
 
 async def help_parser(name, keyboard=None):
@@ -278,9 +264,7 @@ You can choose an option below, by clicking a button.
 If you have any bugs or questions on how to use me, 
 have a look at my [Docs](https://szsupunma.gitbook.io/rose-bot/), or head to @szteambots.
 
-**All commands can be used with the following: / **""",
-        keyboard,
-    )
+**All commands can be used with the following: / **""",keyboard,)
 
 @app.on_message(filters.command("ads"))
 async def ads_message(_, message):

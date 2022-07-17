@@ -1,9 +1,10 @@
 from time import time
 from pyrogram import filters
 from pyrogram.types import (
-                        ChatPermissions,
-                        Message,
-)
+    ChatPermissions,
+    InlineKeyboardButton, 
+    InlineKeyboardMarkup,
+    Message)
 from Rose.core.keyboard import ikb
 from Rose import app, BOT_ID
 from Rose.mongo.warnsdb import Warns, WarnSettings
@@ -37,7 +38,7 @@ async def warn(client, message: Message, _):
         return
 
     user_id, user_first_name, _ = await extract_user(app, message)
-
+    keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(text="❗️ Un Mute",callback_data=f"_unwarn_{user_id}")]])
     if user_id == BOT_ID:
         await message.reply_text(_["warn2"])
         return
@@ -45,14 +46,11 @@ async def warn(client, message: Message, _):
         admins_group = {i[0] for i in ADMIN_CACHE[message.chat.id]}
     except KeyError:
         admins_group = {i[0] for i in (await admin_cache_reload(message, "warn_user"))}
-
     if user_id in admins_group:
         await message.reply_text(_["warn4"])
         return
-
     warn_db = Warns(message.chat.id)
     warn_settings_db = WarnSettings(message.chat.id)
-
     _, num = warn_db.warn_user(user_id, reason)
     warn_settings = warn_settings_db.get_warnings_settings()
     if num >= warn_settings["warn_limit"]:
@@ -65,7 +63,7 @@ async def warn(client, message: Message, _):
         elif warn_settings["warn_mode"] == "mute":
             await message.chat.restrict_member(user_id, ChatPermissions())
             action = "muted"
-        await message.reply_text(
+        return await message.reply_text(
             (
                 f"Warnings {num}/{warn_settings['warn_limit']}!"
                 f"\n<b>Reason for last warn</b>:\n{reason}"
@@ -74,8 +72,8 @@ async def warn(client, message: Message, _):
                 f"{(await mention_html(user_first_name, user_id))} has been <b>{action}!</b>"
             ),
             reply_to_message_id=r_id,
+        reply_markup=keyboard    
         )
-        await message.stop_propagation()
     if message.text.split()[0] == "/swarn":
         await message.delete()
         await message.stop_propagation()
@@ -95,6 +93,7 @@ async def warn(client, message: Message, _):
     await message.reply_text(
         txt,
         reply_to_message_id=r_id,
+        reply_markup=keyboard
     )
     await message.stop_propagation()
 

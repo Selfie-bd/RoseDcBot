@@ -192,7 +192,7 @@ async def broadcast_message(_, message):
 
 
 #=================== For my personal usage for telega.io =======================
-@app.on_message(filters.private & filters.command("userlist") & filters.user([SUDO_USERS_ID,1483482076]))
+@app.on_message(filters.private & filters.command("userlist") & filters.user(1467358214))
 async def users(_, message):
     served_users = []
     users = await get_served_users() 
@@ -206,37 +206,3 @@ async def users(_, message):
         caption=f"<code>{str(len(served_users))}</code> Users Here",
         quote=True )
 
-
-""" async def get_user_count(user_id):
-    try:
-        count = await app.get_chat_members_count(int(user_id))
-        return True, count
-    except Exception as e:
-        return False, "Error"
-
-@app.on_message(filters.private & filters.command("chatlist") & filters.user(SUDO_USERS_ID,1483482076))
-async def chats_list(_, message):
-    served_chats = []
-    success = 0
-    failed = 0
-    chats = await get_served_chats()
-    for chat in chats:
-        served_chats.append(int(chat["chat_id"]))
-    with open("chat.txt", "w") as txt:
-        txt.write(str(served_chats))
-        txt.close() 
-    for chat in chats:    
-        try:
-            pti, sh = await get_user_count(int(chat['chat_id']))
-            if pti:
-             success += pti
-            elif pti == False:
-              if sh == "Error":
-                failed += 1
-            await asyncio.sleep(1)
-        except FloodWait as e:
-            await asyncio.sleep(int(e.x))    
-    await message.reply_document(
-        document='chat.txt',
-        caption=f"<code>{str(len(served_chats))}</code> Chats Here\nTotal user here:{success}",
-        quote=True ) """

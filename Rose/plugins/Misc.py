@@ -1,4 +1,4 @@
-#no need Multi-lang for this plugin !!!!
+import requests
 from pyrogram import filters
 from Rose import app,eor,arq
 from gpytranslate import Translator
@@ -33,11 +33,10 @@ async def getid(client, message):
         except Exception:
             return await eor(message, text="This user doesn't exist.")
     text += f"**Chat ID:** `{chat.id}`\n"
-    text += f"**Forwarded From:** `{message.forward_from_chat.id}`\n\n"
     if not getattr(reply, "empty", True):
         id_ = reply.from_user.id if reply.from_user else reply.sender_chat.id
         text += f"**Replied Message ID:** `{reply.message_id}`\n"
-        text += f"**Replied User ID:** `{id_}`"
+        text += f"**Replied User/chat ID:** `{id_}`"
     await eor(message,text=text,disable_web_page_preview=True,parse_mode="md")
 
 @app.on_message(filters.command("tr"))
@@ -59,10 +58,11 @@ async def tr(_, message):
         text = message.text.split(None, 2)[2]
     detectlang = await trl.detect(text)
     try:
+        data = requests.get(f"https://api.safone.tech/translate?text={text}&target={target_lang}").json()
         tekstr = await trl(text, targetlang=target_lang)
     except ValueError as err:
         return await message.reply_text(f"Error: <code>{str(err)}</code>")
-    return await message.reply_text(f"<b>Translated:</b> from {detectlang} to {target_lang} \n<code>``{tekstr.text}``</code>")
+    return await message.reply_text(f"<b>Translated:</b> from {data['origin']} to {data['target']} \n<code>{data['translated']}</code>")
 
 def ReplyCheck(message: Message):
     reply_id = None

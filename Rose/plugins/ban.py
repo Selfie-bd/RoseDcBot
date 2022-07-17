@@ -78,7 +78,7 @@ async def kickFunc(client, message: Message, _):
 @language
 async def banFunc(client, message: Message, _):
     user_id, reason = await extract_user_and_reason(message, sender_chat=True)
-    keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(text="❗️Un ban",callback_data=f"_unban_{user_id}")]])
+    keyboard = InlineKeyboardMarkup([[InlineKeyboardButton(text="❗️ Un Ban",callback_data=f"_unban_{user_id}")]])
     if not user_id:
         return await message.reply_text(_["ban3"])
     if user_id == BOT_ID:
@@ -92,7 +92,6 @@ async def banFunc(client, message: Message, _):
         mention = (message.reply_to_message.sender_chat.title if message.reply_to_message else "Anon")
     await message.chat.ban_member(user_id)
     msg = f"{mention} **Was Banned By:** {message.from_user.mention if message.from_user else 'Anon'}\n"
-    await message.reply_text(msg,reply_markup=keyboard)
     if message.command[0][0] == "d":
         await message.reply_to_message.delete()
     if message.command[0] == "tban":

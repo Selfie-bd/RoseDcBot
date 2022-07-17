@@ -611,9 +611,7 @@ async def backcb(bot,query):
 #============================== unmute|unwarn|unban|and other un callbacks ==========================
 #====================================================================================================
 
-@app.on_callback_query(
-    filters.regex("_unwarn")
-)
+@app.on_callback_query(filters.regex("_unwarn"))
 async def unwarn(bot,query):
       chat_id = query.message.chat.id
       permissions = await member_permissions(chat_id, query.from_user.id)
@@ -621,20 +619,14 @@ async def unwarn(bot,query):
       if permission not in permissions:
         return await query.answer("You don't have enough permissions to perform this action.")
       user_id = query.data.split("_")[1]
-
       warn_db = Warns(query.message.chat.id)
       warn_db.remove_warn(user_id)
-
       text = query.message.text.markdown
       text = f"~~{text}~~\n\n"
-      
-      text += comman_un_text.format("Warn",query.from_user.mention[{query.from_user.id}])
-
+      text += f"{comman_un_text}".format("Warn",query.from_user.mention[{query.from_user.id}])
       await query.message.edit(text)
 
-@app.on_callback_query(
-    filters.regex("_unban")
-)
+@app.on_callback_query(filters.regex("_unban"))
 async def unban(bot,query):
       from_user = query.from_user
       chat_id = query.message.chat.id
@@ -646,12 +638,10 @@ async def unban(bot,query):
       await query.message.chat.unban_member(user_id)
       text = query.message.text.markdown
       text = f"~~{text}~~\n\n"
-      text += comman_un_text.format("Ban",query.from_user.mention[{query.from_user.id}])
+      text += f"{comman_un_text}".format("Ban",query.from_user.mention[{query.from_user.id}])
       await query.message.edit(text)
 
-@app.on_callback_query(
-    filters.regex("_unmute")
-)
+@app.on_callback_query(filters.regex("_unmute"))
 async def unmute(bot,query):
       from_user = query.from_user
       chat_id = query.message.chat.id
@@ -663,7 +653,7 @@ async def unmute(bot,query):
       await query.message.chat.unban_member(user_id)
       text = query.message.text.markdown
       text = f"~~{text}~~\n\n"
-      text += comman_un_text.format("Mute",query.from_user.mention[{query.from_user.id}])
+      text += f"{comman_un_text}".format("Mute",query.from_user.mention[{query.from_user.id}])
       await query.message.edit(text)  
 
          
