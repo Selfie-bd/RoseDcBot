@@ -12,10 +12,6 @@ CHANNEL_ID = F_SUB_CHANNEL
 async def ForceSub(bot: Client, event: Message):
     try:
         await bot.get_chat_member(chat_id=(int(CHANNEL_ID) if CHANNEL_ID.startswith("-100") else CHANNEL_ID), user_id=event.from_user.id)
-    except FloodWait as e:
-        await asyncio.sleep(e.x)
-        fix_ = await ForceSub(bot, event)
-        return fix_
     except UserNotParticipant:
         try:
            gh = await bot.send_message(chat_id=event.chat.id,text=f"""
@@ -27,12 +23,10 @@ again.</i>""",reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Join Now
            await asyncio.sleep(10)
            await gh.delete()
            return 400
-        except:
-           event.continue_propagation()    
-    except FloodWait as e:
-         await asyncio.sleep(e.x)
-         fix_ = await ForceSub(bot, event)
-         return fix_
+        except FloodWait as e:
+           await asyncio.sleep(e.x)
+           fix_ = await ForceSub(bot, event)
+           return fix_
     except Exception as err:
         print(f"Something Went Wrong! Unable to do Force Subscribe.\nError: {err}\n\nContact Support Group: https://t.me/supunma")
         return 200  
