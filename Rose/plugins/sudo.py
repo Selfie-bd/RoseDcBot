@@ -97,7 +97,8 @@ async def broadcast_message(_, message):
     done = 0
     blocked = 0
     deleted = 0
-    failed =0
+    failed = 0
+    success = 0
 
     for chat in chats:
         try:
@@ -119,7 +120,7 @@ async def broadcast_message(_, message):
             await asyncio.sleep(int(e.x))
         except Exception:
             pass  
-        await m.edit(f"""
+    await m.edit(f"""
 ✅ <strong>success</strong> : <code>{success}</code>
 ✋ <strong>Blocked</strong> : <code>{blocked}</code>
 😹 <strong>deleted</strong> : <code>{deleted}</code>
@@ -161,6 +162,7 @@ async def broadcast_message(_, message):
     blocked = 0
     deleted = 0
     failed =0
+    success = 0
 
     for chat in chats:
         try:
@@ -182,7 +184,7 @@ async def broadcast_message(_, message):
             await asyncio.sleep(int(e.x))
         except Exception:
             pass  
-        await m.edit(f"""
+    await m.edit(f"""
 ✅ <strong>success</strong> : <code>{success}</code>
 ✋ <strong>Blocked</strong> : <code>{blocked}</code>
 😹 <strong>deleted</strong> : <code>{deleted}</code>
