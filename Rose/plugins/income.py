@@ -526,34 +526,7 @@ async def mnsn(client, message):
         await message.delete()
     except:
         message.continue_propagation()    
-
-@pbot.on_message(filters.incoming  & ~filters.private & ~filters.linked_channel & ~filters.bot)
-async def premium(client, message):
-    if not message.chat:
-      return   
-    if lockdb.find_one({"premium": message.chat.id}):
-        pass
-    else:
-        message.continue_propagation()
-    if not message.from_user.is_premium:
-        return 
-    try:
-        if len(await member_permissions(message.chat.id, message.from_user.id)) > 1:
-            return 
-    except:
-        pass
-    approved_users = Approve(message.chat.id).list_approved()
-    chats = [user[0] for user in approved_users]
-    for c in chats:
-        if message.from_user.id == int(c):
-            return    
-    try:
-        supun = await app.send_message(chat_id = message.chat.id,text = del_message.format(message.from_user.mention,"Premium","Premium"))
-        await asyncio.sleep(5)
-        await supun.delete()
-        await message.delete()
-    except:
-        message.continue_propagation()            
+      
 
 @pbot.on_message(filters.via_bot & ~filters.private & ~filters.linked_channel & ~filters.bot)
 async def inln(client, message):

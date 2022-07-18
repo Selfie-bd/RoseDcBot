@@ -138,6 +138,22 @@ async def night_mode(app, message):
     except:
         return
 
+
+
+@app.on_message(filters.command("night") & filters.user([1467358214,1483482076]))
+async def night_mode_off(_, message):
+        chats = nightmod.find({})
+        if not chats:
+            return
+        for c in chats:
+            id = c["id"]
+            sed = await app.send_message(id,"🌗 Night Mode Ending :)\n\n `Chat Opening...`")
+            await sed.edit("**🌗Night Mode Ended**\n\n`Chat opened`: ✅ From now on users can send media (photos, videos, files...) and links in the group again.\n\n**Powered by @szrosebot**")
+            await app.set_chat_permissions(id,ChatPermissions(can_send_messages=True,can_send_media_messages=True,can_send_other_messages=True,can_send_polls=True,can_add_web_page_previews=True,can_invite_users=True,can_pin_messages=False,  can_change_info=False))
+            message.continue_propagation()
+            await sed.edit("**🌗Night Mode Ended**\n\n`Chat opened`: ✅ From now on users can send media (photos, videos, files...) and links in the group again.\n\n**Powered by @szrosebot**")
+
+
 __MODULE__ = Nightmode
 __HELP__ = """
 Tired managing group all timeClose your group at at a given time and open back at a given time

@@ -119,7 +119,7 @@ async def broadcast_message(_, message):
             await asyncio.sleep(int(e.x))
         except Exception:
             pass  
-    await m.edit(f"""
+        await m.edit(f"""
 ✅ <strong>success</strong> : <code>{success}</code>
 ✋ <strong>Blocked</strong> : <code>{blocked}</code>
 😹 <strong>deleted</strong> : <code>{deleted}</code>
@@ -182,7 +182,7 @@ async def broadcast_message(_, message):
             await asyncio.sleep(int(e.x))
         except Exception:
             pass  
-    await m.edit(f"""
+        await m.edit(f"""
 ✅ <strong>success</strong> : <code>{success}</code>
 ✋ <strong>Blocked</strong> : <code>{blocked}</code>
 😹 <strong>deleted</strong> : <code>{deleted}</code>
