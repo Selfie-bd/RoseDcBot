@@ -19,7 +19,7 @@ CBOTA = get_command("CBOTA")
 
 @app.on_message(filters.command("chatbot") & ~filters.edited& ~filters.private& admin_filter)
 @language
-async def cbots(client, message: Message, _):
+async def cbots(client, message: Message, _ ,id):
     group_id = str(message.chat.id)
     chat_id = message.chat.id
     user_id = message.from_user.id
