@@ -47,7 +47,7 @@ Getting started protecting and managing your group better with Rose Bot is very 
 ## Customize your Rose Bot - create a clone (Deploy Heroku)
 If you want to make your bot even more unique, you can create a customized rose bot clone with a name and profile photo of your choice.
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/szsupunma/sz-rosebot)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/selfie-bd/rosedcbot)
 
 [![License](https://www.gnu.org/graphics/agplv3-155x51.png)](LICENSE)   
 Rose is licensed under [GNU Affero General Public License](https://www.gnu.org/licenses/agpl-3.0.en.html) v3 or later.
