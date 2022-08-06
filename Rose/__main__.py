@@ -105,12 +105,12 @@ home_keyboard_pm = InlineKeyboardMarkup(
         ],
         [
             InlineKeyboardButton(
-                text=" 😐 Website",
-                url=f"https://szrosebot.ml",
+                text="Website",
+                url=f"https://dcbots.netfy.org/",
             ),
             InlineKeyboardButton(
                 text="ᴜᴘᴅᴀᴛᴇꜱ",
-                url=f"https://t.me/szroseupdates",
+                url=f"https://t.me/groupdcbots",
             )
         ],
     ]
