@@ -91,7 +91,7 @@ async def delete(bot,query):
 @app.on_callback_query(
     filters.regex("show_whisper")
 )
-async def show_whisper(bot,query):
+async def show_whisper(_,query):
         inline_message_id = query.inline_message_id
         whisper = whispers[inline_message_id]
         sender_uid = whisper['sender_uid']
@@ -110,7 +110,7 @@ async def show_whisper(bot,query):
 @app.on_callback_query(
     filters.regex("promote")
 )
-async def promote(bot,query):
+async def promote(_,query):
         user_id = query.data.split("_")[1]
         owner_id = query.data.split("_")[2]
         fed_id = get_fed_from_ownerid(owner_id)
