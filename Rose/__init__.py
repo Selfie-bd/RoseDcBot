@@ -15,9 +15,9 @@ from datetime import datetime
 
 IST = pytz.timezone('Asia/Colombo')
 time = datetime.now(IST)
-date = time.strftime("%a/%d/%b/%Y %H:%M:%S")#format can change any time if you want /:
+date = time.strftime("%a/%d/%b/%Y %H:%M:%S")
 
-SUPPORT_GROUP = "https://t.me/slbotzone"
+SUPPORT_GROUP = "https://t.me/groupdcbots"
 SUDOERS = SUDO_USERS_ID
 LOG_GROUP_ID = LOG_GROUP_ID
 MOD_LOAD = []
@@ -25,7 +25,7 @@ MOD_NOLOAD = []
 bot_start_time = time.time()
 DB_URI = BASE_DB 
 MONGO_URL = MONGO_URL
-OWNER_ID = 1467358214
+OWNER_ID = 1940030638
 
 
 myclient = pymongo.MongoClient(DB_URI)
